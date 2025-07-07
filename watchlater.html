@@ -1,0 +1,980 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>YouTube Watch Later</title>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f0f2f5;
+            color: #333;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        .container {
+            max-width: 600px; /* Optimal width for mobile devices */
+            margin: 0 auto;
+            background-color: #fff;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.08);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .app-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 20px;
+            background-color: #fff;
+            border-bottom: 1px solid #eee;
+            position: sticky;
+            top: 0;
+            z-index: 20;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+
+        .app-header h1 {
+            margin: 0;
+            font-size: 1.6em;
+            font-weight: 600;
+            color: #222;
+        }
+
+        .icon-button {
+            background: none;
+            border: none;
+            font-size: 1.3em;
+            cursor: pointer;
+            color: #555;
+            padding: 8px;
+            border-radius: 50%;
+            transition: background-color 0.2s;
+        }
+
+        .icon-button:hover {
+            background-color: #f0f0f0;
+        }
+
+        .category-chips-container {
+            padding: 10px 15px;
+            overflow-x: auto;
+            white-space: nowrap;
+            -webkit-overflow-scrolling: touch; /* For smooth scrolling on iOS */
+            border-bottom: 1px solid #eee;
+            background-color: #fdfdfd;
+            box-shadow: inset 0 -1px 3px rgba(0,0,0,0.03);
+        }
+
+        .category-chips {
+            display: flex;
+            gap: 10px;
+            padding-bottom: 5px; /* Space for scrollbar */
+        }
+
+        .chip {
+            display: inline-flex; /* Use flex for icon and text alignment */
+            align-items: center;
+            background-color: #e9e9e9;
+            padding: 8px 18px;
+            border-radius: 25px;
+            font-size: 0.9em;
+            cursor: pointer;
+            transition: background-color 0.3s, color 0.3s, transform 0.1s;
+            flex-shrink: 0; /* Prevent chips from shrinking */
+        }
+
+        .chip i {
+            margin-right: 7px;
+            font-size: 1em;
+        }
+
+        .chip:hover {
+            background-color: #dcdcdc;
+        }
+
+        .chip.active {
+            background-color: #007bff;
+            color: #fff;
+            box-shadow: 0 2px 5px rgba(0, 123, 255, 0.2);
+        }
+
+        .chip.active:hover {
+            background-color: #0069d9;
+        }
+
+        .video-list-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 20px;
+            background-color: #f9f9f9;
+            border-bottom: 1px solid #eee;
+        }
+
+        .video-list-header h2 {
+            margin: 0;
+            font-size: 1.2em;
+            color: #555;
+            font-weight: 500;
+        }
+
+        .video-list {
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            flex-grow: 1; /* Allows list to take available space */
+        }
+
+        .video-card {
+            display: flex;
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            overflow: hidden;
+            position: relative;
+            transition: transform 0.2s ease-in-out;
+            cursor: pointer; /* Added for visual feedback that it's clickable */
+        }
+
+        .video-card:hover {
+            transform: translateY(-3px);
+        }
+
+        .video-thumbnail {
+            flex-shrink: 0;
+            width: 130px; /* Fixed width for thumbnail */
+            height: 90px; /* Aspect ratio for 16:9 thumbnail (approx) */
+            background-color: #eee;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+        }
+
+        .video-thumbnail img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 10px 0 0 10px;
+        }
+
+        .video-info {
+            flex-grow: 1;
+            padding: 10px 15px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .video-info h3 {
+            margin-top: 0;
+            margin-bottom: 8px;
+            font-size: 1.05em;
+            line-height: 1.4;
+            color: #333;
+            display: -webkit-box;
+            -webkit-line-clamp: 2; /* Limit title to 2 lines */
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .video-category {
+            display: inline-flex;
+            align-items: center;
+            background-color: #6c757d; /* Default grey */
+            color: #fff;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 0.75em;
+            align-self: flex-start;
+            margin-top: auto; /* Push to bottom */
+            font-weight: 500;
+        }
+
+        .video-category i {
+            margin-right: 5px;
+            font-size: 0.9em;
+        }
+
+        .video-options {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+        }
+
+        .options-toggle {
+            font-size: 1.1em;
+            color: #777;
+        }
+
+        /* Modals */
+        .modal {
+            display: none; /* ซ่อนโดยค่าเริ่มต้น */
+            position: fixed; /* ให้อยู่กับที่เมื่อเลื่อนหน้าจอ */
+            z-index: 1000; /* ให้อยู่บนสุด */
+            left: 0;
+            top: 0;
+            width: 100%; /* เต็มความกว้าง */
+            height: 100%; /* เต็มความสูง */
+            overflow: auto; /* เปิดใช้งาน scroll ถ้าเนื้อหาเกิน */
+            background-color: rgba(0, 0, 0, 0.5); /* สีพื้นหลังโปร่งแสง */
+            padding: 20px; /* ระยะห่างรอบเนื้อหา Modal */
+            box-sizing: border-box; /* รวม padding ใน width/height */
+        }
+
+        .modal.show {
+            display: flex;
+            justify-content: center; /* จัดเนื้อหาให้อยู่กึ่งกลางแนวนอน */
+            align-items: center; /* จัดเนื้อหาให้อยู่กึ่งกลางแนวตั้ง */
+        }
+
+        .modal-content {
+            background-color: #fefefe;
+            padding: 25px;
+            border-radius: 12px;
+            width: 100%; /* Adjust width for mobile */
+            max-width: 450px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.25);
+            position: relative;
+            animation: fadeIn 0.3s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .modal-content h3 {
+            margin-top: 0;
+            margin-bottom: 25px;
+            text-align: center;
+            font-size: 1.4em;
+            color: #333;
+        }
+
+        .modal-content input,
+        .modal-content select {
+            width: calc(100% - 22px); /* Account for padding */
+            padding: 12px;
+            margin-bottom: 18px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 1em;
+            box-sizing: border-box; /* Include padding in width */
+        }
+
+        .modal-content button {
+            width: 100%;
+            padding: 12px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1.05em;
+            margin-top: 10px;
+            transition: background-color 0.2s;
+        }
+
+        .modal-content button:hover {
+            background-color: #0056b3;
+        }
+
+        .modal-content button.close-button {
+            background-color: #6c757d;
+            margin-top: 8px;
+        }
+
+        .modal-content button.close-button:hover {
+            background-color: #5a6268;
+        }
+
+        .icon-picker {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            justify-content: center;
+            margin-bottom: 20px;
+            max-height: 150px; /* Limit height and make it scrollable */
+            overflow-y: auto;
+            padding: 5px;
+            border: 1px solid #eee;
+            border-radius: 8px;
+            background-color: #f9f9f9;
+        }
+
+        .icon-picker i {
+            font-size: 2em;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease-in-out;
+            background-color: #fff;
+            color: #555;
+        }
+
+        .icon-picker i.selected {
+            background-color: #007bff;
+            color: #fff;
+            border-color: #007bff;
+            box-shadow: 0 0 0 4px rgba(0, 123, 255, 0.3);
+            transform: scale(1.1);
+        }
+
+        /* Bottom Sheet Styles */
+        .bottom-sheet-backdrop {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 999; /* Just below modals */
+            display: none; /* Hidden by default */
+            opacity: 0;
+            transition: opacity 0.3s ease-in-out;
+        }
+
+        .bottom-sheet-backdrop.show {
+            display: block;
+            opacity: 1;
+        }
+
+        .bottom-sheet {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background-color: #fff;
+            border-top-left-radius: 16px;
+            border-top-right-radius: 16px;
+            box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.15);
+            z-index: 1000; /* Same as modals, or slightly higher if it should always be on top of them */
+            transform: translateY(100%); /* Start hidden below screen */
+            transition: transform 0.3s ease-in-out;
+            padding: 20px;
+            box-sizing: border-box;
+            max-width: 600px; /* Match container width */
+            margin: 0 auto; /* Center it */
+            left: 50%; /* Center it horizontally */
+            transform: translateX(-50%) translateY(100%); /* Adjust for centering */
+        }
+
+        .bottom-sheet.show {
+            transform: translateX(-50%) translateY(0); /* Slide up to show */
+        }
+
+        .bottom-sheet h3 {
+            margin-top: 0;
+            font-size: 1.3em;
+            color: #333;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .bottom-sheet button {
+            display: flex;
+            align-items: center;
+            width: 100%;
+            padding: 15px;
+            border: none;
+            background: none;
+            text-align: left;
+            cursor: pointer;
+            font-size: 1.05em;
+            color: #333;
+            transition: background-color 0.2s;
+            border-radius: 8px; /* For hover effect */
+        }
+
+        .bottom-sheet button:hover {
+            background-color: #f5f5f5;
+        }
+
+        .bottom-sheet button i {
+            margin-right: 15px;
+            font-size: 1.2em;
+            color: #555;
+        }
+
+        .bottom-sheet button.delete-action {
+            color: #dc3545; /* Red for delete action */
+        }
+
+        .bottom-sheet button.delete-action i {
+            color: #dc3545;
+        }
+
+        /* Responsive adjustments for smaller screens */
+        @media (max-width: 400px) {
+            .app-header h1 {
+                font-size: 1.4em;
+            }
+            .video-thumbnail {
+                width: 110px;
+                height: 80px;
+            }
+            .video-info h3 {
+                font-size: 0.95em;
+            }
+            .chip {
+                padding: 7px 15px;
+                font-size: 0.85em;
+            }
+            .modal-content {
+                padding: 20px;
+            }
+            .bottom-sheet {
+                padding: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header class="app-header">
+            <button id="menu-toggle" class="icon-button"><i class="fas fa-bars"></i></button>
+            <h1>Watch Later</h1>
+            <button id="add-video-button" class="icon-button"><i class="fas fa-plus"></i></button>
+            <button id="more-options-button" class="icon-button"><i class="fas fa-ellipsis-v"></i></button>
+        </header>
+
+        <section class="category-chips-container">
+            <div id="category-chips" class="category-chips">
+                </div>
+        </section>
+
+        <section class="video-list-header">
+            <h2>RECENT</h2>
+            <button id="sort-button" class="icon-button"><i class="fas fa-sort-amount-down"></i></button>
+        </section>
+
+        <main id="video-list" class="video-list">
+            </main>
+    </div>
+
+    <div id="add-video-modal" class="modal">
+        <div class="modal-content">
+            <h3>Add New Video</h3>
+            <input type="text" id="video-title-input" placeholder="Video Title">
+            <input type="text" id="video-link-input" placeholder="YouTube Link">
+            <select id="video-category-select">
+                </select>
+            <button id="save-video-button">Save</button>
+            <button class="close-button">Cancel</button>
+        </div>
+    </div>
+
+    <div id="create-category-modal" class="modal">
+        <div class="modal-content">
+            <h3>Create Category</h3>
+            <input type="text" id="category-name-input" placeholder="Category name, e.g., work, private">
+            <div id="icon-picker" class="icon-picker">
+                <i class="fas fa-folder selected" data-icon="fas fa-folder"></i>
+                <i class="fas fa-guitar" data-icon="fas fa-guitar"></i>
+                <i class="fas fa-film" data-icon="fas fa-film"></i>
+                <i class="fas fa-gamepad" data-icon="fas fa-gamepad"></i>
+                <i class="fas fa-music" data-icon="fas fa-music"></i>
+                <i class="fas fa-home" data-icon="fas fa-home"></i>
+                <i class="fas fa-book" data-icon="fas fa-book"></i>
+                <i class="fas fa-code" data-icon="fas fa-code"></i>
+                <i class="fas fa-utensils" data-icon="fas fa-utensils"></i>
+                <i class="fas fa-car" data-icon="fas fa-car"></i>
+                <i class="fas fa-graduation-cap" data-icon="fas fa-graduation-cap"></i>
+                <i class="fas fa-heart" data-icon="fas fa-heart"></i>
+            </div>
+            <button id="save-category-button">Create</button>
+            <button class="close-button">Cancel</button>
+        </div>
+    </div>
+
+    <div id="categorize-video-modal" class="modal">
+        <div class="modal-content">
+            <h3>Change Category</h3>
+            <select id="categorize-video-select">
+                </select>
+            <button id="update-category-button">Update</button>
+            <button class="close-button">Cancel</button>
+        </div>
+    </div>
+
+    <div id="video-options-bottom-sheet-backdrop" class="bottom-sheet-backdrop"></div>
+    <div id="video-options-bottom-sheet" class="bottom-sheet">
+        <h3>Video Options</h3>
+        <button id="bottom-sheet-categorize-video"><i class="fas fa-tags"></i> Categorize</button>
+        <button id="bottom-sheet-delete-video" class="delete-action"><i class="fas fa-trash-alt"></i> Delete</button>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@1.35.6/dist/umd/supabase.min.js"></script>
+    <script>
+        // Supabase Initialization
+        const supabaseUrl = 'https://fkntlawaawawiusmjsez.supabase.co';
+        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZrbnRsYXdhYXdhd2l1c21qc2V6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDk5ODcxMjAsImV4cCI6MjA2NTU2MzEyMH0.G-_fLzcpvPla3dUYNCV7qh0j-JHo1Ahr5fS7fQkHdpw';
+        const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
+
+        // DOM Elements
+        const videoList = document.getElementById('video-list');
+        const categoryChipsContainer = document.getElementById('category-chips');
+        const addVideoButton = document.getElementById('add-video-button');
+        const addVideoModal = document.getElementById('add-video-modal');
+        const saveVideoButton = document.getElementById('save-video-button');
+        const videoTitleInput = document.getElementById('video-title-input');
+        const videoLinkInput = document.getElementById('video-link-input');
+        const videoCategorySelect = document.getElementById('video-category-select');
+        const sortButton = document.getElementById('sort-button');
+        const createCategoryModal = document.getElementById('create-category-modal');
+        const categoryNameInput = document.getElementById('category-name-input');
+        const iconPicker = document.getElementById('icon-picker');
+        const saveCategoryButton = document.getElementById('save-category-button');
+        const categorizeVideoModal = document.getElementById('categorize-video-modal');
+        const categorizeVideoSelect = document.getElementById('categorize-video-select');
+        const updateCategoryButton = document.getElementById('update-category-button');
+
+        // Bottom Sheet elements
+        const videoOptionsBottomSheet = document.getElementById('video-options-bottom-sheet');
+        const videoOptionsBottomSheetBackdrop = document.getElementById('video-options-bottom-sheet-backdrop');
+        const bottomSheetCategorizeVideoBtn = document.getElementById('bottom-sheet-categorize-video');
+        const bottomSheetDeleteVideoBtn = document.getElementById('bottom-sheet-delete-video');
+
+        let selectedIcon = 'fas fa-folder'; // Default selected icon for new category
+        let currentVideoIdToCategorize = null; // To store video ID when changing category
+        let videoIdForBottomSheet = null; // To store video ID for current bottom sheet actions
+
+        // Global state
+        let allVideos = [];
+        let allCategories = [];
+        let currentFilterCategory = null; // null means no filter, 'all' for all videos
+        let currentSortOrder = 'desc'; // 'desc' for recent, 'asc' for oldest
+
+        // --- Helper Functions ---
+
+        function getVideoId(url) {
+            // Updated regex to also capture video IDs from youtube.com/shorts/ and youtu.be/
+            const regExp = /(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|shorts\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/i;
+            const match = url.match(regExp);
+            return (match && match[1]) ? match[1] : null;
+        }
+
+        function getThumbnailUrl(videoId) {
+            return `https://i.ytimg.com/vi/${videoId}/mqdefault.jpg`;
+        }
+
+        function showModal(modalElement) {
+            modalElement.classList.add('show');
+        }
+
+        function hideModal(modalElement) {
+            modalElement.classList.remove('show');
+        }
+
+        function showBottomSheet(videoID) {
+            videoIdForBottomSheet = videoID; // Store the video ID
+            videoOptionsBottomSheetBackdrop.classList.add('show');
+            videoOptionsBottomSheet.classList.add('show');
+        }
+
+        function hideBottomSheet() {
+            videoOptionsBottomSheetBackdrop.classList.remove('show');
+            videoOptionsBottomSheet.classList.remove('show');
+            videoIdForBottomSheet = null; // Clear the stored video ID
+        }
+
+        // --- Supabase Data Operations ---
+
+        async function fetchVideos() {
+            let query = supabase.from('YT_WATCHLATER').select(`
+                id,
+                title,
+                link,
+                created_at,
+                category (
+                    id,
+                    category,
+                    icon
+                )
+            `);
+
+            if (currentFilterCategory && currentFilterCategory !== 'all') {
+                query = query.eq('category', currentFilterCategory);
+            }
+
+            if (currentSortOrder === 'desc') {
+                query = query.order('created_at', { ascending: false });
+            } else {
+                query = query.order('created_at', { ascending: true });
+            }
+
+            const { data, error } = await query;
+
+            if (error) {
+                console.error('Error fetching videos:', error.message);
+                return [];
+            }
+            allVideos = data;
+            renderVideoCards(allVideos);
+            return data;
+        }
+
+        async function addVideo(title, link, categoryId) {
+            const { data, error } = await supabase
+                .from('YT_WATCHLATER')
+                .insert([{ title, link, category: categoryId }]);
+
+            if (error) {
+                console.error('Error adding video:', error.message);
+                alert('Failed to add video. Please check the link and try again.');
+                return;
+            }
+            console.log('Video added:', data);
+            hideModal(addVideoModal);
+            await fetchVideos(); // Refresh the list
+        }
+
+        async function deleteVideo(id) {
+            if (!confirm('Are you sure you want to delete this video?')) {
+                return;
+            }
+            const { error } = await supabase
+                .from('YT_WATCHLATER')
+                .delete()
+                .eq('id', id);
+
+            if (error) {
+                console.error('Error deleting video:', error.message);
+                alert('Failed to delete video.');
+                return;
+            }
+            console.log('Video deleted:', id);
+            await fetchVideos(); // Refresh the list
+            hideBottomSheet(); // Ensure bottom sheet is closed after action
+        }
+
+        async function updateVideoCategory(videoId, newCategoryId) {
+            const { data, error } = await supabase
+                .from('YT_WATCHLATER')
+                .update({ category: newCategoryId })
+                .eq('id', videoId);
+
+            if (error) {
+                console.error('Error updating video category:', error.message);
+                alert('Failed to update video category.');
+                return;
+            }
+            console.log('Video category updated:', data);
+            hideModal(categorizeVideoModal);
+            await fetchVideos(); // Refresh the list
+            hideBottomSheet(); // Ensure bottom sheet is closed after action
+        }
+
+        async function fetchCategories() {
+            const { data, error } = await supabase
+                .from('CATEGORY_YT_WATCHLATER')
+                .select('*')
+                .order('category', { ascending: true }); // Sort categories alphabetically
+
+            if (error) {
+                console.error('Error fetching categories:', error.message);
+                return [];
+            }
+            allCategories = data;
+            console.log('Fetched categories:', allCategories);
+
+            renderCategoryChips(allCategories);
+            populateCategorySelect(allCategories);
+            populateCategorizeVideoSelect(allCategories);
+            return data;
+        }
+
+        async function addCategory(categoryName, icon) {
+            const { data, error } = await supabase
+                .from('CATEGORY_YT_WATCHLATER')
+                .insert([{ category: categoryName, icon: icon }]);
+
+            if (error) {
+                console.error('Error adding category:', error.message);
+                alert('Failed to add category. Category name might already exist or there was a database error.');
+                return;
+            }
+            console.log('Category added:', data);
+            hideModal(createCategoryModal);
+            await fetchCategories(); // Refresh categories and select dropdowns
+        }
+
+        // --- UI Rendering ---
+
+        function renderVideoCards(videos) {
+            videoList.innerHTML = ''; // Clear existing videos
+            if (videos.length === 0) {
+                videoList.innerHTML = '<p style="text-align: center; color: #666; margin-top: 30px;">No videos found in this category.</p>';
+                return;
+            }
+
+            videos.forEach(video => {
+                const videoId = getVideoId(video.link);
+                if (!videoId) {
+                    console.warn(`Could not get video ID for link: ${video.link}`);
+                    return;
+                }
+                const thumbnailUrl = getThumbnailUrl(videoId);
+
+                const card = document.createElement('div');
+                card.className = 'video-card';
+                card.dataset.id = video.id;
+                card.dataset.link = video.link; // Added data-link attribute here
+
+                card.innerHTML = `
+                    <div class="video-thumbnail">
+                        <img src="${thumbnailUrl}" alt="${video.title}" onerror="this.onerror=null;this.src='https://via.placeholder.com/130x90?text=No+Thumbnail'; console.error('Failed to load thumbnail for video ID:', '${videoId}');">
+                    </div>
+                    <div class="video-info">
+                        <h3>${video.title}</h3>
+                        ${video.category ? `<span class="video-category"><i class="${video.category.icon}"></i> ${video.category.category}</span>` : ''}
+                    </div>
+                    <div class="video-options">
+                        <button class="icon-button options-toggle"><i class="fas fa-ellipsis-v"></i></button>
+                    </div>
+                `;
+                // The options menu HTML is now in the bottom sheet, not here
+                videoList.appendChild(card);
+            });
+
+            attachVideoCardEventListeners();
+        }
+
+        function renderCategoryChips(categories) {
+            categoryChipsContainer.innerHTML = ''; // Clear existing chips
+
+            // Add "All" filter chip
+            const allChip = document.createElement('div');
+            allChip.className = 'chip';
+            allChip.dataset.categoryId = 'all';
+            allChip.textContent = 'All';
+            categoryChipsContainer.appendChild(allChip);
+
+            categories.forEach(category => {
+                const chip = document.createElement('div');
+                chip.className = 'chip';
+                chip.dataset.categoryId = category.id;
+                chip.innerHTML = `<i class="${category.icon}"></i> ${category.category}`;
+                categoryChipsContainer.appendChild(chip);
+            });
+
+            // Add a chip to create new category
+            const createCategoryChip = document.createElement('div');
+            createCategoryChip.className = 'chip create-category-chip';
+            createCategoryChip.innerHTML = '<i class="fas fa-plus"></i> Create Category';
+            categoryChipsContainer.appendChild(createCategoryChip);
+
+            attachCategoryChipEventListeners();
+            updateCategoryChipActiveState();
+        }
+
+        function populateCategorySelect(categories) {
+            videoCategorySelect.innerHTML = '<option value="">Select Category</option>';
+            categories.forEach(category => {
+                const option = document.createElement('option');
+                option.value = category.id;
+                option.textContent = category.category;
+                videoCategorySelect.appendChild(option);
+            });
+        }
+
+        function populateCategorizeVideoSelect(categories) {
+            categorizeVideoSelect.innerHTML = '<option value="">Select New Category</option>';
+            categories.forEach(category => {
+                const option = document.createElement('option');
+                option.value = category.id;
+                option.textContent = category.category;
+                categorizeVideoSelect.appendChild(option);
+            });
+        }
+
+        function updateCategoryChipActiveState() {
+            document.querySelectorAll('.category-chips .chip').forEach(chip => {
+                const chipId = chip.dataset.categoryId;
+                if ((currentFilterCategory === null && chipId === 'all') ||
+                    (currentFilterCategory !== null && chipId === currentFilterCategory)) {
+                    chip.classList.add('active');
+                } else {
+                    chip.classList.remove('active');
+                }
+            });
+        }
+
+        // --- Event Listeners ---
+
+        function attachVideoCardEventListeners() {
+            document.querySelectorAll('.video-card').forEach(card => {
+                const optionsToggle = card.querySelector('.options-toggle');
+                const videoId = card.dataset.id;
+                const videoLink = card.dataset.link; // Get the video link
+
+                // Click event for the entire card (excluding options toggle button click)
+                card.addEventListener('click', (e) => {
+                    // Prevent card click from triggering if clicking on the options toggle button
+                    if (!e.target.closest('.options-toggle')) {
+                        if (videoLink) {
+                            window.open(videoLink, '_blank'); // Open link in a new tab
+                        }
+                    }
+                });
+
+                // Open bottom sheet
+                optionsToggle.onclick = (e) => {
+                    e.stopPropagation(); // Prevent card click
+                    showBottomSheet(videoId);
+                };
+            });
+        }
+
+        function attachCategoryChipEventListeners() {
+            document.querySelectorAll('.category-chips .chip').forEach(chip => {
+                chip.onclick = () => {
+                    const categoryId = chip.dataset.categoryId;
+                    if (categoryId === 'all') {
+                        currentFilterCategory = null; // No filter
+                    } else {
+                        currentFilterCategory = categoryId;
+                    }
+                    fetchVideos(); // Re-fetch and render videos with new filter
+                    updateCategoryChipActiveState(); // Update active chip styling
+                };
+            });
+
+            document.querySelector('.create-category-chip').onclick = () => {
+                showModal(createCategoryModal);
+                // Reset icon selection
+                iconPicker.querySelectorAll('i').forEach(icon => icon.classList.remove('selected'));
+                iconPicker.querySelector('[data-icon="fas fa-folder"]').classList.add('selected');
+                selectedIcon = 'fas fa-folder';
+            };
+        }
+
+        // Main Add Video Button
+        addVideoButton.onclick = () => {
+            videoTitleInput.value = '';
+            videoLinkInput.value = '';
+            videoCategorySelect.value = ''; // Reset selection
+            showModal(addVideoModal);
+        };
+
+        // Save Video Button (Add New Video Modal)
+        saveVideoButton.onclick = () => {
+            const title = videoTitleInput.value.trim();
+            const link = videoLinkInput.value.trim();
+            const category = videoCategorySelect.value;
+
+            if (!title || !link) {
+                alert('Please enter both title and YouTube link.');
+                return;
+            }
+            if (!getVideoId(link)) {
+                alert('Invalid YouTube link. Please provide a valid YouTube video URL.');
+                return;
+            }
+            if (!category) {
+                alert('Please select a category.');
+                return;
+            }
+
+            addVideo(title, link, category);
+        };
+
+        // Close Modals
+        document.querySelectorAll('.modal .close-button').forEach(button => {
+            button.addEventListener('click', (e) => {
+                hideModal(e.target.closest('.modal'));
+            });
+        });
+
+        // Sort Button
+        sortButton.onclick = () => {
+            currentSortOrder = currentSortOrder === 'desc' ? 'asc' : 'desc';
+            sortButton.querySelector('i').className = currentSortOrder === 'desc' ? 'fas fa-sort-amount-down' : 'fas fa-sort-amount-up';
+            fetchVideos();
+        };
+
+        // Icon Picker in Create Category Modal
+        iconPicker.querySelectorAll('i').forEach(iconElement => {
+            iconElement.onclick = () => {
+                iconPicker.querySelectorAll('i').forEach(icon => icon.classList.remove('selected'));
+                iconElement.classList.add('selected');
+                selectedIcon = iconElement.dataset.icon;
+            };
+        });
+
+        // Save Category Button (Create Category Modal)
+        saveCategoryButton.onclick = () => {
+            const categoryName = categoryNameInput.value.trim();
+            if (!categoryName) {
+                alert('Please enter a category name.');
+                return;
+            }
+            addCategory(categoryName, selectedIcon);
+            categoryNameInput.value = ''; // Clear input
+        };
+
+        // Update Category Button (Categorize Video Modal)
+        updateCategoryButton.onclick = () => {
+            const newCategoryId = categorizeVideoSelect.value;
+            if (!newCategoryId) {
+                alert('Please select a new category.');
+                return;
+            }
+            if (currentVideoIdToCategorize) {
+                updateVideoCategory(currentVideoIdToCategorize, newCategoryId);
+            }
+        };
+
+        // --- Bottom Sheet Event Listeners ---
+        videoOptionsBottomSheetBackdrop.onclick = hideBottomSheet; // Close on backdrop click
+
+        bottomSheetDeleteVideoBtn.onclick = () => {
+            if (videoIdForBottomSheet) {
+                deleteVideo(videoIdForBottomSheet);
+            }
+        };
+
+        bottomSheetCategorizeVideoBtn.onclick = () => {
+            if (videoIdForBottomSheet) {
+                currentVideoIdToCategorize = videoIdForBottomSheet; // Set for modal
+                hideBottomSheet(); // Hide bottom sheet first
+                showModal(categorizeVideoModal); // Then show categorize modal
+            }
+        };
+
+
+        // --- Initial Load ---
+        document.addEventListener('DOMContentLoaded', async () => {
+            // Optional: Add some default categories if tables are empty (for first run)
+            const { data: categories, error: catError } = await supabase.from('CATEGORY_YT_WATCHLATER').select('id');
+            if (catError) {
+                console.error('Error checking categories:', catError.message);
+            } else if (categories.length === 0) {
+                console.log('No categories found, adding defaults...');
+                await supabase.from('CATEGORY_YT_WATCHLATER').insert([
+                    { category: 'Music', icon: 'fas fa-music' },
+                    { category: 'Movie', icon: 'fas fa-film' },
+                    { category: 'Game', icon: 'fas fa-gamepad' },
+                    { category: 'Tutorial', icon: 'fas fa-chalkboard-teacher' },
+                    { category: 'News', icon: 'fas fa-newspaper' }
+                ]);
+            }
+
+            await fetchCategories(); // Fetch and render categories first
+            await fetchVideos();     // Then fetch and render videos
+        });
+    </script>
+</body>
+</html>

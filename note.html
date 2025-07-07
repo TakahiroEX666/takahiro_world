@@ -1,0 +1,532 @@
+<!DOCTYPE html>
+<html lang="th">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>My Notes</title>
+        <link
+            rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
+            integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg=="
+            crossorigin="anonymous"
+            referrerpolicy="no-referrer"
+        />
+        <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@1.35.6/dist/umd/supabase.min.js"></script>
+        <style>
+            body {
+                font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+                margin: 0;
+                padding: 0;
+                background-color: #f0f2f5;
+                display: flex;
+                flex-direction: column;
+                min-height: 100vh;
+            }
+
+            .header {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                padding: 16px;
+                background-color: #ffffff;
+                box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+                margin-bottom: 8px;
+            }
+
+            .header h1 {
+                margin: 0;
+                font-size: 24px;
+                color: #333;
+            }
+
+            .add-note-button {
+                background-color: #007bff;
+                color: white;
+                border: none;
+                border-radius: 50%;
+                width: 48px;
+                height: 48px;
+                font-size: 24px;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                cursor: pointer;
+                box-shadow: 0 4px 8px rgba(0, 123, 255, 0.3);
+                transition: background-color 0.2s, transform 0.2s;
+            }
+
+            .add-note-button:active {
+                background-color: #0056b3;
+                transform: scale(0.95);
+            }
+
+            #note-list-container {
+                display: grid;
+                grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); /* Responsive grid */
+                gap: 16px;
+                padding: 16px;
+                /*flex-grow: 1;*/ /* Allow container to grow */
+                overflow-y: auto; /* Enable scrolling if content overflows */
+            }
+
+            .note-card {
+                background-color: #ffffff;
+                border-radius: 12px;
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+                padding: 16px;
+                min-height:80px;
+                display: flex;
+                flex-direction: column;
+                justify-content: flex-start;
+                cursor: pointer;
+                transition: transform 0.1s ease-in-out, box-shadow 0.1s ease-in-out;
+                position: relative; /* For pin icon positioning */
+                overflow: hidden; /* Ensure background image doesn't overflow */
+                background-size: cover;
+                background-position: center;
+                background-repeat: no-repeat;
+            }
+
+            .note-card:active {
+                transform: scale(0.98);
+                box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            }
+
+            .note-card-header {
+                display: flex;
+                height: 30%;
+                align-items: center;
+                justify-content: space-between;
+                margin-bottom: 4px;
+            }
+
+            .note-card-title {
+                font-size: 18px;
+                font-weight: 600;
+                color: #333;
+                flex-grow: 1;
+                margin-right: 8px; /* Space for pin icon */
+                word-break: break-word; /* Wrap long titles */
+            }
+
+            .note-card-title .pin-icon {
+                color: #ffc107; /* Gold color for pin */
+                margin-right: 8px;
+            }
+
+            .note-card-content {
+                font-size: 14px;
+                color: #555;
+                flex-grow: 1;
+                overflow: hidden;
+                text-overflow: ellipsis; /* Add ellipsis for overflow text */
+                display: -webkit-box;
+                -webkit-line-clamp: 2; /* Limit to 4 lines */
+                -webkit-box-orient: vertical;
+                line-height: 1.4;
+                max-height: 2.8em; /* 4 lines * 1.4 line-height */
+            }
+
+            .note-card-date {
+                font-size: 12px;
+                color: #888;
+                text-align: right;
+                margin-top: 4px;
+            }
+
+            /* --- Bottom Sheet Styles (for long click actions) --- */
+            .bottom-sheet-overlay {
+                position: fixed;
+                inset: 0; /* top, right, bottom, left to 0 */
+                background: rgba(0, 0, 0, 0.4);
+                display: flex;
+                align-items: flex-end;
+                justify-content: center;
+                opacity: 0;
+                visibility: hidden;
+                transition: opacity 0.3s ease, visibility 0.3s ease;
+                z-index: 1000;
+            }
+
+            .bottom-sheet-overlay.show {
+                opacity: 1;
+                visibility: visible;
+            }
+
+            .bottom-sheet {
+                background: #fff;
+                width: 100%;
+                max-width: 500px; /* Max width for larger screens */
+                border-top-left-radius: 16px;
+                border-top-right-radius: 16px;
+                padding: 20px;
+                box-shadow: 0 -4px 15px rgba(0, 0, 0, 0.1);
+                transform: translateY(100%);
+                transition: transform 0.3s ease;
+            }
+
+            .bottom-sheet-overlay.show .bottom-sheet {
+                transform: translateY(0);
+            }
+
+            .bottom-sheet-header {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                margin-bottom: 20px;
+            }
+
+            .bottom-sheet-header h2 {
+                margin: 0;
+                font-size: 20px;
+                color: #333;
+            }
+
+            .bottom-sheet-close-btn {
+                background: none;
+                border: none;
+                font-size: 28px;
+                color: #888;
+                cursor: pointer;
+            }
+
+            .bottom-sheet-options {
+                display: flex;
+                flex-direction: column;
+                gap: 12px;
+            }
+
+            .bottom-sheet-option-button {
+                background-color: #f8f8f8;
+                border: 1px solid #eee;
+                padding: 14px 16px;
+                border-radius: 10px;
+                font-size: 16px;
+                color: #333;
+                cursor: pointer;
+                text-align: left;
+                display: flex;
+                align-items: center;
+                gap: 12px;
+                transition: background-color 0.2s, border-color 0.2s;
+            }
+
+            .bottom-sheet-option-button:hover {
+                background-color: #e9e9e9;
+                border-color: #ddd;
+            }
+
+            .bottom-sheet-option-button .icon {
+                font-size: 20px;
+                width: 24px; /* Ensure consistent icon alignment */
+                text-align: center;
+            }
+
+            .bottom-sheet-option-button.delete-option {
+                color: #dc3545;
+                background-color: #ffebeb;
+                border-color: #f5c6cb;
+            }
+
+            .bottom-sheet-option-button.delete-option .icon {
+                color: #dc3545;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="header">
+            <h1>My Notes</h1>
+            <button class="add-note-button" id="addNewNoteButton">
+                <i class="fa-solid fa-plus"></i>
+            </button>
+        </div>
+
+        <div id="note-list-container">
+            <p id="loading-indicator" style="text-align: center; color: #777;">กำลังโหลดโน้ต...</p>
+        </div>
+
+        <div class="bottom-sheet-overlay" id="noteActionsBottomSheetOverlay">
+            <div class="bottom-sheet" id="noteActionsBottomSheet">
+                <div class="bottom-sheet-header">
+                    <h2 id="noteActionsTitle"></h2>
+                    <button class="bottom-sheet-close-btn" id="closeNoteActionsButton">&times;</button>
+                </div>
+                <div class="bottom-sheet-options">
+                    <button class="bottom-sheet-option-button" id="togglePinButton">
+                        <i class="fa-solid icon fa-thumbtack"></i>
+                        <span id="togglePinText">ปักหมุด</span>
+                    </button>
+                    <button class="bottom-sheet-option-button delete-option" id="deleteNoteButton">
+                        <i class="fa-solid icon fa-trash-can"></i> ลบโน้ต
+                    </button>
+                    </div>
+            </div>
+        </div>
+
+        <script>
+            // Supabase Key Configuration
+            const SUPABASE_URL = 'https://fkntlawaawawiusmjsez.supabase.co';
+            const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZrbnRsYXdhYXdhd2l1c21qc2V6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDk5ODcxMjAsImV4cCI6MjA2NTU2MzEyMH0.G-_fLzcpvPla3dUYNCV7qh0j-JHo1Ahr5fS7fQkHdpw';
+            const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+            // DOM Elements
+            const noteListContainer = document.getElementById('note-list-container');
+            const loadingIndicator = document.getElementById('loading-indicator');
+            const noteActionsBottomSheetOverlay = document.getElementById('noteActionsBottomSheetOverlay');
+            const noteActionsBottomSheet = document.getElementById('noteActionsBottomSheet');
+            const closeNoteActionsButton = document.getElementById('closeNoteActionsButton');
+            const noteActionsTitle = document.getElementById('noteActionsTitle');
+            const togglePinButton = document.getElementById('togglePinButton');
+            const togglePinText = document.getElementById('togglePinText');
+            const deleteNoteButton = document.getElementById('deleteNoteButton');
+            const addNewNoteButton = document.getElementById('addNewNoteButton');
+
+            let currentNoteId = null; // To store the ID of the note being long-clicked
+            let currentIsPinned = false; // To store the current pinned status
+
+            // --- Function to fetch and display notes ---
+            async function fetchAndDisplayNotes() {
+                loadingIndicator.style.display = 'block'; // Show loading indicator
+                noteListContainer.innerHTML = ''; // Clear existing notes
+
+                const { data: notes, error } = await supabase
+                    .from('NOTE')
+                    .select('id, title, content, background, is_pin, updated_at')
+                    .eq('is_deleted', false) // Filter out deleted notes
+                    .order('is_pin', { ascending: false }) // Pinned notes first
+                    .order('updated_at', { ascending: false }); // Then by most recent update
+
+                if (error) {
+                    console.error('Error fetching notes:', error.message);
+                    loadingIndicator.textContent = 'เกิดข้อผิดพลาดในการโหลดโน้ต';
+                    return;
+                }
+
+                if (notes.length === 0) {
+                    loadingIndicator.textContent = 'ยังไม่มีโน้ต';
+                    return;
+                }
+
+                loadingIndicator.style.display = 'none'; // Hide loading indicator
+
+                notes.forEach(note => {
+                    const noteCard = document.createElement('div');
+                    noteCard.className = 'note-card';
+                    noteCard.dataset.noteId = note.id; // Store note ID
+
+                    // Apply background style
+                    if (note.background) {
+                        try {
+                            const backgroundData = note.background; 
+
+                            if (backgroundData.type === 'color' && backgroundData.value) {
+                                noteCard.style.backgroundColor = backgroundData.value;
+                                noteCard.style.backgroundImage = 'none';
+                            } else if (backgroundData.type === 'image' && backgroundData.value) {
+                                noteCard.style.backgroundImage = `url('${backgroundData.value}')`;
+                                noteCard.style.backgroundSize = 'cover';
+                                noteCard.style.backgroundPosition = 'center';
+                                noteCard.style.backgroundRepeat = 'no-repeat';
+                                noteCard.style.backgroundColor = 'transparent'; // Ensure transparent for image
+                            }
+                        } catch (e) {
+                            console.error('Failed to parse background JSON for note:', note.id, e);
+                            // Fallback to default if JSON is malformed
+                            noteCard.style.backgroundColor = '#ffffff';
+                            noteCard.style.backgroundImage = 'none';
+                        }
+                    } else {
+                         // Default background if no background data
+                        noteCard.style.backgroundColor = '#ffffff';
+                        noteCard.style.backgroundImage = 'none';
+                    }
+
+                    const formattedDate = new Date(note.updated_at).toLocaleDateString('th-TH', {
+                        year: 'numeric',
+                        month: 'short',
+                        day: 'numeric',
+                        hour: '2-digit',
+                        minute: '2-digit'
+                    });
+
+                    // Extract plain text from Tiptap content (if content is JSONB from Tiptap)
+                    let previewContent = '';
+                    if (note.content && typeof note.content === 'object' && note.content.content) {
+                        note.content.content.forEach(node => {
+                            if (node.type === 'paragraph' && node.content) {
+                                node.content.forEach(textNode => {
+                                    if (textNode.type === 'text' && textNode.text) {
+                                        previewContent += textNode.text + ' ';
+                                    }
+                                });
+                            }
+                        });
+                        previewContent = previewContent.trim();
+                    } else if (typeof note.content === 'string') {
+                        const tempDiv = document.createElement('div');
+                        tempDiv.innerHTML = note.content;
+                        previewContent = tempDiv.textContent || tempDiv.innerText || '';
+                    }
+                    
+                    noteCard.innerHTML = `
+                        <div class="note-card-header">
+                            <h3 class="note-card-title">
+                                ${note.is_pin ? '<i class="fa-solid fa-thumbtack pin-icon"></i>' : ''}
+                                ${note.title || 'Untitled Note'}
+                            </h3>
+                        </div>
+                        <div class="note-card-content">${previewContent}</div>
+                        <div class="note-card-date">อัปเดต: ${formattedDate}</div>
+                    `;
+                    noteListContainer.appendChild(noteCard);
+
+                    setupInteraction(noteCard, note.id, note.title || 'Untitled Note', note.is_pin);
+                });
+            }
+
+            // --- Interaction Logic (Long Press / Short Click) ---
+            let pressTimer;
+            const LONG_PRESS_THRESHOLD = 500; // milliseconds
+            let isLongPressTriggered = false; // Flag to track if long press was activated
+
+            function setupInteraction(element, noteId, noteTitle, isPinned) {
+                // --- Touch Events (for mobile) ---
+                element.addEventListener('touchstart', (e) => {
+                    e.preventDefault(); // Prevent default touch actions (e.g., scrolling, context menu)
+                    isLongPressTriggered = false; // Reset flag for new interaction
+                    pressTimer = setTimeout(() => {
+                        isLongPressTriggered = true; // Long press confirmed
+                        currentNoteId = noteId; // Set ID for bottom sheet actions
+                        currentIsPinned = isPinned;
+                        openNoteActionsBottomSheet(noteId, noteTitle, isPinned);
+                    }, LONG_PRESS_THRESHOLD);
+                }, { passive: false }); // Use { passive: false } to ensure preventDefault works
+
+                element.addEventListener('touchend', (e) => {
+                    clearTimeout(pressTimer);
+                    if (!isLongPressTriggered) { // If long press was NOT triggered, it's a short tap
+                        console.log('Short click (touchend) on note:', noteId);
+                        window.location.href = `edit.html?noteId=${noteId}`; // Navigate to edit page
+                    }
+                    isLongPressTriggered = false; // Reset flag
+                });
+
+                element.addEventListener('touchmove', () => {
+                    clearTimeout(pressTimer);
+                    // If touch moves significantly, cancel the potential long press
+                    // and prevent short click.
+                    isLongPressTriggered = true; // By setting this to true, the touchend will not trigger short click
+                });
+
+                element.addEventListener('touchcancel', () => { // Handle cases where touch is interrupted
+                    clearTimeout(pressTimer);
+                    isLongPressTriggered = false; // Reset flag
+                });
+
+                // --- Mouse Events (for desktop) ---
+                element.addEventListener('mousedown', (e) => {
+                    if (e.button === 0) { // Left mouse button
+                        isLongPressTriggered = false; // Reset flag
+                        pressTimer = setTimeout(() => {
+                            isLongPressTriggered = true; // Long press confirmed
+                            currentNoteId = noteId;
+                            currentIsPinned = isPinned;
+                            openNoteActionsBottomSheet(noteId, noteTitle, isPinned);
+                        }, LONG_PRESS_THRESHOLD);
+                    }
+                });
+
+                element.addEventListener('mouseup', (e) => {
+                    clearTimeout(pressTimer);
+                    if (!isLongPressTriggered && e.button === 0) { // If long press was NOT triggered and it's left click
+                        console.log('Short click (mouseup) on note:', noteId);
+                        window.location.href = `edit.html?noteId=${noteId}`; // Navigate to edit page
+                    }
+                    isLongPressTriggered = false; // Reset flag
+                });
+
+                element.addEventListener('mouseleave', () => { // If mouse leaves element while pressed
+                    clearTimeout(pressTimer);
+                    isLongPressTriggered = false; // Cancel potential long press
+                });
+            }
+
+
+            // --- Bottom Sheet (Note Actions) Functions ---
+            function openNoteActionsBottomSheet(noteId, noteTitle, isPinned) {
+                noteActionsTitle.textContent = noteTitle;
+                togglePinText.textContent = isPinned ? 'เลิกปักหมุด' : 'ปักหมุด';
+                noteActionsBottomSheetOverlay.classList.add('show');
+                noteActionsBottomSheetOverlay.style.display = 'flex'; // Ensure display is flex
+                noteActionsBottomSheet.dataset.noteId = noteId; // Store current note ID on the sheet
+                noteActionsBottomSheet.dataset.isPinned = isPinned; // Store current pinned status
+            }
+
+            function closeNoteActionsBottomSheet() {
+                noteActionsBottomSheetOverlay.classList.remove('show');
+                setTimeout(() => {
+                    noteActionsBottomSheetOverlay.style.display = 'none';
+                }, 300); // Wait for transition
+            }
+
+            closeNoteActionsButton.addEventListener('click', closeNoteActionsBottomSheet);
+            noteActionsBottomSheetOverlay.addEventListener('click', (event) => {
+                if (event.target === noteActionsBottomSheetOverlay) {
+                    closeNoteActionsBottomSheet();
+                }
+            });
+
+            // --- Supabase Actions from Bottom Sheet ---
+
+            // Toggle Pin/Unpin
+            togglePinButton.addEventListener('click', async () => {
+                const noteId = noteActionsBottomSheet.dataset.noteId;
+                const isPinned = noteActionsBottomSheet.dataset.isPinned === 'true'; // Convert string to boolean
+                const newPinStatus = !isPinned;
+
+                const { data, error } = await supabase
+                    .from('NOTE')
+                    .update({ is_pin: newPinStatus })
+                    .eq('id', noteId);
+
+                if (error) {
+                    console.error('Error toggling pin status:', error.message);
+                    alert('เกิดข้อผิดพลาดในการปักหมุด/เลิกปักหมุดโน้ต');
+                } else {
+                    console.log('Pin status updated:', data);
+                    closeNoteActionsBottomSheet();
+                    fetchAndDisplayNotes(); // Refresh the list
+                }
+            });
+
+            // Delete Note
+            deleteNoteButton.addEventListener('click', async () => {
+                const noteId = noteActionsBottomSheet.dataset.noteId;
+                if (confirm('คุณแน่ใจหรือไม่ว่าต้องการลบโน้ตนี้?')) {
+                    const { data, error } = await supabase
+                        .from('NOTE')
+                        .update({ is_deleted: true }) // Soft delete
+                        .eq('id', noteId);
+
+                    if (error) {
+                        console.error('Error deleting note:', error.message);
+                        alert('เกิดข้อผิดพลาดในการลบโน้ต');
+                    } else {
+                        console.log('Note marked as deleted:', data);
+                        closeNoteActionsBottomSheet();
+                        fetchAndDisplayNotes(); // Refresh the list
+                    }
+                }
+            });
+
+            // --- Initial Load ---
+            document.addEventListener('DOMContentLoaded', fetchAndDisplayNotes);
+
+            // --- Add New Note Button ---
+            addNewNoteButton.addEventListener('click', () => {
+                // Navigate to the edit page to create a new note
+                window.location.href = 'edit.html';
+            });
+        </script>
+    </body>
+</html>

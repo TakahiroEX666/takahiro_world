@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>YouTube Repeat Ranking</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        /* Re-use most of your existing CSS from watchlater.html for general styling */
+        /* For example: body, .container, .app-header, .icon-button, .video-card, .video-thumbnail, .video-info etc. */
+        /* Copy and paste relevant styles, especially for .video-card and its children */
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f0f2f5;
+            color: #333;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: #fff;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.08);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .app-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 20px;
+            background-color: #fff;
+            border-bottom: 1px solid #eee;
+            position: sticky;
+            top: 0;
+            z-index: 20;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+
+        .app-header h1 {
+            margin: 0;
+            font-size: 1.6em;
+            font-weight: 600;
+            color: #222;
+        }
+
+        .icon-button {
+            background: none;
+            border: none;
+            font-size: 1.3em;
+            cursor: pointer;
+            color: #555;
+            padding: 8px;
+            border-radius: 50%;
+            transition: background-color 0.2s;
+        }
+
+        .icon-button:hover {
+            background-color: #f0f0f0;
+        }
+
+        .ranking-controls {
+            display: flex;
+            justify-content: space-around;
+            padding: 10px 20px;
+            background-color: #f9f9f9;
+            border-bottom: 1px solid #eee;
+            flex-wrap: wrap; /* Allow wrapping on smaller screens */
+            gap: 10px; /* Space between controls */
+        }
+
+        .ranking-controls select,
+        .ranking-controls button {
+            padding: 8px 15px;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+            background-color: #fff;
+            cursor: pointer;
+            font-size: 0.95em;
+            transition: background-color 0.2s, border-color 0.2s;
+        }
+
+        .ranking-controls button:hover,
+        .ranking-controls select:hover {
+            background-color: #e9e9e9;
+            border-color: #ccc;
+        }
+
+        .ranking-controls button.active {
+            background-color: #007bff;
+            color: #fff;
+            border-color: #007bff;
+        }
+
+        .ranking-list {
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        /* Re-use .video-card styles, but add specific ranking adjustments */
+        .ranking-card {
+            display: flex;
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            overflow: hidden;
+            position: relative;
+            transition: transform 0.2s ease-in-out;
+            cursor: pointer;
+            align-items: center; /* Align items vertically */
+        }
+
+        .ranking-card:hover {
+            transform: translateY(-3px);
+        }
+
+        .ranking-position {
+            flex-shrink: 0;
+            width: 50px; /* Space for rank number */
+            text-align: center;
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #007bff;
+            padding: 10px 5px;
+            background-color: #eaf6ff;
+            border-right: 1px solid #e0e0e0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100%; /* Make it fill card height */
+        }
+
+        .ranking-card .video-thumbnail {
+            flex-shrink: 0;
+            width: 130px;
+            height: 90px;
+            background-color: #eee;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+        }
+
+        .ranking-card .video-thumbnail img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 0; /* Remove border-radius on the left as rank is there */
+        }
+
+        .ranking-card .video-info {
+            flex-grow: 1;
+            padding: 10px 15px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center; /* Center content vertically */
+        }
+
+        .ranking-card .video-info h3 {
+            margin-top: 0;
+            margin-bottom: 5px;
+            font-size: 1.05em;
+            line-height: 1.4;
+            color: #333;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .repeat-count {
+            font-size: 0.9em;
+            color: #666;
+            margin-top: 5px;
+            font-weight: 500;
+        }
+
+        .repeat-count i {
+            margin-right: 5px;
+            color: #007bff;
+        }
+
+        /* Empty thumbnail style */
+        .empty-thumbnail {
+            background-color: #e0e0e0; /* A neutral gray */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #888;
+            font-size: 0.8em;
+            text-align: center;
+        }
+
+        @media (max-width: 400px) {
+            .app-header h1 {
+                font-size: 1.4em;
+            }
+            .ranking-card .video-thumbnail {
+                width: 100px;
+                height: 75px;
+            }
+            .ranking-card .video-info h3 {
+                font-size: 0.95em;
+            }
+            .ranking-controls select,
+            .ranking-controls button {
+                font-size: 0.85em;
+                padding: 6px 10px;
+            }
+            .ranking-position {
+                width: 40px;
+                font-size: 1.3em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header class="app-header">
+            <a href="watchlater.html" class="icon-button"><i class="fas fa-arrow-left"></i></a>
+            <h1>Repeat Ranking</h1>
+            <button id="refresh-ranking-button" class="icon-button"><i class="fas fa-sync-alt"></i></button>
+        </header>
+
+        <section class="ranking-controls">
+<select id="time-filter">
+    <option value="all_time">All Time</option>
+    <option value="daily" selected>Today</option> <option value="weekly">This Week</option>
+    <option value="monthly">This Month</option>
+    <option value="yearly">This Year</option>
+</select>
+            <button id="sort-order-button" class="active" data-sort="desc"><i class="fas fa-sort-numeric-down"></i> Highest Repeats</button>
+        </section>
+
+        <main id="ranking-list" class="ranking-list">
+            <p style="text-align: center; color: #666; margin-top: 30px;">Loading ranking...</p>
+        </main>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@1.35.6/dist/umd/supabase.min.js"></script>
+    <script>
+        // Supabase Initialization (use your exact keys)
+        const supabaseUrl = 'https://fkntlawaawawiusmjsez.supabase.co';
+        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZrbnRsYXdhYXdhd2l1c21qc2V6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDk5ODcxMjAsImV4cCI6MjA2NTU2MzEyMH0.G-_fLzcpvPla3dUYNCV7qh0j-JHo1Ahr5fS7fQkHdpw';
+        const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
+
+        // DOM Elements
+        const rankingList = document.getElementById('ranking-list');
+        const timeFilterSelect = document.getElementById('time-filter');
+        const sortOrderButton = document.getElementById('sort-order-button');
+        const refreshRankingButton = document.getElementById('refresh-ranking-button');
+
+        // Global State
+        let currentSortOrder = 'desc'; // 'desc' for highest repeats, 'asc' for lowest
+        let currentTimeFilter = 'daily'; // 'daily', 'weekly', 'monthly', 'yearly', 'all_time'
+
+        // --- Helper Functions ---
+
+        function getVideoId(url) {
+            // Updated regex to also capture video IDs from youtube.com/shorts/ and youtu.be/
+            const regExp = /(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|shorts\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/i;
+            const match = url.match(regExp);
+            return (match && match[1]) ? match[1] : null;
+        }
+
+        function getThumbnailUrl(videoId) {
+            return `https://i.ytimg.com/vi/${videoId}/mqdefault.jpg`;
+        }
+
+        // --- Supabase Data Operations ---
+
+        async function fetchRepeatRanking() {
+            rankingList.innerHTML = '<p style="text-align: center; color: #666; margin-top: 30px;">Loading ranking...</p>'; // Show loading
+
+            let query = supabase.from('YT_REPEAT')
+                .select('title, link, created_at') // เลือกเฉพาะคอลัมน์ที่มีอยู่จริงในตาราง
+                .neq('link', ''); // กรอง Link ที่ว่างออกไป
+
+            // Apply time filter (ส่วนนี้เหมือนเดิม)
+            const now = new Date();
+            let startDate = null;
+
+            if (currentTimeFilter === 'daily') {
+                startDate = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+            } else if (currentTimeFilter === 'weekly') {
+                startDate = new Date(now.getFullYear(), now.getMonth(), now.getDate() - now.getDay());
+            } else if (currentTimeFilter === 'monthly') {
+                startDate = new Date(now.getFullYear(), now.getMonth(), 1);
+            } else if (currentTimeFilter === 'yearly') {
+                startDate = new Date(now.getFullYear(), 0, 1);
+            }
+
+            if (startDate) {
+                query = query.gte('created_at', startDate.toISOString());
+            }
+
+            // เนื่องจาก Supabase Client Library ไม่รองรับ GROUP BY และ COUNT แบบตรงๆ
+            // เราจะดึงข้อมูลทั้งหมดที่ตรงเงื่อนไขเวลา แล้วมาทำการ Group และนับใน Client-side
+            const { data, error } = await query;
+
+            if (error) {
+                console.error('Error fetching repeat data:', error.message);
+                rankingList.innerHTML = '<p style="text-align: center; color: #dc3545; margin-top: 30px;">Failed to load ranking. Please try again.</p>';
+                return;
+            }
+
+            // --- Client-side Grouping and Counting ---
+            const groupedVideos = {};
+            data.forEach(item => {
+                const videoId = getVideoId(item.link);
+                if (videoId) { // Only process if a valid video ID can be extracted
+                    const key = `${videoId}-${item.title}`; // ใช้ videoId และ title เป็น unique key
+                    if (!groupedVideos[key]) {
+                        groupedVideos[key] = {
+                            title: item.title,
+                            link: item.link,
+                            count: 0,
+                            created_ats: [] // เก็บ created_at เพื่อใช้เช็คเงื่อนไขรายวัน
+                        };
+                    }
+                    groupedVideos[key].count++;
+                    groupedVideos[key].created_ats.push(new Date(item.created_at));
+                }
+            });
+
+            let rankingData = Object.values(groupedVideos);
+
+            // --- Filter for daily entries >= 2 ---
+            const finalRanking = [];
+            rankingData.forEach(video => {
+                const dailyCounts = {};
+                video.created_ats.forEach(date => {
+                    const dateKey = date.toISOString().split('T')[0]; // Format YYYY-MM-DD
+                    dailyCounts[dateKey] = (dailyCounts[dateKey] || 0) + 1;
+                });
+
+                // ตรวจสอบว่ามีวันใดวันหนึ่งที่ดูเกิน 2 ครั้งหรือไม่
+                const meetsThreshold = Object.values(dailyCounts).some(count => count >= 2);
+
+                if (meetsThreshold) {
+                    finalRanking.push(video);
+                }
+            });
+
+            // --- Sort by total count after filtering ---
+            finalRanking.sort((a, b) => {
+                if (currentSortOrder === 'desc') {
+                    return b.count - a.count; // จัดเรียงจากมากไปน้อย
+                } else {
+                    return a.count - b.count; // จัดเรียงจากน้อยไปมาก
+                }
+            });
+
+            renderRepeatRanking(finalRanking);
+        }
+        
+        // --- UI Rendering ---
+
+        function renderRepeatRanking(rankingData) {
+            rankingList.innerHTML = ''; // Clear existing list
+
+            if (rankingData.length === 0) {
+                rankingList.innerHTML = '<p style="text-align: center; color: #666; margin-top: 30px;">No videos meet the ranking criteria for this period.</p>';
+                return;
+            }
+
+            rankingData.forEach((item, index) => {
+                const videoId = getVideoId(item.link);
+                const thumbnailUrl = videoId ? getThumbnailUrl(videoId) : ''; // Get thumbnail or empty string
+                const card = document.createElement('div');
+                card.className = 'ranking-card';
+                card.dataset.link = item.link;
+
+                card.innerHTML = `
+                    <div class="ranking-position">${index + 1}</div>
+                    <div class="video-thumbnail">
+                        ${thumbnailUrl ? `<img src="${thumbnailUrl}" alt="${item.title}" onerror="this.onerror=null;this.src='';this.parentNode.classList.add('empty-thumbnail');this.parentNode.innerHTML='No Thumbnail';">` : `<div class="empty-thumbnail">No Thumbnail</div>`}
+                    </div>
+                    <div class="video-info">
+                        <h3>${item.title}</h3>
+                        <div class="repeat-count"><i class="fas fa-redo-alt"></i> Repeats: ${item.count}</div>
+                    </div>
+                `;
+                rankingList.appendChild(card);
+            });
+
+            attachRankingCardEventListeners();
+        }
+
+        // --- Event Listeners ---
+
+        function attachRankingCardEventListeners() {
+            document.querySelectorAll('.ranking-card').forEach(card => {
+                card.addEventListener('click', () => {
+                    const videoLink = card.dataset.link;
+                    if (videoLink) {
+                        window.open(videoLink, '_blank'); // Open link in new tab
+                    }
+                });
+            });
+        }
+
+        // Filter and Sort controls
+        timeFilterSelect.onchange = () => {
+            currentTimeFilter = timeFilterSelect.value;
+            fetchRepeatRanking();
+        };
+
+        sortOrderButton.onclick = () => {
+            currentSortOrder = (currentSortOrder === 'desc') ? 'asc' : 'desc';
+            sortOrderButton.dataset.sort = currentSortOrder;
+            sortOrderButton.innerHTML = currentSortOrder === 'desc' ? '<i class="fas fa-sort-numeric-down"></i> Highest Repeats' : '<i class="fas fa-sort-numeric-up"></i> Lowest Repeats';
+            fetchRepeatRanking();
+        };
+
+        refreshRankingButton.onclick = () => {
+            fetchRepeatRanking();
+        }
+
+        // --- Initial Load ---
+        document.addEventListener('DOMContentLoaded', fetchRepeatRanking);
+    </script>
+</body>
+</html>
