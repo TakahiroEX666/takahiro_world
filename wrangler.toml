@@ -8,7 +8,7 @@ workers_dev = true
 
 [build]
 upload.format = "modules"
-upload.main = "worker/main.js"
+upload.main = "worker/worker.js"
 
 [site]
 bucket = "./public"
