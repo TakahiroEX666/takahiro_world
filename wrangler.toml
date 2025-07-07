@@ -1,15 +1,8 @@
 name = "takahiro_world"
-type = "javascript"
 compatibility_date = "2025-07-07"
 
-
-account_id = "474707b9f3c070db2946e0d268def24f"
+main = "worker/worker.js"
 workers_dev = true
-
-[build]
-upload.format = "modules"
-upload.main = "worker/worker.js"
 
 [site]
 bucket = "./public"
-entry-point = "worker"
