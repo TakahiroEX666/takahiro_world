@@ -6,3 +6,10 @@ workers_dev = true
 
 [site]
 bucket = "./public"
+
+# wrangler.toml (wrangler v3.88.0^)
+[observability.logs]
+enabled = false
+
+
+
