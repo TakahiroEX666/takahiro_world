@@ -1,4 +1,4 @@
-name = "takahiro_world"
+name = "takahiroworld"
 compatibility_date = "2025-07-07"
 
 main = "worker/worker.js"
