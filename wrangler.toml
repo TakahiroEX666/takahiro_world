@@ -1,4 +1,3 @@
-// wrangler.json หรือ wrangler.toml (v4 syntax JSON หรือ TOML ก็ได้)
 {
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "takahiroworld",
