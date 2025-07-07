@@ -1,12 +1,11 @@
-name = "takahiroworld"
-compatibility_date = "2025-07-07"
-
-main = "worker/worker.js"
-workers_dev = true
-
-[site]
-bucket = "./public"
-
-
-
-compatibility_flags = ["nodejs_compat"]
+// wrangler.json หรือ wrangler.toml (v4 syntax JSON หรือ TOML ก็ได้)
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "takahiroworld",
+  "main": "./worker/worker.js",
+  "compatibility_date": "2025-07-07",
+  "assets": {
+    "directory": "./public",
+    "binding": "ASSETS"  // 👈 จำเป็นมาก
+  }
+}
