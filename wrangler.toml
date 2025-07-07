@@ -6,3 +6,7 @@ workers_dev = true
 
 [site]
 bucket = "./public"
+
+
+
+compatibility_flags = ["nodejs_compat"]
