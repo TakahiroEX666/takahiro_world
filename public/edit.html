@@ -7,7 +7,7 @@
         <link href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css" rel="stylesheet" />
         <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@1.35.6/dist/umd/supabase.min.js"></script>
-        
+
         <link
             rel="stylesheet"
             href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
@@ -15,7 +15,6 @@
             crossorigin="anonymous"
             referrerpolicy="no-referrer"
         />
-
         <style>
             /* Global Resets and Base Styles */
             html,
@@ -552,11 +551,10 @@ background-color: #d1e9ff;
                 
                 width: 20px; /* กำหนดความกว้างเพื่อให้ไอคอนจัดเรียงตรงกัน */
                 text-align: center;
-            }
-
-            
+            }         
             
         </style>
+
     </head>
     <body>
         <div id="editor-wrapper">
@@ -576,18 +574,18 @@ background-color: #d1e9ff;
                 <button id="toggleLargeParagraphButton">
                     <i class="fa-solid fa-paragraph"></i>
                 </button>
-                                <button id="insertTimeButton" >
-        <i class="fas fa-clock"></i>
-    </button>
+                <button id="insertTimeButton" class="toolbar-button" title="แทรกเวลาปัจจุบัน">
+                    <i class="fas fa-clock"></i>
+                </button>
                 <button id="taskListButton">
                     <i class="fa-solid fa-square-check"></i>
                 </button>
                 <button id="imageButton">
                     <i class="fa-solid fa-image"></i>
                 </button>
-         <!--       <button id="backgroundButton1"> -->
-              <!--      <i class="fa-solid fa-brush"></i> -->
-       <!--         </button> -->
+                <!--       <button id="backgroundButton1"> -->
+                <!--      <i class="fa-solid fa-brush"></i> -->
+                <!--         </button> -->
                 <button id="detailsButton">
                     <i class="fa-solid fa-info"></i>
                 </button>
@@ -667,7 +665,7 @@ background-color: #d1e9ff;
                             <input type="file" id="fileInput" accept="image/*" />
                             <div class="image-option" id="uploadImageOption">
                                 <i class="fa-solid fa-upload"></i>
-                            </div>                            
+                            </div>
                             <div class="image-option" data-image-url="images/your_uploaded_image1.jpg">
                                 <img src="images/your_uploaded_image1.jpg" alt="Uploaded Image 1" />
                             </div>
@@ -690,44 +688,27 @@ background-color: #d1e9ff;
                     </div>
                 </div>
             </div>
-            
-            
+
             <div class="bottom-sheet-overlay" id="settingsBottomSheetOverlay" style="display: none;">
                 <div class="bottom-sheet" id="settingsBottomSheet">
-                	<div class="chip">
-                                <i class="fa-solid fa-pen-to-square"></i>NOTE
-                            </div>
-                    <div class="bottom-sheet-header">                   	
-                        <h1 id="settingsNoteTitle" placeholder="Note Title"></h1>                                                         
-                        <button class="bottom-sheet-close-btn" id="closeSettingsBottomSheetButton">&times;</button>                                                                      
-                    </div>                
+                    <div class="chip"><i class="fa-solid fa-pen-to-square"></i>NOTE</div>
+                    <div class="bottom-sheet-header">
+                        <h1 id="settingsNoteTitle" placeholder="Note Title"></h1>
+                        <button class="bottom-sheet-close-btn" id="closeSettingsBottomSheetButton">&times;</button>
+                    </div>
                     <div class="option-section title-section"></div>
                     <div class="option-section chip-section">
                         <div class="chip-grid">
-                            
-                            <button class="setting-button">
-                                <i class="fa-solid fa-thumbtack"></i> Pin
-                            </button>
+                            <button class="setting-button"><i class="fa-solid fa-thumbtack"></i> Pin</button>
                             <div class="option-section title-section"></div>
-                            <button class="setting-button" id="backgroundButton">
-                                <i class="fa-solid fa-palette"></i> Background
-                            </button>
-                            <button class="setting-button">
-                                <i class="fa-solid fa-tags"></i> Category
-                            </button>
-                            <button class="setting-button">
-                                <i class="fa-solid fa-face-smile"></i> Icon
-                            </button>
-                            <button class="setting-button">
-                                <i class="fa-solid fa-trash-can"></i> Delete
-                            </button>
+                            <button class="setting-button" id="backgroundButton"><i class="fa-solid fa-palette"></i> Background</button>
+                            <button class="setting-button"><i class="fa-solid fa-tags"></i> Category</button>
+                            <button class="setting-button"><i class="fa-solid fa-face-smile"></i> Icon</button>
+                            <button class="setting-button"><i class="fa-solid fa-trash-can"></i> Delete</button>
                         </div>
-                    </div>                   
+                    </div>
                 </div>
             </div>
-            
-            
-            
 
             <input type="file" id="imageUploader" accept="image/*" style="display: none;" />
             <div id="cropModal" style="display: none; position: fixed; inset: 0; background: rgba(0, 0, 0, 0.6); z-index: 9999; align-items: center; justify-content: center;">
@@ -752,9 +733,6 @@ background-color: #d1e9ff;
         </div>
 
         <script type="module">
-        	
-        
-        	        
             import { Editor } from "https://esm.sh/@tiptap/core";
             import StarterKit from "https://esm.sh/@tiptap/starter-kit";
             import Table from "https://esm.sh/@tiptap/extension-table";
@@ -776,62 +754,47 @@ background-color: #d1e9ff;
             import { Extension } from "https://esm.sh/@tiptap/core"; // ถ้ายังไม่มี
             import Paragraph from "https://esm.sh/@tiptap/extension-paragraph";
 
-
-            const SUPABASE_URL = 'https://fkntlawaawawiusmjsez.supabase.co';
-            const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZrbnRsYXdhYXdhd2l1c21qc2V6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDk5ODcxMjAsImV4cCI6MjA2NTU2MzEyMH0.G-_fLzcpvPla3dUYNCV7qh0j-JHo1Ahr5fS7fQkHdpw';
+            const SUPABASE_URL = "https://fkntlawaawawiusmjsez.supabase.co";
+            const SUPABASE_ANON_KEY =
+                "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZrbnRsYXdhYXdhd2l1c21qc2V6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDk5ODcxMjAsImV4cCI6MjA2NTU2MzEyMH0.G-_fLzcpvPla3dUYNCV7qh0j-JHo1Ahr5fS7fQkHdpw";
             const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-            
-
-
 
             document.addEventListener("DOMContentLoaded", () => {
                 const editorWrapper = document.getElementById("editor-wrapper");
                 const fileInput = document.getElementById("fileInput"); // สำหรับการอัปโหลดรูปภาพพื้นหลัง
                 const uploadImageOption = document.getElementById("uploadImageOption"); // ปุ่มอัปโหลดรูปภาพพื้นหลัง
 
-                console.log("9999");
-
                 const urlParams = new URLSearchParams(window.location.search);
-                let noteId = urlParams.get('noteId'); // จะเป็น null ถ้าไม่มี noteId ใน URL
-                console.log('Note ID from URL:', noteId);
+                let noteId = urlParams.get("noteId"); // จะเป็น null ถ้าไม่มี noteId ใน URL
+                console.log("Note ID from URL:", noteId);
                 let currentNoteData = null; // เก็บข้อมูลโน้ตปัจจุบันที่โหลดมา
                 let hasUnsavedChanges = false; // Flag เพื่อตรวจสอบการเปลี่ยนแปลง
                 let isSaving = false;
                 // --- สิ้นสุดการเพิ่ม ---
                 loadNote(noteId);
 
+                let autosaveTimeout; // สำหรับเก็บ Timer ของ Autosave
 
+                // ฟังก์ชัน Debounce
+                function debounce(func, delay) {
+                    return function (...args) {
+                        clearTimeout(autosaveTimeout); // ล้าง Timer เก่าถ้ามีการพิมพ์ใหม่
+                        console.log("777");
+                        autosaveTimeout = setTimeout(() => {
+                            func.apply(this, args); // เรียกใช้ฟังก์ชัน saveNote หลังจาก delay
+                        }, delay);
+                    };
+                }
 
-let autosaveTimeout; // สำหรับเก็บ Timer ของ Autosave
-
-// ฟังก์ชัน Debounce
-function debounce(func, delay) {
-    return function(...args) {
-        clearTimeout(autosaveTimeout); // ล้าง Timer เก่าถ้ามีการพิมพ์ใหม่
-        console.log("777");
-        autosaveTimeout = setTimeout(() => {
-            func.apply(this, args); // เรียกใช้ฟังก์ชัน saveNote หลังจาก delay
-        }, delay);
-    };
-}
-
-// สร้างฟังก์ชัน saveNote ที่ถูก Debounce ไว้ (ในที่นี้ตั้งค่าให้บันทึกหลังจากหยุดพิมพ์ 2 วินาที)
-const debouncedSaveNote = debounce(saveNote, 5000); // 2000 มิลลิวินาที = 2 วินาที
-
-
-
-
+                // สร้างฟังก์ชัน saveNote ที่ถูก Debounce ไว้ (ในที่นี้ตั้งค่าให้บันทึกหลังจากหยุดพิมพ์ 2 วินาที)
+                const debouncedSaveNote = debounce(saveNote, 2000); // 2000 มิลลิวินาที = 2 วินาที
 
                 // Settings Bottom Sheet Elements *** NEW ***
                 const settingsButton = document.getElementById("settingsButton");
                 const settingsBottomSheetOverlay = document.getElementById("settingsBottomSheetOverlay");
                 const closeSettingsBottomSheetButton = document.getElementById("closeSettingsBottomSheetButton");
                 //const settingsNoteTitleInput = document.getElementById("settingsNoteTitle");
-                const settingsNoteTitleElement = document.getElementById("settingsNoteTitle"); 
-
-                
-
-
+                const settingsNoteTitleElement = document.getElementById("settingsNoteTitle");
 
                 // เปิด bottom sheet
                 document.getElementById("backgroundButton").addEventListener("click", () => {
@@ -849,42 +812,31 @@ const debouncedSaveNote = debounce(saveNote, 5000); // 2000 มิลลิว�
                         const color = option.dataset.color;
                         document.getElementById("editor-wrapper").style.backgroundColor = color;
                         document.getElementById("bottomSheetOverlay").style.display = "none";
+                        debouncedSaveNote();
                     });
                 });
-                
-                
+
                 // Open Settings Bottom Sheet *** UPDATED ***
                 settingsButton.addEventListener("click", () => {
                     // Set textContent for the H2 element
                     settingsNoteTitleElement.textContent = document.getElementById("note-title").value; // Populate title
                     settingsBottomSheetOverlay.style.display = "flex";
-                 //   setTimeout(() => settingsBottomSheetOverlay.classList.add('show'), 10); // สำหรับ transition
+                    //   setTimeout(() => settingsBottomSheetOverlay.classList.add('show'), 10); // สำหรับ transition
                 });
-                
-               
 
                 // Close Settings Bottom Sheet *** NEW ***
                 closeSettingsBottomSheetButton.addEventListener("click", () => {
-                    settingsBottomSheetOverlay.classList.remove('show');
+                    settingsBottomSheetOverlay.classList.remove("show");
                     settingsBottomSheetOverlay.style.display = "none";
-                //    setTimeout(() => settingsBottomSheetOverlay.style.display = "none", 300); // รอ transition จบ
+                    //    setTimeout(() => settingsBottomSheetOverlay.style.display = "none", 300); // รอ transition จบ
                 });
 
                 // Close Settings Bottom Sheet when clicking outside (on the overlay) *** NEW ***
-                settingsBottomSheetOverlay.addEventListener('click', (event) => {
+                settingsBottomSheetOverlay.addEventListener("click", (event) => {
                     if (event.target === settingsBottomSheetOverlay) {
                         closeSettingsBottomSheetButton.click(); // เรียกใช้ click บนปุ่มปิดเพื่อใช้ logic เดียวกัน
                     }
                 });
-
-                
-                
-                
-                
-                
-                
-                
-                
 
                 // === NEW: การจัดการรูปภาพพื้นหลัง ===
 
@@ -911,6 +863,7 @@ const debouncedSaveNote = debounce(saveNote, 5000); // 2000 มิลลิว�
                             editorWrapper.style.backgroundColor = "transparent";
                         }
                         bottomSheetOverlay.style.display = "none";
+                        debouncedSaveNote();
                     });
                 });
 
@@ -929,6 +882,7 @@ const debouncedSaveNote = debounce(saveNote, 5000); // 2000 มิลลิว�
                             editorWrapper.style.backgroundColor = "transparent"; // ล้าง background-color เมื่อมีภาพ
                             bottomSheetOverlay.style.display = "none";
                             fileInput.value = ""; // เคลียร์ค่า input เพื่อให้สามารถเลือกไฟล์เดิมได้อีก
+                            debouncedSaveNote();
                         };
                         reader.readAsDataURL(file); // อ่านไฟล์เป็น Data URL
                     }
@@ -963,40 +917,25 @@ const debouncedSaveNote = debounce(saveNote, 5000); // 2000 มิลลิว�
                         };
                     },
                 });
-                
-                
-                
-                
-                
-                
-   const thaiMonths = [
-                "มกราคม", "กุมภาพันธ์", "มีนาคม", "เมษายน", "พฤษภาคม", "มิถุนายน",
-                "กรกฎาคม", "สิงหาคม", "กันยายน", "ตุลาคม", "พฤศจิกายน", "ธันวาคม"
-            ];
-            
-            const insertTimeButton = document.getElementById("insertTimeButton");
+
+                const thaiMonths = ["มกราคม", "กุมภาพันธ์", "มีนาคม", "เมษายน", "พฤษภาคม", "มิถุนายน", "กรกฎาคม", "สิงหาคม", "กันยายน", "ตุลาคม", "พฤศจิกายน", "ธันวาคม"];
+
+                const insertTimeButton = document.getElementById("insertTimeButton");
                 if (insertTimeButton) {
                     insertTimeButton.addEventListener("click", () => {
                         const now = new Date();
                         const day = now.getDate();
                         const month = thaiMonths[now.getMonth()]; // ใช้ชื่อเดือนไทย
                         const year = now.getFullYear() + 543; // ปีพุทธศักราช
-                        const hours = String(now.getHours()).padStart(2, '0');
-                        const minutes = String(now.getMinutes()).padStart(2, '0');
+                        const hours = String(now.getHours()).padStart(2, "0");
+                        const minutes = String(now.getMinutes()).padStart(2, "0");
 
                         const formattedTime = `${day} ${month} ${year} ${hours}:${minutes}`;
 
                         // แทรกข้อความลงใน Tiptap Editor
                         editor.chain().insertContent(formattedTime).run();
                     });
-                }             
-                
-                
-                
-                
-                
-                
-                
+                }
 
                 const editor = new Editor({
                     element: document.querySelector("#editor"),
@@ -1106,53 +1045,57 @@ const debouncedSaveNote = debounce(saveNote, 5000); // 2000 มิลลิว�
                     ],
                     content: '<p data-placeholder="พิมพ์ข้อความที่นี่..."></p>',
                     autofocus: true,
-                    
-                    
+
                     onUpdate({ editor }) {
-                    updateToolbar(editor); // อันนี้มีอยู่แล้ว
-                    debouncedSaveNote(); // <--- เพิ่มโค้ดนี้เข้าไป
-                },
-                    
+                        updateToolbar(editor); // อันนี้มีอยู่แล้ว
+                        debouncedSaveNote(); // <--- เพิ่มโค้ดนี้เข้าไป
+                    },
+
                     onSelectionUpdate: ({ editor }) => updateToolbar(editor),
                 });
 
-
                 // --- เพิ่มส่วนนี้: ฟังก์ชัน loadNote ---
                 const noteTitleInput = document.getElementById("note-title"); // ได้ค่า input ของ title
+                noteTitleInput.addEventListener("input", () => {
+                    // เมื่อมีการพิมพ์ในช่องชื่อโน้ต
+                    debouncedSaveNote(); // <<< เพิ่มบรรทัดนี้
+                    navbarTitle.textContent = noteTitleInput.value.trim() || "New Note"; // อัปเดตชื่อใน Navbar ทันที
+                });
+
                 const navbarTitle = document.querySelector(".navbar-title"); // สำหรับแสดงชื่อโน้ตใน Navbar
 
                 async function loadNote(id) {
                     if (!id) {
                         // ถ้าไม่มี ID คือสร้างโน้ตใหม่
-                        noteTitleInput.value = '';
+                        noteTitleInput.value = "";
                         editor.commands.setContent('<p data-placeholder="พิมพ์ข้อความที่นี่..."></p>');
-                        navbarTitle.textContent = 'New Note'; // เปลี่ยนชื่อใน Navbar
+                        navbarTitle.textContent = "New Note"; // เปลี่ยนชื่อใน Navbar
                         currentNoteData = null; // รีเซ็ตข้อมูลโน้ต
-                        console.log('Creating new note.');
+                        console.log("Creating new note.");
                         return;
                     }
 
                     // ถ้ามี ID ให้โหลดโน้ตเดิม
-                    console.log('Loading note with ID:', id);
+                    console.log("Loading note with ID:", id);
                     const { data, error } = await supabase
-                        .from('NOTE')
-                        .select('*') // ดึงข้อมูลทั้งหมดของโน้ต
-                        .eq('id', id)
+                        .from("NOTE")
+                        .select("*") // ดึงข้อมูลทั้งหมดของโน้ต
+                        .eq("id", id)
                         .single(); // คาดหวังผลลัพธ์เดียว
 
                     if (error) {
-                        console.error('Error loading note:', error.message);
-                        alert('เกิดข้อผิดพลาดในการโหลดโน้ต');
+                        console.error("Error loading note:", error.message);
+                        alert("เกิดข้อผิดพลาดในการโหลดโน้ต");
                         return;
                     }
 
                     if (data) {
                         currentNoteData = data;
-                        noteTitleInput.value = data.title || '';
+                        noteTitleInput.value = data.title || "";
                         // ตั้งค่าเนื้อหา Tiptap
-                        if (data.content && typeof data.content === 'object') {
+                        if (data.content && typeof data.content === "object") {
                             editor.commands.setContent(data.content);
-                        } else if (typeof data.content === 'string') {
+                        } else if (typeof data.content === "string") {
                             // กรณี content ถูกเก็บเป็น HTML string (ไม่แนะนำถ้าใช้ Tiptap JSONB)
                             editor.commands.setContent(data.content);
                         } else {
@@ -1163,112 +1106,119 @@ const debouncedSaveNote = debounce(saveNote, 5000); // 2000 มิลลิว�
                         if (data.background) {
                             try {
                                 const backgroundData = data.background;
-                                if (backgroundData.type === 'color' && backgroundData.value) {
+                                if (backgroundData.type === "color" && backgroundData.value) {
                                     editorWrapper.style.backgroundColor = backgroundData.value;
-                                    editorWrapper.style.backgroundImage = 'none';
-                                } else if (backgroundData.type === 'image' && backgroundData.value) {
+                                    editorWrapper.style.backgroundImage = "none";
+                                } else if (backgroundData.type === "image" && backgroundData.value) {
                                     editorWrapper.style.backgroundImage = `url('${backgroundData.value}')`;
-                                    editorWrapper.style.backgroundSize = 'cover';
-                                    editorWrapper.style.backgroundPosition = 'center';
-                                    editorWrapper.style.backgroundRepeat = 'no-repeat';
-                                    editorWrapper.style.backgroundColor = 'transparent';
+                                    editorWrapper.style.backgroundSize = "cover";
+                                    editorWrapper.style.backgroundPosition = "center";
+                                    editorWrapper.style.backgroundRepeat = "no-repeat";
+                                    editorWrapper.style.backgroundColor = "transparent";
                                 }
                             } catch (e) {
-                                console.error('Failed to apply background from note:', e);
+                                console.error("Failed to apply background from note:", e);
                             }
                         } else {
-                             editorWrapper.style.backgroundColor = '#f8f8f8'; // Default fallback
-                             editorWrapper.style.backgroundImage = 'none';
+                            editorWrapper.style.backgroundColor = "#f8f8f8"; // Default fallback
+                            editorWrapper.style.backgroundImage = "none";
                         }
-                        navbarTitle.textContent = data.title || 'Untitled Note'; // อัปเดตชื่อใน Navbar
+                        navbarTitle.textContent = data.title || "Untitled Note"; // อัปเดตชื่อใน Navbar
                         hasUnsavedChanges = false; // เมื่อโหลดเสร็จ ถือว่าไม่มีการเปลี่ยนแปลง
                     } else {
                         // ไม่พบโน้ต ให้ถือว่าเป็นการสร้างโน้ตใหม่
-                        console.log('Note not found, starting a new note.');
+                        console.log("Note not found, starting a new note.");
                         await loadNote(null); // เรียกตัวเองให้เป็นโหมดสร้างใหม่
                     }
                 }
                 // --- สิ้นสุดการเพิ่ม loadNote ---
-                
-                
 
+                // --- ส่วนนี้คือฟังก์ชัน saveNote() ที่ปรับปรุงแล้ว ---
+                async function saveNote() {
+                    if (isSaving) {
+                        console.log("Save in progress, skipping this call.");
+                        return; // ถ้ามีการบันทึกอยู่แล้ว ให้ข้ามการเรียกนี้ไป
+                    }
 
-    // --- ส่วนนี้คือฟังก์ชัน saveNote() ที่ปรับปรุงแล้ว ---
-    async function saveNote() {
-        if (isSaving) {
-            console.log('Save in progress, skipping this call.');
-            return; // ถ้ามีการบันทึกอยู่แล้ว ให้ข้ามการเรียกนี้ไป
-        }
+                    isSaving = true; // ตั้งค่าสถานะว่ากำลังบันทึก
 
-        isSaving = true; // ตั้งค่าสถานะว่ากำลังบันทึก
+                    try {
+                        console.log("Attempting to save note...");
+                        const title = noteTitleInput.value.trim();
+                        const content = editor.getJSON(); // หรือ editor.getHTML()
+                        const editorWrapperElement = document.getElementById("editor-wrapper");
+                        let backgroundData = null;
 
-        try {
-            console.log('Attempting to save note...');
-            const title = noteTitleInput.value.trim();
-            const content = editor.getJSON(); // หรือ editor.getHTML()
-            const editorWrapperElement = document.getElementById("editor-wrapper");
-            let backgroundData = null;
+                        // --- เพิ่ม console.log เหล่านี้เข้ามา ---
+                        console.log("DEBUG saveNote: editorWrapperElement.style.backgroundImage =", editorWrapperElement.style.backgroundImage);
+                        console.log("DEBUG saveNote: editorWrapperElement.style.backgroundColor =", editorWrapperElement.style.backgroundColor);
+                        // --- สิ้นสุดการเพิ่ม console.log ---
 
-            // ... (โค้ดดึงข้อมูล backgroundData เหมือนเดิม)
+                        // ตรวจสอบ Background Image ก่อน
+                        const backgroundImage = editorWrapperElement.style.backgroundImage;
+                        if (backgroundImage && backgroundImage !== "none") {
+                            const imageUrlMatch = backgroundImage.match(/url\(['"]?(.*?)['"]?\)/);
+                            if (imageUrlMatch && imageUrlMatch[1]) {
+                                backgroundData = { type: "image", value: imageUrlMatch[1] };
+                            }
+                        } else {
+                            // ถ้าไม่มี Background Image ให้ตรวจสอบ Background Color
+                            const backgroundColor = editorWrapperElement.style.backgroundColor;
+                            if (backgroundColor && backgroundColor !== "transparent" && backgroundColor !== "rgba(0, 0, 0, 0)") {
+                                backgroundData = { type: "color", value: backgroundColor };
+                            }
+                        }
 
-            const noteToSave = {
-                title: title || 'Untitled Note',
-                content: content,
-                updated_at: new Date().toISOString(),
-                background: backgroundData
-            };
+                        // --- เพิ่ม console.log นี้เข้ามา ---
+                        console.log("DEBUG saveNote: backgroundData to be saved =", backgroundData);
+                        // --- สิ้นสุดการเพิ่ม console.log ---
 
-            if (noteId) {
-                // อัปเดตโน้ตที่มีอยู่
-                const { data, error } = await supabase
-                    .from('NOTE')
-                    .update(noteToSave)
-                    .eq('id', noteId)
-                    .select();
+                        const noteToSave = {
+                            title: title || "Untitled Note",
+                            content: content,
+                            updated_at: new Date().toISOString(),
+                            background: backgroundData,
+                        };
 
-                if (error) {
-                    console.error('Error updating note:', error.message);
-                } else {
-                    console.log('Note updated successfully:', data);
-                    currentNoteData = data[0];
-                    navbarTitle.textContent = title;
-                    hasUnsavedChanges = false;
-                }
-            } else {
-                // สร้างโน้ตใหม่
-                const { data, error } = await supabase
-                    .from('NOTE')
-                    .insert([noteToSave])
-                    .select();
+                        if (noteId) {
+                            // อัปเดตโน้ตที่มีอยู่
+                            const { data, error } = await supabase.from("NOTE").update(noteToSave).eq("id", noteId).select();
 
-                if (error) {
-                    console.error('Error inserting new note:', error.message);
-                } else {
-                    console.log('New note created successfully:', data);
-                    if (data && data.length > 0) {
-                        currentNoteData = data[0];
-                        noteId = data[0].id; // กำหนด noteId ใหม่ทันทีที่ได้รับจาก DB
+                            if (error) {
+                                console.error("Error updating note:", error.message);
+                            } else {
+                                console.log("Note updated successfully:", data);
+                                currentNoteData = data[0];
+                                navbarTitle.textContent = title;
+                                hasUnsavedChanges = false;
+                            }
+                        } else {
+                            // สร้างโน้ตใหม่
+                            const { data, error } = await supabase.from("NOTE").insert([noteToSave]).select();
 
-                        // อัปเดต URL ใน Browser ให้มี noteId ใหม่
-                        const newUrl = new URL(window.location.href);
-                        newUrl.searchParams.set('noteId', noteId);
-                        window.history.replaceState({}, '', newUrl);
+                            if (error) {
+                                console.error("Error inserting new note:", error.message);
+                            } else {
+                                console.log("New note created successfully:", data);
+                                if (data && data.length > 0) {
+                                    currentNoteData = data[0];
+                                    noteId = data[0].id; // กำหนด noteId ใหม่ทันทีที่ได้รับจาก DB
 
-                        navbarTitle.textContent = title;
-                        hasUnsavedChanges = false;
+                                    // อัปเดต URL ใน Browser ให้มี noteId ใหม่
+                                    const newUrl = new URL(window.location.href);
+                                    newUrl.searchParams.set("noteId", noteId);
+                                    window.history.replaceState({}, "", newUrl);
+
+                                    navbarTitle.textContent = title;
+                                    hasUnsavedChanges = false;
+                                }
+                            }
+                        }
+                    } finally {
+                        isSaving = false; // <<< สำคัญมาก: รีเซ็ตสถานะว่าบันทึกเสร็จแล้ว (ไม่ว่าจะสำเร็จหรือล้มเหลว)
                     }
                 }
-            }
-        } finally {
-            isSaving = false; // <<< สำคัญมาก: รีเซ็ตสถานะว่าบันทึกเสร็จแล้ว (ไม่ว่าจะสำเร็จหรือล้มเหลว)
-        }
-    }
-    // --- สิ้นสุดฟังก์ชัน saveNote() ---
-    
-
-
-                
-                
+                // --- สิ้นสุดฟังก์ชัน saveNote() ---
 
                 document.getElementById("colorPicker").addEventListener("input", (event) => {
                     const color = event.target.value;
@@ -1282,10 +1232,9 @@ const debouncedSaveNote = debounce(saveNote, 5000); // 2000 มิลลิว�
                 document.getElementById("toggleLargeParagraphButton").addEventListener("click", () => {
                     editor.chain().focus().setLargeParagraph().run();
                 });
-
+                
                 const buttons = {
                     taskListButton: () => editor.chain().focus().toggleTaskList().run(),
-
                     detailsButton: () => editor.chain().focus().setDetails().run(),
                     hrButton: () => editor.chain().focus().setHorizontalRule().run(),
                     imageButton: () => document.getElementById("imageUploader").click(),
@@ -1318,6 +1267,7 @@ const debouncedSaveNote = debounce(saveNote, 5000); // 2000 มิลลิว�
                 const cropperImage = document.getElementById("cropperImage");
 
                 imageUploader.addEventListener("change", (event) => {
+                	console.log("888");
                     const file = event.target.files[0];
                     if (!file) return;
 
