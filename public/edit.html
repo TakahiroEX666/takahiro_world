@@ -24,7 +24,7 @@
                 height: 100%;
                 font-family: sans-serif;
                 background-color: #f8f8f8;
-                overflow: hidden; /* Prevent scrolling of the entire page */
+                overflow: visible; /* deff hidden Prevent scrolling of the entire page */
             }
 
             /* Main Editor Wrapper - Ensures it fills the screen and arranges children vertically */
@@ -88,7 +88,7 @@
             /* Tiptap Editor Container - This div wraps the actual ProseMirror content */
             #editor {
                 flex-grow: 1; /* Allow editor to take all *remaining* available space */
-                overflow-y: auto; /* Enable vertical scrolling if content overflows */
+                overflow-y: auto; /*   auto  Enable vertical scrolling if content overflows */
 
                 min-height: 150px; /* คุณสามารถปรับค่านี้ได้ตามความเหมาะสม เช่น 100px, 200px */
                 box-sizing: border-box; /* สำคัญ: เพื่อให้ padding และ border ไม่ทำให้ขนาดเกิน */
@@ -415,7 +415,7 @@
             }
 
             .image-option {
-            	margin-top: 8px;
+                margin-top: 8px;
                 width: 40px;
                 height: 40px;
                 border-radius: 8px;
@@ -455,7 +455,7 @@
                 background-color: rgba(255, 255, 255, 0); /* สีขาวโปร่งใส 50% */
                 outline: none; /* ลบเส้นขอบสีฟ้าๆ ที่เบราว์เซอร์สร้างขึ้นเมื่อโฟกัส */
             }
-            
+
             /* === New Styles for Settings Bottom Sheet === */
             #settingsBottomSheetOverlay {
                 z-index: 100; /* ให้สูงกว่า bottomSheetOverlay อื่นๆ */
@@ -464,10 +464,10 @@
             #settingsBottomSheet {
                 max-width: 600px; /* สามารถปรับความกว้างสูงสุดได้ตามต้องการ */
                 padding: 24px;
-                
             }
 
-            .chip-section h3, .title-section h3 {
+            .chip-section h3,
+            .title-section h3 {
                 margin-top: 0;
                 margin-bottom: 12px;
                 font-size: 1.1em;
@@ -483,21 +483,21 @@
             .chip {
                 display: flex;
                 align-items: center;
-                width:70px;
+                width: 70px;
                 padding: 10px 15px;
-                background-color: #2A2A2A; /* สีพื้นหลังชิป */
-                
+                background-color: #2a2a2a; /* สีพื้นหลังชิป */
+
                 font-weight: bold;
                 border-radius: 80px; /* มุมโค้งมน */
                 font-size: 0.8em;
                 color: white;
-                
+
                 transition: background-color 0.2s;
                 border: 1px solid #eee; /* เพิ่มขอบบางๆ */
             }
 
-
-            .chip i { /* สำหรับไอคอน Font Awesome ภายในชิป */
+            .chip i {
+                /* สำหรับไอคอน Font Awesome ภายในชิป */
                 margin-right: 8px; /* ระยะห่างระหว่างไอคอนกับข้อความ */
                 color: white;
                 font-size: 1.2em;
@@ -505,56 +505,100 @@
                 text-align: center;
             }
 
-            
-
             .title-section {
                 margin-top: 5px;
                 padding-top: 5px;
-               
+
                 border-top: 1px solid #eee; /* เส้นแบ่งส่วน */
             }
             #settingsNoteTitle {
                 width: 100%;
-                
-                
+
                 font-size: 1.25em;
                 box-sizing: border-box; /* สำคัญเพื่อให้ padding ไม่ทำให้ input กว้างเกิน */
             }
 
             /* END New Styles */
-            
+
             .setting-button {
-            background-color: rgba(255, 255, 255, 0); 
-            color: #2A2A2A;
-            display: flex;
+                background-color: rgba(255, 255, 255, 0);
+                color: #2a2a2a;
+                display: flex;
                 align-items: center;
-                
+
                 padding: 10px 15px;
-                
-                
+
                 font-weight: bold;
                 border-radius: 80px; /* มุมโค้งมน */
                 font-size: 1.15em;
-                
-                
-                
+
                 border: 0px solid #eee; /* เพิ่มขอบบางๆ */
-}
+            }
 
-.setting-button:active {
-background-color: #d1e9ff;
-}
+            .setting-button:active {
+                background-color: #d1e9ff;
+            }
 
-            .setting-button i { /* สำหรับไอคอน Font Awesome ภายในชิป */
+            .setting-button i {
+                /* สำหรับไอคอน Font Awesome ภายในชิป */
                 margin-right: 12px; /* ระยะห่างระหว่างไอคอนกับข้อความ */
-                color: #2A2A2A;
-                
+                color: #2a2a2a;
+
                 width: 20px; /* กำหนดความกว้างเพื่อให้ไอคอนจัดเรียงตรงกัน */
                 text-align: center;
-            }         
-            
-        </style>
+            }
 
+            /* เดิม: .option-grid */
+            .option-grid {
+                display: flex; /* เปลี่ยนจาก grid เป็น flex เพื่อควบคุมการจัดเรียงง่ายขึ้น */
+                justify-content: space-around; /* กระจายช่องว่างระหว่างปุ่ม */
+                align-items: center; /* จัดให้อยู่กึ่งกลางในแนวตั้ง */
+                gap: 16px; /* เพิ่มระยะห่างระหว่างปุ่ม */
+                padding: 10px 0; /* เพิ่ม padding ด้านบนและล่าง */
+            }
+
+            /* เดิม: .align-option */
+            .align-option {
+                background-color: #f0f0f0; /* สีพื้นหลังเริ่มต้น */
+                border: 1px solid #ccc;
+                border-radius: 12px; /* ทำให้มุมมนขึ้นเล็กน้อย */
+                padding: 12px 15px; /* เพิ่ม padding เพื่อให้ปุ่มมีพื้นที่มากขึ้น */
+                flex: 1; /* ทำให้ปุ่มขยายเพื่อแบ่งพื้นที่เท่าๆ กัน */
+                max-width: 120px; /* กำหนดความกว้างสูงสุดเพื่อไม่ให้ปุ่มกว้างเกินไป */
+                display: flex;
+                flex-direction: column; /* จัดให้ไอคอนกับข้อความอยู่คนละบรรทัด */
+                align-items: center; /* จัดไอคอนและข้อความให้อยู่กึ่งกลางแนวนอน */
+                justify-content: center;
+                cursor: pointer;
+                font-size: 14px;
+                font-weight: bold; /* ทำให้ข้อความตัวหนาขึ้น */
+                color: #555; /* สีข้อความ */
+                transition: background-color 0.2s, border-color 0.2s, color 0.2s;
+                text-align: center; /* จัดข้อความกึ่งกลาง */
+            }
+
+            .align-option i {
+                font-size: 28px; /* ขนาดไอคอนใหญ่ขึ้น */
+                margin-bottom: 8px; /* เพิ่มระยะห่างระหว่างไอคอนกับข้อความ */
+                color: #333; /* สีไอคอนเริ่มต้น */
+            }
+
+            .align-option:hover {
+                background-color: #e0e0e0;
+                border-color: #4285f4;
+                color: #333; /* ให้สีข้อความคงที่หรือเข้มขึ้นเล็กน้อยเมื่อ hover */
+            }
+
+            .align-option.is-active {
+                background-color: #4285f4; /* สีเมื่อปุ่มถูกเลือก */
+                border-color: #4285f4;
+                color: white; /* ข้อความและไอคอนเป็นสีขาวเมื่อ active */
+            }
+
+            .align-option.is-active i {
+                color: white; /* ไอคอนเป็นสีขาวเมื่อ active */
+            }
+        </style>
     </head>
     <body>
         <div id="editor-wrapper">
@@ -571,6 +615,23 @@ background-color: #d1e9ff;
             <div id="editor"></div>
 
             <div class="toolbar">
+                <div class="toolbar-group" style="position: relative;">
+                    <button id="textAlignButton" class="toolbar-button" title="จัดตำแหน่งข้อความ"><i class="fas fa-align-left"></i></button>
+                    <div id="textAlignBottomSheetOverlay" class="bottom-sheet-overlay" style="display: none;">
+                        <div id="textAlignBottomSheet" class="bottom-sheet">
+                            <div class="bottom-sheet-header">
+                                <h3>จัดตำแหน่งข้อความ</h3>
+                                <button id="closeTextAlignBottomSheetBtn" class="bottom-sheet-close-btn">&times;</button>
+                            </div>
+                            <div class="option-grid" id="textAlignOptionsGrid">
+                                <button data-align="left" class="align-option"><i class="fas fa-align-left"></i> ซ้าย</button>
+                                <button data-align="center" class="align-option"><i class="fas fa-align-center"></i> กลาง</button>
+                                <button data-align="right" class="align-option"><i class="fas fa-align-right"></i> ขวา</button>
+                                <button data-align="justify" class="align-option"><i class="fas fa-align-justify"></i> จัดเต็ม</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
                 <button id="toggleLargeParagraphButton">
                     <i class="fa-solid fa-paragraph"></i>
                 </button>
@@ -734,6 +795,7 @@ background-color: #d1e9ff;
 
         <script type="module">
             import { Editor } from "https://esm.sh/@tiptap/core";
+            import TextAlign from "https://esm.sh/@tiptap/extension-text-align"; // เพิ่มบรรทัดนี้
             import StarterKit from "https://esm.sh/@tiptap/starter-kit";
             import Table from "https://esm.sh/@tiptap/extension-table";
             import TableRow from "https://esm.sh/@tiptap/extension-table-row";
@@ -763,6 +825,70 @@ background-color: #d1e9ff;
                 const editorWrapper = document.getElementById("editor-wrapper");
                 const fileInput = document.getElementById("fileInput"); // สำหรับการอัปโหลดรูปภาพพื้นหลัง
                 const uploadImageOption = document.getElementById("uploadImageOption"); // ปุ่มอัปโหลดรูปภาพพื้นหลัง
+
+                const toolbarButtons = {
+                    // ... (ปุ่มอื่นๆ ของคุณ)
+                    insertTimeButton: document.getElementById("insertTimeButton"),
+                    textAlignButton: document.getElementById("textAlignButton"), // เพิ่มปุ่มนี้
+                };
+
+                const textAlignBottomSheetOverlay = document.getElementById("textAlignBottomSheetOverlay");
+                const closeTextAlignBottomSheetBtn = document.getElementById("closeTextAlignBottomSheetBtn");
+                const textAlignOptionsGrid = document.getElementById("textAlignOptionsGrid");
+                const alignOptionButtons = textAlignOptionsGrid.querySelectorAll(".align-option"); // เลือกปุ่มจัดตำแหน่งทั้งหมด
+
+                // เมื่อคลิกปุ่ม "จัดตำแหน่งข้อความ" ใน Toolbar
+                toolbarButtons.textAlignButton.addEventListener("click", () => {
+                    textAlignBottomSheetOverlay.style.display = "flex"; // แสดง bottom sheet
+                    updateTextAlignOptions(editor); // อัปเดตสถานะปุ่ม (Active) เมื่อเปิดเมนู
+                });
+
+                // เมื่อคลิกปุ่มปิดใน Bottom Sheet
+                closeTextAlignBottomSheetBtn.addEventListener("click", () => {
+                    textAlignBottomSheetOverlay.style.display = "none"; // ซ่อน bottom sheet
+                });
+
+                // เมื่อคลิกนอก Bottom Sheet เพื่อปิด
+                textAlignBottomSheetOverlay.addEventListener("click", (event) => {
+                    if (event.target === textAlignBottomSheetOverlay) {
+                        textAlignBottomSheetOverlay.style.display = "none";
+                    }
+                });
+
+                // เพิ่ม Event Listener ให้กับปุ่มจัดตำแหน่งแต่ละปุ่มใน Bottom Sheet
+                alignOptionButtons.forEach((button) => {
+                    button.addEventListener("click", () => {
+                        const align = button.dataset.align;
+                        editor.chain().focus().setTextAlign(align).run();
+                        textAlignBottomSheetOverlay.style.display = "none"; // ซ่อน bottom sheet หลังจากเลือก
+                    });
+                });
+
+                // ฟังก์ชันสำหรับอัปเดตสถานะ Active ของปุ่มใน Bottom Sheet
+                function updateTextAlignOptions(editorInstance) {
+                    alignOptionButtons.forEach((btn) => {
+                        const align = btn.dataset.align;
+                        if (editorInstance.isActive({ textAlign: align })) {
+                            btn.classList.add("is-active");
+                        } else {
+                            btn.classList.remove("is-active");
+                        }
+                    });
+                }
+
+                // เรียกใช้ updateTextAlignOptions ใน updateToolbar (เดิม)
+                // หา function updateToolbar(editor) { ... } ของคุณ
+                // และเพิ่มบรรทัดนี้ในตอนท้ายของ updateToolbar:
+
+                // ปิดเมนูเมื่อคลิกนอกเมนูหรือปุ่ม
+                document.addEventListener("click", (event) => {
+                    const isClickInsideToolbarButton = toolbarButtons.textAlignButton.contains(event.target);
+                    const isClickInsideMenu = textAlignMenu.contains(event.target);
+
+                    if (!isClickInsideToolbarButton && !isClickInsideMenu) {
+                        textAlignMenu.style.display = "none";
+                    }
+                });
 
                 const urlParams = new URLSearchParams(window.location.search);
                 let noteId = urlParams.get("noteId"); // จะเป็น null ถ้าไม่มี noteId ใน URL
@@ -957,6 +1083,9 @@ background-color: #d1e9ff;
                         Paragraph,
                         LargeParagraph,
                         HardBreak,
+
+                        TextAlign.configure({ types: ["heading", "paragraph"] }), // ตรวจสอบว่ามีบรรทัดนี้อยู่
+                        // ...
 
                         TaskList,
                         TaskItem.configure({
@@ -1232,7 +1361,7 @@ background-color: #d1e9ff;
                 document.getElementById("toggleLargeParagraphButton").addEventListener("click", () => {
                     editor.chain().focus().setLargeParagraph().run();
                 });
-                
+
                 const buttons = {
                     taskListButton: () => editor.chain().focus().toggleTaskList().run(),
                     detailsButton: () => editor.chain().focus().setDetails().run(),
@@ -1267,7 +1396,7 @@ background-color: #d1e9ff;
                 const cropperImage = document.getElementById("cropperImage");
 
                 imageUploader.addEventListener("change", (event) => {
-                	console.log("888");
+                    console.log("888");
                     const file = event.target.files[0];
                     if (!file) return;
 
@@ -1326,6 +1455,17 @@ background-color: #d1e9ff;
                         if (btn) btn.classList.toggle("is-active", states[id]);
                     }
                 }
+
+                // Update active state for text align buttons in the floating menu
+                alignButtons.forEach((btn) => {
+                    const align = btn.dataset.align;
+                    // ตรวจสอบว่า editor มีการจัดตำแหน่งปัจจุบันตรงกับปุ่มหรือไม่
+                    if (editor.isActive({ textAlign: align })) {
+                        btn.classList.add("is-active");
+                    } else {
+                        btn.classList.remove("is-active");
+                    }
+                });
                 window.getNoteData = () => ({
                     title: document.getElementById("note-title").value,
                     content: editor.getHTML(),
