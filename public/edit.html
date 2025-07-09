@@ -1296,6 +1296,13 @@
                     //  editor.commands.insertContent('</span>');
                     //editor.commands.selectAll();
                     //editor.commands.setColor(color);
+                    
+                    const noteTitleInput = document.getElementById("note-title"); // ได้ค่า input ของ title
+                    const navbarTitle = document.querySelector(".navbar-title"); // สำหรับแสดงชื่อโน้ตใน Navbar
+                    
+                    noteTitleInput.style.color=color;
+                    navbarTitle.style.color=color;
+     
 
                     const doc = editor.state.doc;
                     const { tr } = editor.state;
@@ -1477,6 +1484,9 @@ if (savedMainTextColor) {
                         navbarTitle.textContent = "New Note"; // เปลี่ยนชื่อใน Navbar
                         currentNoteData = null; // รีเซ็ตข้อมูลโน้ต
                         console.log("Creating new note.");
+                        
+                        
+                        
                         return;
                     }
 
@@ -1525,11 +1535,37 @@ if (savedMainTextColor) {
                                 console.error("Failed to apply background from note:", e);
                             }
                         } else {
-                            editorWrapper.style.backgroundColor = "#f8f8f8"; // Default fallback
+                         //   editorWrapper.style.backgroundColor = "#f8f8f8"; // Default fallback
+                            editorWrapper.style.backgroundColor = "#ffffff"; // Default fallback
+                            
+                            //Default blackground.color
+                            
                             editorWrapper.style.backgroundImage = "none";
                         }
                         navbarTitle.textContent = data.title || "Untitled Note"; // อัปเดตชื่อใน Navbar
+
+                        if (data.tcolor != null) {
+  noteTitleInput.style.color = data.tcolor;
+  navbarTitle.style.color = data.tcolor;
+}
+
+                       
+                    
+
+
+ 
+                        
+                        
+                        
                         hasUnsavedChanges = false; // เมื่อโหลดเสร็จ ถือว่าไม่มีการเปลี่ยนแปลง
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
                     } else {
                         // ไม่พบโน้ต ให้ถือว่าเป็นการสร้างโน้ตใหม่
                         console.log("Note not found, starting a new note.");
@@ -1553,6 +1589,8 @@ if (savedMainTextColor) {
                         const content = editor.getJSON(); // หรือ editor.getHTML()
                         const editorWrapperElement = document.getElementById("editor-wrapper");
                         let backgroundData = null;
+                        
+                        
 
                         // --- เพิ่ม console.log เหล่านี้เข้ามา ---
                         console.log("DEBUG saveNote: editorWrapperElement.style.backgroundImage =", editorWrapperElement.style.backgroundImage);
@@ -1582,7 +1620,9 @@ if (savedMainTextColor) {
                             title: title || "Untitled Note",
                             content: content,
                             updated_at: new Date().toISOString(),
-                            background: backgroundData,
+                            background: backgroundData,                                                                                    
+                            tcolor: window.getComputedStyle(noteTitleInput).getPropertyValue("color")
+                            
                         };
 
                         if (noteId) {
