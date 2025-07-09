@@ -500,13 +500,24 @@
             });
 
             // Delete Note
-            deleteNoteButton.addEventListener('click', async () => {
+            deleteNoteButton.addEventListener('click', async () => {           	                      
                 const noteId = noteActionsBottomSheet.dataset.noteId;
-                if (confirm('คุณแน่ใจหรือไม่ว่าต้องการลบโน้ตนี้?')) {
+
+                await supabase
+                        .from('NOTE')
+                        .update({ is_deleted: true }) // Soft delete
+                        .eq('id', noteId);
+                        closeNoteActionsBottomSheet();
+                        fetchAndDisplayNotes(); // Refresh the list
+                
+                /*if (confirm('คุณแน่ใจหรือไม่ว่าต้องการลบโน้ตนี้?')) {
                     const { data, error } = await supabase
                         .from('NOTE')
                         .update({ is_deleted: true }) // Soft delete
                         .eq('id', noteId);
+                        
+                        closeNoteActionsBottomSheet();
+                        fetchAndDisplayNotes(); // Refresh the list
 
                     if (error) {
                         console.error('Error deleting note:', error.message);
@@ -516,7 +527,7 @@
                         closeNoteActionsBottomSheet();
                         fetchAndDisplayNotes(); // Refresh the list
                     }
-                }
+                }*/
             });
 
             // --- Initial Load ---
