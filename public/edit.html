@@ -657,6 +657,19 @@
             .custom-color-button:hover {
                 border-color: #4285f4;
             }
+
+            /* สำหรับปุ่มเลือกสีใน Settings (ถ้ายังไม่มี) */
+            .settings-section {
+                margin-top: 20px;
+                padding-top: 15px;
+                border-top: 1px solid #eee;
+            }
+            .settings-section h3 {
+                margin-top: 0;
+                margin-bottom: 12px;
+                font-size: 1.1em;
+                color: #555;
+            }
         </style>
     </head>
     <body>
@@ -848,10 +861,32 @@
                             <button class="setting-button"><i class="fa-solid fa-thumbtack"></i> Pin</button>
                             <div class="option-section title-section"></div>
                             <button class="setting-button" id="backgroundButton"><i class="fa-solid fa-palette"></i> Background</button>
+                            <button class="setting-button" id="mainTextColorButton"><i class="fa-solid fa-font"></i> Text Color</button>
+
                             <button class="setting-button"><i class="fa-solid fa-tags"></i> Category</button>
                             <button class="setting-button"><i class="fa-solid fa-face-smile"></i> Icon</button>
                             <button class="setting-button"><i class="fa-solid fa-trash-can"></i> Delete</button>
                         </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="mainTextColorBottomSheetOverlay" class="bottom-sheet-overlay" style="display: none;">
+                <div id="mainTextColorBottomSheet" class="bottom-sheet">
+                    <div class="bottom-sheet-header">
+                        <h3>สีข้อความเริ่มต้น</h3>
+                        <button id="closeMainTextColorBottomSheetBtn" class="bottom-sheet-close-btn">&times;</button>
+                    </div>
+                    <div class="option-grid color-grid" id="mainTextGrid">
+                        <button class="color-option3" data-color="#333333" title="ดำ" style="background-color: #333333;"></button>
+                        <button class="color-option3" data-color="#1A1A1A" title="ดำเข้ม" style="background-color: #1a1a1a;"></button>
+                        <button class="color-option3" data-color="#666666" title="เทาเข้ม" style="background-color: #666666;"></button>
+                        <button class="color-option3" data-color="#B0BEC5" title="เทาอ่อน" style="background-color: #b0bec5;"></button>
+                        <button class="color-option3" data-color="#FFFFFF" title="ขาว" style="background-color: #ffffff; border: 1px solid #eee;"></button>
+                        <label for="customMainTextColorInput" class="color-option custom-color-button" title="กำหนดเอง">
+                            <input type="color" id="customMainTextColorInput" style="display: none;" />
+                            <i class="fas fa-palette"></i>
+                        </label>
                     </div>
                 </div>
             </div>
@@ -1199,6 +1234,107 @@
                     highlightBottomSheetOverlay.style.display = "none";
                 });
 
+                // --- NEW: Main Text Color Button in Settings & Dedicated Bottom Sheet Logic ---
+                const mainTextColorButton = document.getElementById("mainTextColorButton"); // ปุ่มใหม่ใน settingsBottomSheet
+                const mainTextColorBottomSheetOverlay = document.getElementById("mainTextColorBottomSheetOverlay"); // Overlay ของ Bottom Sheet ใหม่
+                const closeMainTextColorBottomSheetBtn = document.getElementById("closeMainTextColorBottomSheetBtn"); // ปุ่มปิดใน Bottom Sheet ใหม่
+
+                // อ้างอิง Element ภายใน Bottom Sheet ใหม่ (ย้ายมาจาก settingsBottomSheet เดิม)
+                const mainTextGrid = document.getElementById("mainTextGrid");
+                const mainTextOptions = mainTextGrid.querySelectorAll(".color-option3");
+                const customMainTextColorInput = document.getElementById("customMainTextColorInput");
+
+                // --- Event Listener สำหรับเปิด Main Text Color Bottom Sheet ---
+                mainTextColorButton.addEventListener("click", () => {
+                    settingsBottomSheetOverlay.style.display = "none"; // ปิด settingsBottomSheet ก่อน
+                    mainTextColorBottomSheetOverlay.style.display = "flex"; // เปิด Bottom Sheet ของสีข้อความ
+                    //updateMainTextOptionsUI(); // อัปเดต UI ของสีเมื่อเปิด Bottom Sheet
+                });
+
+                // --- Event Listener สำหรับปิด Main Text Color Bottom Sheet ---
+                closeMainTextColorBottomSheetBtn.addEventListener("click", () => {
+                    mainTextColorBottomSheetOverlay.style.display = "none";
+                });
+
+                // เมื่อคลิกนอก Bottom Sheet เพื่อปิด
+                mainTextColorBottomSheetOverlay.addEventListener("click", (event) => {
+                    if (event.target === mainTextColorBottomSheetOverlay) {
+                        mainTextColorBottomSheetOverlay.style.display = "none";
+                    }
+                });
+
+                // --- Event Listeners สำหรับปุ่มเลือกสีข้อความหลัก (ภายใน Bottom Sheet ใหม่) ---
+                mainTextOptions.forEach((button) => {
+                    button.addEventListener("click", () => {
+                        const color = button.dataset.color;
+
+                        setMainTextColor(color);
+                        localStorage.setItem("mainTextColor", color); // เก็บค่าใน localStorage
+                        mainTextColorBottomSheetOverlay.style.display = "none"; // ปิด Bottom Sheet เมื่อเลือกสี
+                    });
+                });
+
+                customMainTextColorInput.addEventListener("input", (event) => {
+                    const color = event.target.value;
+                    setMainTextColor(color);
+                    localStorage.setItem("mainTextColor", color);
+                });
+
+                customMainTextColorInput.addEventListener("change", () => {
+                    // เมื่อเลือกสีเสร็จ (ปล่อยเมาส์/ออกจาก input)
+                    mainTextColorBottomSheetOverlay.style.display = "none"; // ปิด Bottom Sheet
+                });
+
+                // --- Functions สำหรับตั้งค่าสีและอัปเดตสถานะปุ่ม (ย้ายมาใช้สำหรับ Bottom Sheet ใหม่) ---
+                function setMainTextColor(color) {
+                    //เปลี่ยนสีจาก Color Extension
+                    //editor.chain().focus().setColor(color).run();
+
+                    //editor.chain().insertContentAt(0, '<span style="color: #ff0000>"').run();
+                    // editor.chain().insertContent('</span>').run();
+                    //editor.commands.insertContentAt(0,'<span style="color:#ff0000">');
+                    //  editor.commands.insertContent('</span>');
+                    //editor.commands.selectAll();
+                    //editor.commands.setColor(color);
+
+                    const doc = editor.state.doc;
+                    const { tr } = editor.state;
+
+                    doc.descendants((node, pos) => {
+                        if (node.isText) {
+                            const hasColorMark = node.marks.some((mark) => mark.type.name === "textStyle" && !!mark.attrs.color);
+
+                            if (!hasColorMark) {
+                                tr.addMark(pos, pos + node.nodeSize, editor.schema.marks.textStyle.create({ color: color }));
+                            }
+                        }
+                    });
+
+                    editor.view.dispatch(tr);
+
+                    //htmlElement.style.setProperty('--main-text-color', color);
+                }
+
+                // ฟังก์ชันสำหรับอัปเดตสถานะ Active ของปุ่มใน Bottom Sheet ใหม่
+                /*function updateMainTextOptionsUI() {
+    const currentMainTextColor = getComputedStyle(htmlElement).getPropertyValue('--main-text-color').trim();
+    mainTextOptions.forEach(btn => {
+        btn.classList.toggle('is-active', btn.dataset.color === currentMainTextColor);
+    });
+    customMainTextColorInput.value = currentMainTextColor; // ตั้งค่าสีใน custom input
+}*/
+
+                // --- โหลดค่าที่ตั้งไว้เมื่อเริ่มต้น (ยังคงอยู่เหมือนเดิม) ---
+                /*const savedMainTextColor = localStorage.getItem('mainTextColor');
+if (savedMainTextColor) {
+    setMainTextColor(savedMainTextColor);
+    // ไม่ต้องเรียก updateMainTextOptionsUI() ตรงนี้ เพราะจะเรียกเมื่อ Bottom Sheet เปิด
+} else {
+    // ตั้งค่าเริ่มต้นถ้าไม่มีใน localStorage (ดึงจาก CSS default)
+    const defaultColor = getComputedStyle(htmlElement).getPropertyValue('--main-text-color').trim();
+    setMainTextColor(defaultColor);
+}      */
+
                 const editor = new Editor({
                     element: document.querySelector("#editor"),
                     extensions: [
@@ -1326,10 +1462,9 @@
                 noteTitleInput.addEventListener("input", () => {
                     // เมื่อมีการพิมพ์ในช่องชื่อโน้ต
                     debouncedSaveNote(); // <<< เพิ่มบรรทัดนี้
-                    navbarTitle.textContent = noteTitleInput.value.trim() || "New Note"; // อัปเดตชื่อใน Navbar ทันที          
-                     var newTitle = document.getElementById("title").value;
+                    navbarTitle.textContent = noteTitleInput.value.trim() || "New Note"; // อัปเดตชื่อใน Navbar ทันที
+                    var newTitle = document.getElementById("title").value;
                     document.title = noteTitleInput.value.trim() || "New Note";
-                    
                 });
 
                 const navbarTitle = document.querySelector(".navbar-title"); // สำหรับแสดงชื่อโน้ตใน Navbar
@@ -1494,6 +1629,8 @@
                     const color = event.target.value;
                     editor.chain().focus().setColor(color).run();
                 });
+
+                //editor.chain().focus().setColor("#FF0000").run();
 
                 document.getElementById("clearColorButton").addEventListener("click", () => {
                     editor.chain().focus().unsetColor().run();
