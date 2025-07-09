@@ -3,7 +3,7 @@
     <head>
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>Tiptap Editor Mobile + Table</title>
+        <title id="title">Note Edit</title>
         <link href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css" rel="stylesheet" />
         <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@1.35.6/dist/umd/supabase.min.js"></script>
@@ -153,7 +153,7 @@
                 display: block;
                 margin: 8px 0;
             }
-            
+
             /*
     .ProseMirror blockquote {
       border-left: 4px solid #ccc;
@@ -165,26 +165,26 @@
     }
 */
 
-.ProseMirror blockquote {
-    border-left: 4px solid #a8a8a8; /* เปลี่ยนสีเส้นให้ดูสุภาพขึ้น */
-    /* border-left: 4px solid #667eea;  อาจลองใช้สีฟ้าอมม่วงแบบ Minimal */
-    
-    background: none; /* ลบพื้นหลังสีออก */
-    /* background: rgba(0, 0, 0, 0.03); */ /* หรืออาจใช้สีเทาอ่อนๆ บางๆ หากต้องการ */
-    
-    padding: 10px 15px; /* ปรับ padding ให้กระชับขึ้น */
-    margin: 16px 0; /* คง margin ไว้ */
-    
-    border-radius: 4px; /* ปรับให้เป็นมุมมนน้อยๆ หรือ 0px เพื่อความคม */
-    /* border-radius: 0px; */ /* ถ้าต้องการความคม */
-    
-    box-shadow: none; /* ลบเงาออกเพื่อความ Minimal */
-    
-    color: #4a4a4a; /* ปรับสีข้อความให้อ่อนลงเล็กน้อย */
-    /*font-style: italic; *//* อาจเพิ่ม font-style เพื่อให้ดูเป็น quote มากขึ้น */
-    line-height: 0.2; /* ปรับความสูงบรรทัดเพื่อให้อ่านง่าย */
-}
-       /*     .ProseMirror blockquote {
+            .ProseMirror blockquote {
+                border-left: 4px solid #a8a8a8; /* เปลี่ยนสีเส้นให้ดูสุภาพขึ้น */
+                /* border-left: 4px solid #667eea;  อาจลองใช้สีฟ้าอมม่วงแบบ Minimal */
+
+                background: none; /* ลบพื้นหลังสีออก */
+                /* background: rgba(0, 0, 0, 0.03); */ /* หรืออาจใช้สีเทาอ่อนๆ บางๆ หากต้องการ */
+
+                padding: 10px 15px; /* ปรับ padding ให้กระชับขึ้น */
+                margin: 16px 0; /* คง margin ไว้ */
+
+                border-radius: 4px; /* ปรับให้เป็นมุมมนน้อยๆ หรือ 0px เพื่อความคม */
+                /* border-radius: 0px; */ /* ถ้าต้องการความคม */
+
+                box-shadow: none; /* ลบเงาออกเพื่อความ Minimal */
+
+                color: #4a4a4a; /* ปรับสีข้อความให้อ่อนลงเล็กน้อย */
+                /*font-style: italic; */ /* อาจเพิ่ม font-style เพื่อให้ดูเป็น quote มากขึ้น */
+                line-height: 0.2; /* ปรับความสูงบรรทัดเพื่อให้อ่านง่าย */
+            }
+            /*     .ProseMirror blockquote {
                 border-left: 4px solid #3e7eff;
                 background: #eef4ff;
                 padding: 12px 16px;
@@ -619,44 +619,44 @@
             .align-option.is-active i {
                 color: white; /* ไอคอนเป็นสีขาวเมื่อ active */
             }
-            
+
             /* สำหรับปุ่มเลือกสีไฮไลท์ - ใช้ .color-option เดิมของคุณได้เลย */
-/* ตรวจสอบว่า .color-option มี CSS คล้ายๆ แบบนี้อยู่แล้วหรือไม่ */
-.color-option2 {
-    width: 40px;
-    height: 40px;
-    border-radius: 8px;
-    border: 2px solid #ccc;
-    cursor: pointer;
-    overflow: hidden;
-    display: flex; /* เพื่อจัดไอคอนให้ตรงกลาง */
-    align-items: center;
-    justify-content: center;
-}
+            /* ตรวจสอบว่า .color-option มี CSS คล้ายๆ แบบนี้อยู่แล้วหรือไม่ */
+            .color-option2 {
+                width: 40px;
+                height: 40px;
+                border-radius: 8px;
+                border: 2px solid #ccc;
+                cursor: pointer;
+                overflow: hidden;
+                display: flex; /* เพื่อจัดไอคอนให้ตรงกลาง */
+                align-items: center;
+                justify-content: center;
+            }
 
-.color-option2.is-active {
-    border-color: #4285f4; /* สีขอบเมื่อเลือก */
-    box-shadow: 0 0 0 2px rgba(66, 133, 244, 0.4); /* เพิ่มเงาอ่อนๆ */
-}
+            .color-option2.is-active {
+                border-color: #4285f4; /* สีขอบเมื่อเลือก */
+                box-shadow: 0 0 0 2px rgba(66, 133, 244, 0.4); /* เพิ่มเงาอ่อนๆ */
+            }
 
-/* สำหรับปุ่ม Custom Color ใน Bottom Sheet */
-.custom-color-button {
-    background-color: #f0f0f0; /* สีพื้นหลัง */
-    border: 2px solid #ccc; /* ขอบ */
-    color: #333; /* สีไอคอน */
-    font-size: 20px; /* ขนาดไอคอน */
-}
-/* ตรวจสอบให้แน่ใจว่า highlight mark ทำงานแบบ inline */
-.ProseMirror mark[data-highlight-color] {
-    display: inline;
-    /* อาจจะต้องเพิ่ม !important หากมี rule อื่นมาทับ */
-    /* background-color: var(--color, yellow) !important; */ 
-    /* หรือระบุสีตรงๆ เช่น */
-    /* background-color: attr(data-highlight-color) !important; */ 
-}
-.custom-color-button:hover {
-    border-color: #4285f4;
-}
+            /* สำหรับปุ่ม Custom Color ใน Bottom Sheet */
+            .custom-color-button {
+                background-color: #f0f0f0; /* สีพื้นหลัง */
+                border: 2px solid #ccc; /* ขอบ */
+                color: #333; /* สีไอคอน */
+                font-size: 20px; /* ขนาดไอคอน */
+            }
+            /* ตรวจสอบให้แน่ใจว่า highlight mark ทำงานแบบ inline */
+            .ProseMirror mark[data-highlight-color] {
+                display: inline;
+                /* อาจจะต้องเพิ่ม !important หากมี rule อื่นมาทับ */
+                /* background-color: var(--color, yellow) !important; */
+                /* หรือระบุสีตรงๆ เช่น */
+                /* background-color: attr(data-highlight-color) !important; */
+            }
+            .custom-color-button:hover {
+                border-color: #4285f4;
+            }
         </style>
     </head>
     <body>
@@ -692,30 +692,32 @@
                     </div>
                 </div>
                 <div class="toolbar-group">
-    <button id="highlightButton" class="toolbar-button" title="ไฮไลท์ข้อความ"><i class="fas fa-highlighter"></i></button>
-    </div>
-    <div id="highlightBottomSheetOverlay" class="bottom-sheet-overlay" style="display: none;">
-    <div id="highlightBottomSheet" class="bottom-sheet">
-        <div class="bottom-sheet-header">
-            <h3>สีไฮไลท์</h3>
-            <button id="closeHighlightBottomSheetBtn" class="bottom-sheet-close-btn">&times;</button>
-        </div>
-        <div class="option-grid color-grid" id="highlightColorGrid">
-            <button class="color-option2" data-color="#FFF59D" title="เหลืองอ่อน" style="background-color: #FFF59D;"></button>
-            <button class="color-option2" data-color="#A5D6A7" title="เขียวอ่อน" style="background-color: #A5D6A7;"></button>
-            <button class="color-option2" data-color="#FFAB91" title="ส้มอ่อน" style="background-color: #FFAB91;"></button>
-            <button class="color-option2" data-color="#9FA8DA" title="ม่วงอ่อน" style="background-color: #9FA8DA;"></button>
-            <button class="color-option2" data-color="#FFCDD2" title="แดงอ่อน" style="background-color: #FFCDD2;"></button>
-            <button class="color-option2" data-color="#B0BEC5" title="เทา" style="background-color: #B0BEC5;"></button>
-            <button class="color-option2" data-color="unset" title="ลบไฮไลท์" style="background-color: transparent; border: 1px dashed #ccc; display: flex; align-items: center; justify-content: center;"><i class="fas fa-ban" style="color: #666;"></i></button>
+                    <button id="highlightButton" class="toolbar-button" title="ไฮไลท์ข้อความ"><i class="fas fa-highlighter"></i></button>
+                </div>
+                <div id="highlightBottomSheetOverlay" class="bottom-sheet-overlay" style="display: none;">
+                    <div id="highlightBottomSheet" class="bottom-sheet">
+                        <div class="bottom-sheet-header">
+                            <h3>สีไฮไลท์</h3>
+                            <button id="closeHighlightBottomSheetBtn" class="bottom-sheet-close-btn">&times;</button>
+                        </div>
+                        <div class="option-grid color-grid" id="highlightColorGrid">
+                            <button class="color-option2" data-color="#FFF59D" title="เหลืองอ่อน" style="background-color: #fff59d;"></button>
+                            <button class="color-option2" data-color="#A5D6A7" title="เขียวอ่อน" style="background-color: #a5d6a7;"></button>
+                            <button class="color-option2" data-color="#FFAB91" title="ส้มอ่อน" style="background-color: #ffab91;"></button>
+                            <button class="color-option2" data-color="#9FA8DA" title="ม่วงอ่อน" style="background-color: #9fa8da;"></button>
+                            <button class="color-option2" data-color="#FFCDD2" title="แดงอ่อน" style="background-color: #ffcdd2;"></button>
+                            <button class="color-option2" data-color="#B0BEC5" title="เทา" style="background-color: #b0bec5;"></button>
+                            <button class="color-option2" data-color="unset" title="ลบไฮไลท์" style="background-color: transparent; border: 1px dashed #ccc; display: flex; align-items: center; justify-content: center;">
+                                <i class="fas fa-ban" style="color: #666;"></i>
+                            </button>
 
-            <label for="customHighlightColorInput" class="color-option custom-color-button" title="สีเอง">
-                <input type="color" id="customHighlightColorInput" style="display: none;">
-                <i class="fas fa-palette"></i>
-            </label>
-        </div>
-    </div>
-</div>
+                            <label for="customHighlightColorInput" class="color-option custom-color-button" title="สีเอง">
+                                <input type="color" id="customHighlightColorInput" style="display: none;" />
+                                <i class="fas fa-palette"></i>
+                            </label>
+                        </div>
+                    </div>
+                </div>
                 <button id="toggleLargeParagraphButton">
                     <i class="fa-solid fa-paragraph"></i>
                 </button>
@@ -784,7 +786,7 @@
                     <div class="bottom-sheet-header">
                         <h2>Background</h2>
                         <button class="bottom-sheet-close-btn" id="closeBottomSheetButton">&times;</button>
-                    </div>                                        
+                    </div>
                     <div class="option-section color-options">
                         <div class="option-grid" id="colorGrid">
                             <div class="color-option" data-color="#FFFFFF" style="background-color: #ffffff;"></div>
@@ -965,7 +967,7 @@
                 // และเพิ่มบรรทัดนี้ในตอนท้ายของ updateToolbar:
 
                 // ปิดเมนูเมื่อคลิกนอกเมนูหรือปุ่ม
-             /*   document.addEventListener("click", (event) => {
+                /*   document.addEventListener("click", (event) => {
                     const isClickInsideToolbarButton = toolbarButtons.textAlignButton.contains(event.target);
                     const isClickInsideMenu = textAlignMenu.contains(event.target);
 
@@ -1146,60 +1148,56 @@
                         editor.chain().insertContent(formattedTime).run();
                     });
                 }
-                
-                
-                
-               // --- New Highlight Color Bottom Sheet Logic ---
-const highlightButton = document.getElementById('highlightButton');
-const highlightBottomSheetOverlay = document.getElementById('highlightBottomSheetOverlay');
-const closeHighlightBottomSheetBtn = document.getElementById('closeHighlightBottomSheetBtn');
-const highlightColorGrid = document.getElementById('highlightColorGrid');
-const highlightColorOptions = highlightColorGrid.querySelectorAll('.color-option2');
-const customHighlightColorInput = document.getElementById('customHighlightColorInput');
 
-// เมื่อคลิกปุ่ม "ไฮไลท์" ใน Toolbar
-highlightButton.addEventListener('click', () => {
-    highlightBottomSheetOverlay.style.display = 'flex'; // แสดง bottom sheet
-    updateHighlightOptions(editor); // อัปเดตสถานะปุ่ม (Active)
-});
+                // --- New Highlight Color Bottom Sheet Logic ---
+                const highlightButton = document.getElementById("highlightButton");
+                const highlightBottomSheetOverlay = document.getElementById("highlightBottomSheetOverlay");
+                const closeHighlightBottomSheetBtn = document.getElementById("closeHighlightBottomSheetBtn");
+                const highlightColorGrid = document.getElementById("highlightColorGrid");
+                const highlightColorOptions = highlightColorGrid.querySelectorAll(".color-option2");
+                const customHighlightColorInput = document.getElementById("customHighlightColorInput");
 
-// เมื่อคลิกปุ่มปิดใน Bottom Sheet
-closeHighlightBottomSheetBtn.addEventListener('click', () => {
-    highlightBottomSheetOverlay.style.display = 'none'; // ซ่อน bottom sheet
-});
+                // เมื่อคลิกปุ่ม "ไฮไลท์" ใน Toolbar
+                highlightButton.addEventListener("click", () => {
+                    highlightBottomSheetOverlay.style.display = "flex"; // แสดง bottom sheet
+                    updateHighlightOptions(editor); // อัปเดตสถานะปุ่ม (Active)
+                });
 
-// เมื่อคลิกนอก Bottom Sheet เพื่อปิด
-highlightBottomSheetOverlay.addEventListener('click', (event) => {
-    if (event.target === highlightBottomSheetOverlay) {
-        highlightBottomSheetOverlay.style.display = 'none';
-    }
-});
+                // เมื่อคลิกปุ่มปิดใน Bottom Sheet
+                closeHighlightBottomSheetBtn.addEventListener("click", () => {
+                    highlightBottomSheetOverlay.style.display = "none"; // ซ่อน bottom sheet
+                });
 
-// เพิ่ม Event Listener ให้กับปุ่มเลือกสีไฮไลท์แต่ละปุ่ม
-highlightColorOptions.forEach(button => {
-    button.addEventListener('click', () => {
-        const color = button.dataset.color;
-        if (color === 'unset') {
-            editor.chain().focus().unsetHighlight().run();
-        } else {
-            editor.chain().focus().setHighlight({ color: color }).run();
-        }
-        highlightBottomSheetOverlay.style.display = 'none'; // ซ่อน bottom sheet หลังจากเลือก
-    });
-});
+                // เมื่อคลิกนอก Bottom Sheet เพื่อปิด
+                highlightBottomSheetOverlay.addEventListener("click", (event) => {
+                    if (event.target === highlightBottomSheetOverlay) {
+                        highlightBottomSheetOverlay.style.display = "none";
+                    }
+                });
 
-// Event Listener สำหรับ input custom color
-customHighlightColorInput.addEventListener('input', (event) => {
-    const color = event.target.value;
-    editor.chain().focus().setHighlight({ color: color }).run();
-});
+                // เพิ่ม Event Listener ให้กับปุ่มเลือกสีไฮไลท์แต่ละปุ่ม
+                highlightColorOptions.forEach((button) => {
+                    button.addEventListener("click", () => {
+                        const color = button.dataset.color;
+                        if (color === "unset") {
+                            editor.chain().focus().unsetHighlight().run();
+                        } else {
+                            editor.chain().focus().setHighlight({ color: color }).run();
+                        }
+                        highlightBottomSheetOverlay.style.display = "none"; // ซ่อน bottom sheet หลังจากเลือก
+                    });
+                });
 
-// เมื่อเปลี่ยน custom color แล้วต้องการปิด bottom sheet ด้วย:
-customHighlightColorInput.addEventListener('change', () => {
-    highlightBottomSheetOverlay.style.display = 'none';
-});
+                // Event Listener สำหรับ input custom color
+                customHighlightColorInput.addEventListener("input", (event) => {
+                    const color = event.target.value;
+                    editor.chain().focus().setHighlight({ color: color }).run();
+                });
 
- 
+                // เมื่อเปลี่ยน custom color แล้วต้องการปิด bottom sheet ด้วย:
+                customHighlightColorInput.addEventListener("change", () => {
+                    highlightBottomSheetOverlay.style.display = "none";
+                });
 
                 const editor = new Editor({
                     element: document.querySelector("#editor"),
@@ -1224,9 +1222,9 @@ customHighlightColorInput.addEventListener('change', () => {
 
                         TextAlign.configure({ types: ["heading", "paragraph"] }), // ตรวจสอบว่ามีบรรทัดนี้อยู่
                         // ...
-Highlight.configure({
-            multicolor: true, // อนุญาตให้มีหลายสี
-        }),
+                        Highlight.configure({
+                            multicolor: true, // อนุญาตให้มีหลายสี
+                        }),
                         TaskList,
                         TaskItem.configure({
                             nested: true, // ถ้าต้องการให้มีเช็กลิสต์ซ้อนกันได้
@@ -1328,7 +1326,10 @@ Highlight.configure({
                 noteTitleInput.addEventListener("input", () => {
                     // เมื่อมีการพิมพ์ในช่องชื่อโน้ต
                     debouncedSaveNote(); // <<< เพิ่มบรรทัดนี้
-                    navbarTitle.textContent = noteTitleInput.value.trim() || "New Note"; // อัปเดตชื่อใน Navbar ทันที
+                    navbarTitle.textContent = noteTitleInput.value.trim() || "New Note"; // อัปเดตชื่อใน Navbar ทันที          
+                     var newTitle = document.getElementById("title").value;
+                    document.title = noteTitleInput.value.trim() || "New Note";
+                    
                 });
 
                 const navbarTitle = document.querySelector(".navbar-title"); // สำหรับแสดงชื่อโน้ตใน Navbar
@@ -1549,7 +1550,7 @@ Highlight.configure({
                         if (cropper) cropper.destroy();
 
                         cropper = new Cropper(cropperImage, {
-                            aspectRatio: 4/3, // หรือใส่ 1, 16/9 ตามต้องการ
+                            aspectRatio: 4 / 3, // หรือใส่ 1, 16/9 ตามต้องการ
                             viewMode: 1,
                             autoCropArea: 1,
                         });
@@ -1575,10 +1576,9 @@ Highlight.configure({
                 });
 
                 function updateToolbar(editor) {
-                	updateTextAlignOptions(editor); 
-                        updateHighlightOptions(editor);
+                    updateTextAlignOptions(editor);
+                    updateHighlightOptions(editor);
                     const states = {
-                    	
                         taskListButton: editor.isActive("taskList"),
                         boldButton: editor.isActive("bold"),
                         italicButton: editor.isActive("italic"),
@@ -1598,36 +1598,34 @@ Highlight.configure({
                         if (btn) btn.classList.toggle("is-active", states[id]);
                     }
                 }
-                
+
                 // ฟังก์ชันสำหรับอัปเดตสถานะ Active ของปุ่มใน Bottom Sheet
-function updateHighlightOptions(editorInstance) {
-    highlightColorOptions.forEach(btn => {
-        const color = btn.dataset.color;
-        if (color === 'unset') {
-            if (editorInstance.isActive('highlight')) {
-                btn.classList.remove('is-active'); // ถ้ามีไฮไลท์อยู่ ปุ่ม unset จะไม่ active
-            } else {
-                btn.classList.add('is-active'); // ถ้าไม่มีไฮไลท์ ปุ่ม unset จะ active
-            }
-        } else {
-            if (editorInstance.isActive({ highlight: { color: color } })) {
-                btn.classList.add('is-active');
-            } else {
-                btn.classList.remove('is-active');
-            }
-        }
-    });
-    // ตรวจสอบ Custom Color Input ด้วย
-    const currentHighlightColor = editorInstance.getAttributes('highlight').color;
-    if (currentHighlightColor) {
-        customHighlightColorInput.value = currentHighlightColor;
-    } else {
-        // ตั้งค่าสีเริ่มต้นหากไม่มีไฮไลท์ หรือต้องการค่าที่ชัดเจน
-        customHighlightColorInput.value = '#000000'; // หรือสีที่คุณต้องการ
-    }
-}
-
-
+                function updateHighlightOptions(editorInstance) {
+                    highlightColorOptions.forEach((btn) => {
+                        const color = btn.dataset.color;
+                        if (color === "unset") {
+                            if (editorInstance.isActive("highlight")) {
+                                btn.classList.remove("is-active"); // ถ้ามีไฮไลท์อยู่ ปุ่ม unset จะไม่ active
+                            } else {
+                                btn.classList.add("is-active"); // ถ้าไม่มีไฮไลท์ ปุ่ม unset จะ active
+                            }
+                        } else {
+                            if (editorInstance.isActive({ highlight: { color: color } })) {
+                                btn.classList.add("is-active");
+                            } else {
+                                btn.classList.remove("is-active");
+                            }
+                        }
+                    });
+                    // ตรวจสอบ Custom Color Input ด้วย
+                    const currentHighlightColor = editorInstance.getAttributes("highlight").color;
+                    if (currentHighlightColor) {
+                        customHighlightColorInput.value = currentHighlightColor;
+                    } else {
+                        // ตั้งค่าสีเริ่มต้นหากไม่มีไฮไลท์ หรือต้องการค่าที่ชัดเจน
+                        customHighlightColorInput.value = "#000000"; // หรือสีที่คุณต้องการ
+                    }
+                }
 
                 window.getNoteData = () => ({
                     title: document.getElementById("note-title").value,
