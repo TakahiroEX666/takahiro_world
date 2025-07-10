@@ -262,7 +262,7 @@
                 word-break: break-word;
             }
 
-            .note-card-title .pin-icon {
+            . .pin-icon {
                 color: #ffc107;
                 margin-right: 8px;
             }
@@ -563,7 +563,7 @@ const SUPABASE_URL = 'https://fkntlawaawawiusmjsez.supabase.co';
 
                 let query = supabase
                     .from('NOTE')
-                    .select('id, title, content, background, is_pin, is_archived, is_hidden, category_id, updated_at, NOTE_CATEGORY(name)') // Fetch category name
+                    .select('id, title, content, background, is_pin, is_archived, is_hidden, category_id, updated_at,tcolor, NOTE_CATEGORY(name)') // Fetch category name
                     .eq('is_deleted', false) // Filter out deleted notes
                     .order('is_pin', { ascending: false }) // Pinned notes first
                     .order('updated_at', { ascending: false }); // Then by most recent update
@@ -631,6 +631,17 @@ const SUPABASE_URL = 'https://fkntlawaawawiusmjsez.supabase.co';
                         noteCard.style.backgroundColor = '#ffffff';
                         noteCard.style.backgroundImage = 'none';
                     }
+                    
+                    
+                    
+                    
+                    
+                    
+                    const colorx=note.tcolor;
+                   
+                    
+                    
+                    
 
                     const formattedDate = new Date(note.updated_at).toLocaleDateString('th-TH', {
                         year: 'numeric',
@@ -661,12 +672,12 @@ const SUPABASE_URL = 'https://fkntlawaawawiusmjsez.supabase.co';
                     
                     noteCard.innerHTML = `
                         <div class="note-card-header">
-                            <h3 class="note-card-title">
+                            <h3 class="note-card-title" style="color:${colorx}">
                                 ${note.is_pin ? '<i class="fa-solid fa-thumbtack pin-icon"></i>' : ''}
                                 ${note.title || 'Untitled Note'}
                             </h3>
                         </div>
-                        <div class="note-card-content">${previewContent}</div>
+                        <div class="note-card-content" style="color:${colorx}">${previewContent}</div>
                         <div class="note-card-date">อัปเดต: ${formattedDate}</div>
                     `;
                     noteListContainer.appendChild(noteCard);
