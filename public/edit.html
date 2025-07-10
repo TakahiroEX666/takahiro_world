@@ -743,6 +743,9 @@
                 <button id="imageButton">
                     <i class="fa-solid fa-image"></i>
                 </button>
+                <button class="menu-button" id="youtubeButton" title="แทรกวิดีโอ YouTube">
+    <i class="fab fa-youtube"></i>
+</button>
                 <!--       <button id="backgroundButton1"> -->
                 <!--      <i class="fa-solid fa-brush"></i> -->
                 <!--         </button> -->
@@ -936,7 +939,9 @@
             import { keymap } from "https://esm.sh/prosemirror-keymap"; // เพิ่มบรรทัดนี้
             import { Extension } from "https://esm.sh/@tiptap/core"; // ถ้ายังไม่มี
             import Paragraph from "https://esm.sh/@tiptap/extension-paragraph";
-
+            import Youtube from "https://esm.sh/@tiptap/extension-youtube";
+            
+        
             const SUPABASE_URL = "https://fkntlawaawawiusmjsez.supabase.co";
             const SUPABASE_ANON_KEY =
                 "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZrbnRsYXdhYXdhd2l1c21qc2V6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDk5ODcxMjAsImV4cCI6MjA2NTU2MzEyMH0.G-_fLzcpvPla3dUYNCV7qh0j-JHo1Ahr5fS7fQkHdpw";
@@ -1342,6 +1347,28 @@ if (savedMainTextColor) {
     setMainTextColor(defaultColor);
 }      */
 
+
+
+
+// === NEW: Event Listener สำหรับปุ่ม YouTube ===
+    youtubeButton.addEventListener('click', () => {
+        const url = prompt('วาง URL วิดีโอ YouTube ที่นี่:'); // Prompt ให้ผู้ใช้กรอก URL
+
+        if (url) {
+            // ตรวจสอบว่า URL เป็นของ YouTube และแทรกวิดีโอ
+            editor.commands.setYoutubeVideo({
+                src: url,
+                // คุณสามารถเพิ่ม options อื่นๆ ได้ เช่น width, height
+                 width: 360,
+                 height: 220,
+            });
+        }
+    });
+    // ================================================
+    
+
+
+
                 const editor = new Editor({
                     element: document.querySelector("#editor"),
                     extensions: [
@@ -1362,6 +1389,18 @@ if (savedMainTextColor) {
                         Paragraph,
                         LargeParagraph,
                         HardBreak,
+                        // === NEW: เพิ่ม Youtube Extension ตรงนี้ ===
+        Youtube.configure({
+            nocookie: true, // ใช้โหมดความเป็นส่วนตัวสูง (youtube-nocookie.com)
+            controls: false, // ซ่อน controls ของวิดีโอ (แล้วแต่ชอบ)
+            autoplay: true, // ไม่เล่นอัตโนมัติ
+            interfaceLanguage: 'th',
+            modestBranding: true, // แสดงแบรนด์ YouTube น้อยลง
+
+            // สำหรับทำให้ปรับขนาดได้ (Requires Resize extension if you have one)
+            // resizable: true, // ต้องมี extension สำหรับ resize ด้วย
+        }),
+        // =======
 
                         TextAlign.configure({ types: ["heading", "paragraph"] }), // ตรวจสอบว่ามีบรรทัดนี้อยู่
                         // ...
