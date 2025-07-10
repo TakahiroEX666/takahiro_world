@@ -19,8 +19,10 @@
                 padding: 0;
                 background-color: #f0f2f5;
                 display: flex;
-                flex-direction: column;
+                flex-direction: column; /* Changed to column to allow sidebar to float over */
                 min-height: 100vh;
+                position: relative; /* For fixed children positioning context */
+                overflow-x: hidden; /* Prevent horizontal scrollbar during sidebar animation */
             }
 
             .header {
@@ -31,57 +33,208 @@
                 background-color: #ffffff;
                 box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
                 margin-bottom: 8px;
+                position: sticky;
+                top: 0;
+                z-index: 100;
             }
 
             .header h1 {
                 margin: 0;
                 font-size: 24px;
                 color: #333;
+                flex-grow: 1; /* Allow title to take available space */
             }
 
-            .add-note-button {
-                background-color: #007bff;
+            /* New: Sidebar Toggle Button */
+            .sidebar-toggle-button {
+                background: none;
+                border: none;
+                font-size: 24px;
+                color: #555;
+                cursor: pointer;
+                padding: 8px;
+                margin-left: 10px; /* Space from title */
+                border-radius: 50%;
+                transition: background-color 0.2s;
+            }
+
+            .sidebar-toggle-button:hover {
+                background-color: #e0e2e5;
+            }
+
+            /* --- Sidebar Styles --- */
+            .sidebar {
+                width: 280px;
+                background-color: #ffffff;
+                box-shadow: -2px 0 5px rgba(0, 0, 0, 0.2); /* Adjusted for right side shadow */
+                padding: 20px;
+                flex-direction: column; /* For internal layout */
+                position: fixed; /* Make it float */
+                top: 0;
+                right: -280px; /* Initially off-screen on the RIGHT */
+                height: 100%;
+                z-index: 1000; /* Above main content and header */
+                transition: right 0.3s ease-out; /* Smooth transition for RIGHT */
+                display: none; /* Changed: Initially hidden with display: none */
+            }
+
+            .sidebar.open {
+                right: 0; /* Slide in from RIGHT */
+                display: flex; /* Changed: Show as flexbox when open */
+            }
+
+            /* New: Overlay when sidebar is open */
+            .sidebar-overlay {
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background-color: rgba(0, 0, 0, 0.4);
+                z-index: 999; /* Below sidebar, above main content */
+                opacity: 0;
+                visibility: hidden;
+                transition: opacity 0.3s ease-out, visibility 0.3s ease-out;
+            }
+
+            .sidebar-overlay.show {
+                opacity: 1;
+                visibility: visible;
+            }
+
+
+            .sidebar-header {
+                font-size: 20px;
+                font-weight: 600;
+                color: #333;
+                margin-bottom: 20px;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+            }
+
+            .sidebar-list {
+                list-style: none;
+                padding: 0;
+                margin: 0;
+                flex-grow: 1;
+                overflow-y: auto;
+            }
+
+            .sidebar-list-item {
+                margin-bottom: 8px;
+            }
+
+            .sidebar-list-item-toggle {
+                display: flex;
+                align-items: center;
+                padding: 10px 12px;
+                border-radius: 8px;
+                cursor: pointer;
+                transition: background-color 0.2s;
+            }
+
+            .sidebar-list-item-toggle:hover {
+                background-color: #f0f2f5;
+            }
+
+            .sidebar-list-item-toggle.active {
+                background-color: #e0e2e5;
+                font-weight: 600;
+            }
+
+            .sidebar-list-item-toggle .icon {
+                margin-right: 12px;
+                color: #555;
+            }
+
+            .sidebar-list-item-toggle .arrow-icon {
+                margin-left: auto;
+                transition: transform 0.2s;
+            }
+
+            .sidebar-list-item-toggle.expanded .arrow-icon {
+                transform: rotate(90deg);
+            }
+
+            .sidebar-sub-list {
+                list-style: none;
+                padding-left: 30px;
+                margin-top: 5px;
+                display: none;
+            }
+
+            .sidebar-sub-list.show {
+                display: block;
+            }
+
+            .sidebar-sub-list-item {
+                padding: 8px 0;
+                color: #555;
+                cursor: pointer;
+                border-radius: 6px;
+                padding-left: 10px;
+                display: flex; /* For icon alignment */
+                align-items: center; /* For icon alignment */
+            }
+
+            .sidebar-sub-list-item .category-icon {
+                margin-right: 8px; /* Space between icon and text */
+            }
+
+            .sidebar-sub-list-item:hover {
+                background-color: #f0f2f5;
+            }
+            
+            /* Add Category Button in Sidebar */
+            .add-category-button {
+                background-color: #28a745;
                 color: white;
                 border: none;
-                border-radius: 50%;
-                width: 48px;
-                height: 48px;
-                font-size: 24px;
-                display: flex;
-                justify-content: center;
-                align-items: center;
+                padding: 10px 15px;
+                border-radius: 8px;
+                font-size: 14px;
                 cursor: pointer;
-                box-shadow: 0 4px 8px rgba(0, 123, 255, 0.3);
-                transition: background-color 0.2s, transform 0.2s;
+                transition: background-color 0.2s;
+                margin-top: 15px;
             }
 
-            .add-note-button:active {
-                background-color: #0056b3;
-                transform: scale(0.95);
+            .add-category-button:hover {
+                background-color: #218838;
+            }
+
+
+            /* --- Main Content Area --- */
+            .main-content {
+                flex-grow: 1;
+                display: flex;
+                flex-direction: column;
+                position: relative;
             }
 
             #note-list-container {
                 display: grid;
-                grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); /* Responsive grid */
+                grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
                 gap: 16px;
                 padding: 16px;
-                /*flex-grow: 1;*/ /* Allow container to grow */
-                overflow-y: auto; /* Enable scrolling if content overflows */
+                flex-grow: 1;
+                overflow-y: auto;
             }
+
 
             .note-card {
                 background-color: #ffffff;
                 border-radius: 12px;
                 box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
                 padding: 16px;
-                min-height:80px;
+                height:100px;
                 display: flex;
                 flex-direction: column;
                 justify-content: flex-start;
                 cursor: pointer;
                 transition: transform 0.1s ease-in-out, box-shadow 0.1s ease-in-out;
-                position: relative; /* For pin icon positioning */
-                overflow: hidden; /* Ensure background image doesn't overflow */
+                position: relative;
+                overflow: hidden;
                 background-size: cover;
                 background-position: center;
                 background-repeat: no-repeat;
@@ -94,7 +247,7 @@
 
             .note-card-header {
                 display: flex;
-                height: 30%;
+                /*height: 30%;*/
                 align-items: center;
                 justify-content: space-between;
                 margin-bottom: 4px;
@@ -105,26 +258,27 @@
                 font-weight: 600;
                 color: #333;
                 flex-grow: 1;
-                margin-right: 8px; /* Space for pin icon */
-                word-break: break-word; /* Wrap long titles */
+                margin-right: 8px;
+                word-break: break-word;
             }
 
             .note-card-title .pin-icon {
-                color: #ffc107; /* Gold color for pin */
+                color: #ffc107;
                 margin-right: 8px;
             }
 
             .note-card-content {
                 font-size: 14px;
                 color: #555;
-                flex-grow: 1;
+                /*flex-grow: 1;*/
                 overflow: hidden;
-                text-overflow: ellipsis; /* Add ellipsis for overflow text */
+                text-overflow: ellipsis;
+                
                 display: -webkit-box;
-                -webkit-line-clamp: 2; /* Limit to 4 lines */
+                -webkit-line-clamp: 1;
                 -webkit-box-orient: vertical;
                 line-height: 1.4;
-                max-height: 2.8em; /* 4 lines * 1.4 line-height */
+                max-height: 2.8em;
             }
 
             .note-card-date {
@@ -134,10 +288,40 @@
                 margin-top: 4px;
             }
 
+            /* --- Floating Action Button (FAB) --- */
+            .fab-container {
+                position: fixed;
+                bottom: 24px;
+                right: 24px;
+                z-index: 999;
+            }
+
+            .add-note-fab {
+                background-color: #007bff;
+                color: white;
+                border: none;
+                border-radius: 50%;
+                width: 56px;
+                height: 56px;
+                font-size: 28px;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                cursor: pointer;
+                box-shadow: 0 4px 10px rgba(0, 123, 255, 0.4);
+                transition: background-color 0.2s, transform 0.2s;
+            }
+
+            .add-note-fab:active {
+                background-color: #0056b3;
+                transform: scale(0.95);
+            }
+
+
             /* --- Bottom Sheet Styles (for long click actions) --- */
             .bottom-sheet-overlay {
                 position: fixed;
-                inset: 0; /* top, right, bottom, left to 0 */
+                inset: 0;
                 background: rgba(0, 0, 0, 0.4);
                 display: flex;
                 align-items: flex-end;
@@ -156,7 +340,7 @@
             .bottom-sheet {
                 background: #fff;
                 width: 100%;
-                max-width: 500px; /* Max width for larger screens */
+                max-width: 500px;
                 border-top-left-radius: 16px;
                 border-top-right-radius: 16px;
                 padding: 20px;
@@ -218,7 +402,7 @@
 
             .bottom-sheet-option-button .icon {
                 font-size: 20px;
-                width: 24px; /* Ensure consistent icon alignment */
+                width: 24px;
                 text-align: center;
             }
 
@@ -234,15 +418,68 @@
         </style>
     </head>
     <body>
-        <div class="header">
-            <h1>My Notes</h1>
-            <button class="add-note-button" id="addNewNoteButton">
-                <i class="fa-solid fa-plus"></i>
-            </button>
+        <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+        <div class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <span>Notes Menu</span>
+                <button class="add-category-button" id="addCategoryButton">
+                    <i class="fa-solid fa-folder-plus"></i> เพิ่มหมวดหมู่
+                </button>
+            </div>
+            <ul class="sidebar-list">
+                <li class="sidebar-list-item">
+                    <div class="sidebar-list-item-toggle" data-filter="pinned">
+                        <i class="fa-solid icon fa-thumbtack"></i>
+                        <span>Pinned</span>
+                        <i class="fa-solid fa-chevron-right arrow-icon"></i>
+                    </div>
+                    <ul class="sidebar-sub-list" id="pinned-notes-list"></ul>
+                </li>
+                <li class="sidebar-list-item">
+                    <div class="sidebar-list-item-toggle" data-filter="categories">
+                        <i class="fa-solid icon fa-folder"></i>
+                        <span>Categories</span>
+                        <i class="fa-solid fa-chevron-right arrow-icon"></i>
+                    </div>
+                    <ul class="sidebar-sub-list" id="categories-list"></ul>
+                </li>
+                <li class="sidebar-list-item">
+                    <div class="sidebar-list-item-toggle" data-filter="archived">
+                        <i class="fa-solid icon fa-box-archive"></i>
+                        <span>Archived</span>
+                        <i class="fa-solid fa-chevron-right arrow-icon"></i>
+                    </div>
+                    <ul class="sidebar-sub-list" id="archived-notes-list"></ul>
+                </li>
+                <li class="sidebar-list-item">
+                    <div class="sidebar-list-item-toggle" data-filter="hidden">
+                        <i class="fa-solid icon fa-eye-slash"></i>
+                        <span>Hidden</span>
+                        <i class="fa-solid fa-chevron-right arrow-icon"></i>
+                    </div>
+                    <ul class="sidebar-sub-list" id="hidden-notes-list"></ul>
+                </li>
+            </ul>
         </div>
 
-        <div id="note-list-container">
-            <p id="loading-indicator" style="text-align: center; color: #777;">กำลังโหลดโน้ต...</p>
+        <div class="main-content">
+            <div class="header">
+                <h1 id="main-header-title">My Notes</h1>
+                <button class="sidebar-toggle-button" id="sidebarToggleButton">
+                    <i class="fa-solid fa-bars"></i>
+                </button>
+            </div>
+
+            <div id="note-list-container">
+                <p id="loading-indicator" style="text-align: center; color: #777;">กำลังโหลดโน้ต...</p>
+            </div>
+        </div>
+
+        <div class="fab-container">
+            <button class="add-note-fab" id="addNewNoteButton">
+                <i class="fa-solid fa-plus"></i>
+            </button>
         </div>
 
         <div class="bottom-sheet-overlay" id="noteActionsBottomSheetOverlay">
@@ -256,19 +493,30 @@
                         <i class="fa-solid icon fa-thumbtack"></i>
                         <span id="togglePinText">ปักหมุด</span>
                     </button>
+                    <button class="bottom-sheet-option-button" id="toggleArchiveButton">
+                        <i class="fa-solid icon fa-box-archive"></i>
+                        <span id="toggleArchiveText">เก็บถาวร</span>
+                    </button>
+                    <button class="bottom-sheet-option-button" id="toggleHideButton">
+                        <i class="fa-solid icon fa-eye-slash"></i>
+                        <span id="toggleHideText">ซ่อนโน้ต</span>
+                    </button>
+                    <button class="bottom-sheet-option-button" id="changeCategoryButton">
+                        <i class="fa-solid icon fa-folder"></i> เปลี่ยนหมวดหมู่
+                    </button>
                     <button class="bottom-sheet-option-button delete-option" id="deleteNoteButton">
                         <i class="fa-solid icon fa-trash-can"></i> ลบโน้ต
                     </button>
-                    </div>
+                </div>
             </div>
         </div>
 
         <script>
             // Supabase Key Configuration
-            const SUPABASE_URL = 'https://fkntlawaawawiusmjsez.supabase.co';
+const SUPABASE_URL = 'https://fkntlawaawawiusmjsez.supabase.co';
             const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZrbnRsYXdhYXdhd2l1c21qc2V6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDk5ODcxMjAsImV4cCI6MjA2NTU2MzEyMH0.G-_fLzcpvPla3dUYNCV7qh0j-JHo1Ahr5fS7fQkHdpw';
             const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-
+            
             // DOM Elements
             const noteListContainer = document.getElementById('note-list-container');
             const loadingIndicator = document.getElementById('loading-indicator');
@@ -280,21 +528,61 @@
             const togglePinText = document.getElementById('togglePinText');
             const deleteNoteButton = document.getElementById('deleteNoteButton');
             const addNewNoteButton = document.getElementById('addNewNoteButton');
+            const mainHeaderTitle = document.getElementById('main-header-title');
 
-            let currentNoteId = null; // To store the ID of the note being long-clicked
-            let currentIsPinned = false; // To store the current pinned status
+            // Sidebar Elements
+            const sidebarToggleButton = document.getElementById('sidebarToggleButton');
+            const sidebar = document.getElementById('sidebar');
+            const sidebarOverlay = document.getElementById('sidebarOverlay');
+            const sidebarToggleButtons = document.querySelectorAll('.sidebar-list-item-toggle');
+            const pinnedNotesList = document.getElementById('pinned-notes-list');
+            const categoriesList = document.getElementById('categories-list');
+            const archivedNotesList = document.getElementById('archived-notes-list');
+            const hiddenNotesList = document.getElementById('hidden-notes-list');
+            const addCategoryButton = document.getElementById('addCategoryButton');
+            const toggleArchiveButton = document.getElementById('toggleArchiveButton');
+            const toggleArchiveText = document.getElementById('toggleArchiveText');
+            const toggleHideButton = document.getElementById('toggleHideButton');
+            const toggleHideText = document.getElementById('toggleHideText');
+
+            // New: Category Button in Bottom Sheet
+            const changeCategoryButton = document.getElementById('changeCategoryButton');
+
+
+            let currentNoteId = null;
+            let currentIsPinned = false;
+            let currentIsArchived = false;
+            let currentIsHidden = false;
+            let currentFilter = 'all'; // Default filter
+            let currentCategoryId = null; // For category filtering
 
             // --- Function to fetch and display notes ---
             async function fetchAndDisplayNotes() {
-                loadingIndicator.style.display = 'block'; // Show loading indicator
-                noteListContainer.innerHTML = ''; // Clear existing notes
+                loadingIndicator.style.display = 'block';
+                noteListContainer.innerHTML = '';
 
-                const { data: notes, error } = await supabase
+                let query = supabase
                     .from('NOTE')
-                    .select('id, title, content, background, is_pin, updated_at')
+                    .select('id, title, content, background, is_pin, is_archived, is_hidden, category_id, updated_at, NOTE_CATEGORY(name)') // Fetch category name
                     .eq('is_deleted', false) // Filter out deleted notes
                     .order('is_pin', { ascending: false }) // Pinned notes first
                     .order('updated_at', { ascending: false }); // Then by most recent update
+
+                // Apply filters based on currentFilter
+                if (currentFilter === 'pinned') {
+                    query = query.eq('is_pin', true);
+                } else if (currentFilter === 'archived') {
+                    query = query.eq('is_archived', true);
+                } else if (currentFilter === 'hidden') {
+                    query = query.eq('is_hidden', true);
+                } else if (currentFilter === 'category' && currentCategoryId) {
+                    query = query.eq('category_id', currentCategoryId);
+                } else {
+                    // Default view: not archived, not hidden, not pinned (unless explicitly filtered by pinned sidebar)
+                    query = query.eq('is_archived', false).eq('is_hidden', false);
+                }
+
+                const { data: notes, error } = await query;
 
                 if (error) {
                     console.error('Error fetching notes:', error.message);
@@ -303,21 +591,26 @@
                 }
 
                 if (notes.length === 0) {
-                    loadingIndicator.textContent = 'ยังไม่มีโน้ต';
+                    loadingIndicator.textContent = 'ยังไม่มีโน้ตในหมวดหมู่นี้';
+                    if (currentFilter === 'all') {
+                         loadingIndicator.textContent = 'ยังไม่มีโน้ต';
+                    }
                     return;
                 }
 
-                loadingIndicator.style.display = 'none'; // Hide loading indicator
+                loadingIndicator.style.display = 'none';
 
                 notes.forEach(note => {
                     const noteCard = document.createElement('div');
                     noteCard.className = 'note-card';
-                    noteCard.dataset.noteId = note.id; // Store note ID
+                    noteCard.dataset.noteId = note.id;
+                    noteCard.draggable = true; // Make note cards draggable
+                    noteCard.dataset.categoryId = note.category_id; // Store category ID for drag and drop
 
                     // Apply background style
                     if (note.background) {
                         try {
-                            const backgroundData = note.background; 
+                            const backgroundData = note.background;
 
                             if (backgroundData.type === 'color' && backgroundData.value) {
                                 noteCard.style.backgroundColor = backgroundData.value;
@@ -327,16 +620,14 @@
                                 noteCard.style.backgroundSize = 'cover';
                                 noteCard.style.backgroundPosition = 'center';
                                 noteCard.style.backgroundRepeat = 'no-repeat';
-                                noteCard.style.backgroundColor = 'transparent'; // Ensure transparent for image
+                                noteCard.style.backgroundColor = 'transparent';
                             }
                         } catch (e) {
                             console.error('Failed to parse background JSON for note:', note.id, e);
-                            // Fallback to default if JSON is malformed
                             noteCard.style.backgroundColor = '#ffffff';
                             noteCard.style.backgroundImage = 'none';
                         }
                     } else {
-                         // Default background if no background data
                         noteCard.style.backgroundColor = '#ffffff';
                         noteCard.style.backgroundImage = 'none';
                     }
@@ -349,7 +640,7 @@
                         minute: '2-digit'
                     });
 
-                    // Extract plain text from Tiptap content (if content is JSONB from Tiptap)
+                    // Extract plain text from Tiptap content
                     let previewContent = '';
                     if (note.content && typeof note.content === 'object' && note.content.content) {
                         note.content.content.forEach(node => {
@@ -380,16 +671,181 @@
                     `;
                     noteListContainer.appendChild(noteCard);
 
-                    setupInteraction(noteCard, note.id, note.title || 'Untitled Note', note.is_pin);
+                    setupInteraction(noteCard, note.id, note.title || 'Untitled Note', note.is_pin, note.is_archived, note.is_hidden);
                 });
             }
+
+            // --- Function to fetch and display sidebar lists (Pinned, Categories, Archived, Hidden) ---
+            async function fetchAndDisplaySidebarLists() {
+                // Fetch Pinned Notes for sidebar
+                const { data: pinnedNotes, error: pinnedError } = await supabase
+                    .from('NOTE')
+                    .select('id, title')
+                    .eq('is_pin', true)
+                    .eq('is_deleted', false)
+                    .order('updated_at', { ascending: false });
+                
+                if (!pinnedError) {
+                    pinnedNotesList.innerHTML = '';
+                    if (pinnedNotes.length > 0) {
+                        pinnedNotes.forEach(note => {
+                            const listItem = document.createElement('li');
+                            listItem.className = 'sidebar-sub-list-item';
+                            listItem.textContent = note.title || 'Untitled Note';
+                            listItem.dataset.noteId = note.id;
+                            listItem.addEventListener('click', () => {
+                                window.location.href = `edit.html?noteId=${note.id}`;
+                                closeSidebar(); // Close sidebar after navigation
+                            });
+                            pinnedNotesList.appendChild(listItem);
+                        });
+                    } else {
+                        pinnedNotesList.innerHTML = '<li class="sidebar-sub-list-item">ไม่มีโน้ตที่ปักหมุด</li>';
+                    }
+                } else {
+                    console.error('Error fetching pinned notes for sidebar:', pinnedError.message);
+                }
+
+                // Fetch Categories for sidebar
+                const { data: categories, error: categoriesError } = await supabase
+                    .from('NOTE_CATEGORY')
+                    .select('id, name, icon, color') // Select icon and color
+                    .order('name', { ascending: true });
+
+                if (!categoriesError) {
+                    categoriesList.innerHTML = '';
+                    if (categories.length > 0) {
+                        categories.forEach(category => {
+                            const listItem = document.createElement('li');
+                            listItem.className = 'sidebar-sub-list-item';
+                            listItem.dataset.categoryId = category.id; // Store category ID
+
+                            let iconHtml = '';
+                            if (category.icon) {
+                                iconHtml = `<i class="${category.icon} category-icon" style="color: ${category.color || 'inherit'};"></i>`;
+                            }
+                            listItem.innerHTML = `${iconHtml}<span>${category.name}</span>`;
+
+                            listItem.addEventListener('click', () => {
+                                currentFilter = 'category';
+                                currentCategoryId = category.id;
+                                mainHeaderTitle.textContent = `Category: ${category.name}`;
+                                fetchAndDisplayNotes();
+                                closeAllSidebarSubLists();
+                                closeSidebar(); // Close sidebar after filter
+                            });
+                            // Add dragover and drop listeners for category
+                            listItem.addEventListener('dragover', (e) => {
+                                e.preventDefault(); // Allow drop
+                                listItem.style.backgroundColor = '#e0e2e5'; // Highlight on drag over
+                            });
+                            listItem.addEventListener('dragleave', () => {
+                                listItem.style.backgroundColor = ''; // Remove highlight
+                            });
+                            listItem.addEventListener('drop', async (e) => {
+                                e.preventDefault();
+                                listItem.style.backgroundColor = ''; // Remove highlight
+                                const noteId = e.dataTransfer.getData('text/plain');
+                                const newCategoryId = category.id;
+
+                                // Update the note's category_id in Supabase
+                                const { data, error } = await supabase
+                                    .from('NOTE')
+                                    .update({ category_id: newCategoryId })
+                                    .eq('id', noteId);
+
+                                if (error) {
+                                    console.error('Error updating note category:', error.message);
+                                    alert('เกิดข้อผิดพลาดในการย้ายโน้ตไปยังหมวดหมู่');
+                                } else {
+                                    console.log('Note category updated:', data);
+                                    fetchAndDisplayNotes(); // Refresh the main list
+                                    fetchAndDisplaySidebarLists(); // Refresh sidebar categories (in case counts were displayed later)
+                                }
+                                closeSidebar(); // Close sidebar after drag-drop
+                            });
+
+                            categoriesList.appendChild(listItem);
+                        });
+                    } else {
+                        categoriesList.innerHTML = '<li class="sidebar-sub-list-item">ไม่มีหมวดหมู่</li>';
+                    }
+                } else {
+                    console.error('Error fetching categories:', categoriesError.message);
+                }
+
+                // Fetch Archived Notes for sidebar
+                const { data: archivedNotes, error: archivedError } = await supabase
+                    .from('NOTE')
+                    .select('id, title')
+                    .eq('is_archived', true)
+                    .eq('is_deleted', false)
+                    .order('updated_at', { ascending: false });
+
+                if (!archivedError) {
+                    archivedNotesList.innerHTML = '';
+                    if (archivedNotes.length > 0) {
+                        archivedNotes.forEach(note => {
+                            const listItem = document.createElement('li');
+                            listItem.className = 'sidebar-sub-list-item';
+                            listItem.textContent = note.title || 'Untitled Note';
+                            listItem.dataset.noteId = note.id;
+                            listItem.addEventListener('click', () => {
+                                window.location.href = `edit.html?noteId=${note.id}`;
+                                closeSidebar(); // Close sidebar after navigation
+                            });
+                            archivedNotesList.appendChild(listItem);
+                        });
+                    } else {
+                        archivedNotesList.innerHTML = '<li class="sidebar-sub-list-item">ไม่มีโน้ตที่เก็บถาวร</li>';
+                    }
+                } else {
+                    console.error('Error fetching archived notes for sidebar:', archivedError.message);
+                }
+
+                // Fetch Hidden Notes for sidebar
+                const { data: hiddenNotes, error: hiddenError } = await supabase
+                    .from('NOTE')
+                    .select('id, title')
+                    .eq('is_hidden', true)
+                    .eq('is_deleted', false)
+                    .order('updated_at', { ascending: false });
+
+                if (!hiddenError) {
+                    hiddenNotesList.innerHTML = '';
+                    if (hiddenNotes.length > 0) {
+                        hiddenNotes.forEach(note => {
+                            const listItem = document.createElement('li');
+                            listItem.className = 'sidebar-sub-list-item';
+                            listItem.textContent = note.title || 'Untitled Note';
+                            listItem.dataset.noteId = note.id;
+                            listItem.addEventListener('click', () => {
+                                window.location.href = `edit.html?noteId=${note.id}`;
+                                closeSidebar(); // Close sidebar after navigation
+                            });
+                            hiddenNotesList.appendChild(listItem);
+                        });
+                    } else {
+                        hiddenNotesList.innerHTML = '<li class="sidebar-sub-list-item">ไม่มีโน้ตที่ซ่อนอยู่</li>';
+                    }
+                } else {
+                    console.error('Error fetching hidden notes for sidebar:', hiddenError.message);
+                }
+            }
+
 
             // --- Interaction Logic (Long Press / Short Click) ---
             let pressTimer;
             const LONG_PRESS_THRESHOLD = 500; // milliseconds
             let isLongPressTriggered = false; // Flag to track if long press was activated
 
-            function setupInteraction(element, noteId, noteTitle, isPinned) {
+            function setupInteraction(element, noteId, noteTitle, isPinned, isArchived, isHidden) {
+                // Drag start event
+                element.addEventListener('dragstart', (e) => {
+                    e.dataTransfer.setData('text/plain', noteId); // Pass note ID
+                    e.effectAllowed = 'move'; // Indicate that a move operation is allowed
+                });
+
                 // --- Touch Events (for mobile) ---
                 element.addEventListener('touchstart', (e) => {
                     e.preventDefault(); // Prevent default touch actions (e.g., scrolling, context menu)
@@ -398,7 +854,9 @@
                         isLongPressTriggered = true; // Long press confirmed
                         currentNoteId = noteId; // Set ID for bottom sheet actions
                         currentIsPinned = isPinned;
-                        openNoteActionsBottomSheet(noteId, noteTitle, isPinned);
+                        currentIsArchived = isArchived;
+                        currentIsHidden = isHidden;
+                        openNoteActionsBottomSheet(noteId, noteTitle, isPinned, isArchived, isHidden);
                     }, LONG_PRESS_THRESHOLD);
                 }, { passive: false }); // Use { passive: false } to ensure preventDefault works
 
@@ -431,7 +889,9 @@
                             isLongPressTriggered = true; // Long press confirmed
                             currentNoteId = noteId;
                             currentIsPinned = isPinned;
-                            openNoteActionsBottomSheet(noteId, noteTitle, isPinned);
+                            currentIsArchived = isArchived;
+                            currentIsHidden = isHidden;
+                            openNoteActionsBottomSheet(noteId, noteTitle, isPinned, isArchived, isHidden);
                         }, LONG_PRESS_THRESHOLD);
                     }
                 });
@@ -453,13 +913,18 @@
 
 
             // --- Bottom Sheet (Note Actions) Functions ---
-            function openNoteActionsBottomSheet(noteId, noteTitle, isPinned) {
+            function openNoteActionsBottomSheet(noteId, noteTitle, isPinned, isArchived, isHidden) {
                 noteActionsTitle.textContent = noteTitle;
                 togglePinText.textContent = isPinned ? 'เลิกปักหมุด' : 'ปักหมุด';
+                toggleArchiveText.textContent = isArchived ? 'เลิกเก็บถาวร' : 'เก็บถาวร';
+                toggleHideText.textContent = isHidden ? 'เลิกซ่อนโน้ต' : 'ซ่อนโน้ต';
+
                 noteActionsBottomSheetOverlay.classList.add('show');
                 noteActionsBottomSheetOverlay.style.display = 'flex'; // Ensure display is flex
                 noteActionsBottomSheet.dataset.noteId = noteId; // Store current note ID on the sheet
                 noteActionsBottomSheet.dataset.isPinned = isPinned; // Store current pinned status
+                noteActionsBottomSheet.dataset.isArchived = isArchived; // Store current archived status
+                noteActionsBottomSheet.dataset.isHidden = isHidden; // Store current hidden status
             }
 
             function closeNoteActionsBottomSheet() {
@@ -496,6 +961,51 @@
                     console.log('Pin status updated:', data);
                     closeNoteActionsBottomSheet();
                     fetchAndDisplayNotes(); // Refresh the list
+                    fetchAndDisplaySidebarLists(); // Refresh sidebar
+                }
+            });
+
+            // Toggle Archive/Unarchive
+            toggleArchiveButton.addEventListener('click', async () => {
+                const noteId = noteActionsBottomSheet.dataset.noteId;
+                const isArchived = noteActionsBottomSheet.dataset.isArchived === 'true';
+                const newArchiveStatus = !isArchived;
+
+                const { data, error } = await supabase
+                    .from('NOTE')
+                    .update({ is_archived: newArchiveStatus, is_pin: false, is_hidden: false }) // Unpin and unhide if archiving
+                    .eq('id', noteId);
+
+                if (error) {
+                    console.error('Error toggling archive status:', error.message);
+                    alert('เกิดข้อผิดพลาดในการเก็บถาวร/เลิกเก็บถาวรโน้ต');
+                } else {
+                    console.log('Archive status updated:', data);
+                    closeNoteActionsBottomSheet();
+                    fetchAndDisplayNotes();
+                    fetchAndDisplaySidebarLists();
+                }
+            });
+
+            // Toggle Hide/Unhide
+            toggleHideButton.addEventListener('click', async () => {
+                const noteId = noteActionsBottomSheet.dataset.noteId;
+                const isHidden = noteActionsBottomSheet.dataset.isHidden === 'true';
+                const newHideStatus = !isHidden;
+
+                const { data, error } = await supabase
+                    .from('NOTE')
+                    .update({ is_hidden: newHideStatus, is_pin: false, is_archived: false }) // Unpin and unarchive if hiding
+                    .eq('id', noteId);
+
+                if (error) {
+                    console.error('Error toggling hide status:', error.message);
+                    alert('เกิดข้อผิดพลาดในการซ่อน/เลิกซ่อนโน้ต');
+                } else {
+                    console.log('Hide status updated:', data);
+                    closeNoteActionsBottomSheet();
+                    fetchAndDisplayNotes();
+                    fetchAndDisplaySidebarLists();
                 }
             });
 
@@ -503,39 +1013,207 @@
             deleteNoteButton.addEventListener('click', async () => {           	                      
                 const noteId = noteActionsBottomSheet.dataset.noteId;
 
-                await supabase
-                        .from('NOTE')
-                        .update({ is_deleted: true }) // Soft delete
-                        .eq('id', noteId);
-                        closeNoteActionsBottomSheet();
-                        fetchAndDisplayNotes(); // Refresh the list
-                
-                /*if (confirm('คุณแน่ใจหรือไม่ว่าต้องการลบโน้ตนี้?')) {
-                    const { data, error } = await supabase
+                // For simplicity, directly soft-deleting without confirmation in this example.
+                // You might want to add a confirm dialog here.
+                const { data, error } = await supabase
                         .from('NOTE')
                         .update({ is_deleted: true }) // Soft delete
                         .eq('id', noteId);
                         
-                        closeNoteActionsBottomSheet();
-                        fetchAndDisplayNotes(); // Refresh the list
-
-                    if (error) {
-                        console.error('Error deleting note:', error.message);
-                        alert('เกิดข้อผิดพลาดในการลบโน้ต');
-                    } else {
-                        console.log('Note marked as deleted:', data);
-                        closeNoteActionsBottomSheet();
-                        fetchAndDisplayNotes(); // Refresh the list
-                    }
-                }*/
+                if (error) {
+                    console.error('Error deleting note:', error.message);
+                    alert('เกิดข้อผิดพลาดในการลบโน้ต');
+                } else {
+                    console.log('Note marked as deleted:', data);
+                    closeNoteActionsBottomSheet();
+                    fetchAndDisplayNotes(); // Refresh the list
+                    fetchAndDisplaySidebarLists(); // Refresh sidebar
+                }
             });
 
-            // --- Initial Load ---
-            document.addEventListener('DOMContentLoaded', fetchAndDisplayNotes);
+            // New: Change Category Action
+            changeCategoryButton.addEventListener('click', async () => {
+                const noteId = noteActionsBottomSheet.dataset.noteId;
+                await showCategorySelectionDialog(noteId);
+                closeNoteActionsBottomSheet(); // Close bottom sheet after category selection
+            });
 
-            // --- Add New Note Button ---
+            async function showCategorySelectionDialog(noteId) {
+                const { data: categories, error } = await supabase
+                    .from('NOTE_CATEGORY')
+                    .select('id, name')
+                    .order('name', { ascending: true });
+
+                if (error) {
+                    console.error('Error fetching categories:', error.message);
+                    alert('ไม่สามารถโหลดหมวดหมู่ได้: ' + error.message);
+                    return;
+                }
+
+                let categoryOptions = 'เลือกหมวดหมู่ใหม่สำหรับโน้ตนี้:\n';
+                categories.forEach((cat, index) => {
+                    categoryOptions += `${index + 1}. ${cat.name}\n`;
+                });
+                categoryOptions += `\n0. ไม่มีหมวดหมู่ (ลบหมวดหมู่ปัจจุบัน)`;
+
+                const selectedOption = prompt(categoryOptions);
+
+                if (selectedOption === null) { // User clicked Cancel
+                    return;
+                }
+
+                let newCategoryId = null;
+
+                if (selectedOption === '0') { // User chose to remove category
+                    newCategoryId = null;
+                } else {
+                    const selectedIndex = parseInt(selectedOption) - 1;
+                    if (selectedIndex >= 0 && selectedIndex < categories.length) {
+                        newCategoryId = categories[selectedIndex].id;
+                    } else {
+                        alert('ตัวเลือกไม่ถูกต้อง กรุณาป้อนหมายเลขที่ถูกต้อง');
+                        return;
+                    }
+                }
+
+                // Update the note's category_id in Supabase
+                const { data, error: updateError } = await supabase
+                    .from('NOTE')
+                    .update({ category_id: newCategoryId })
+                    .eq('id', noteId);
+
+                if (updateError) {
+                    console.error('Error updating note category:', updateError.message);
+                    alert('เกิดข้อผิดพลาดในการเปลี่ยนหมวดหมู่: ' + updateError.message);
+                } else {
+                    console.log('Note category updated:', data);
+                    fetchAndDisplayNotes(); // Refresh the main list
+                    fetchAndDisplaySidebarLists(); // Refresh sidebar categories
+                }
+            }
+
+
+            // --- Sidebar Interaction ---
+            // New: Toggle sidebar open/close
+            sidebarToggleButton.addEventListener('click', () => {
+                if (!sidebar.classList.contains('open')) {
+                    // เมื่อเปิด: ตั้งค่า display เป็น flex ทันที, แล้วค่อยเพิ่ม class 'open' เพื่อเริ่ม animation
+                    sidebar.style.display = 'flex';
+                    // ใช้ setTimeout เล็กน้อยเพื่อให้เบราว์เซอร์มีเวลา render การเปลี่ยน display ก่อนเริ่ม transition
+                    setTimeout(() => {
+                        sidebar.classList.add('open');
+                        sidebarOverlay.classList.add('show');
+                    }, 10); // หน่วงเวลาเล็กน้อย
+                } else {
+                    // เมื่อปิด: ลบ class 'open' เพื่อเริ่ม animation, แล้วค่อยซ่อน display หลังจาก animation จบ
+                    closeSidebar();
+                }
+            });
+
+            // New: Close sidebar when clicking overlay
+            sidebarOverlay.addEventListener('click', () => {
+                closeSidebar();
+            });
+
+            function closeSidebar() {
+                sidebar.classList.remove('open');
+                sidebarOverlay.classList.remove('show');
+                // ซ่อน display หลังจาก transition จบ (0.3 วินาทีตามที่ตั้งค่าใน CSS)
+                setTimeout(() => {
+                    sidebar.style.display = 'none';
+                }, 300); // ต้องตรงกับค่า transition duration ใน CSS (.sidebar)
+            }
+
+
+            sidebarToggleButtons.forEach(button => {
+                button.addEventListener('click', (e) => {
+                    const parentItem = button.closest('.sidebar-list-item');
+                    const subList = parentItem.querySelector('.sidebar-sub-list');
+                    const filterType = button.dataset.filter;
+
+                    // Close other open sub-lists
+                    document.querySelectorAll('.sidebar-sub-list.show').forEach(list => {
+                        if (list !== subList) {
+                            list.classList.remove('show');
+                            list.previousElementSibling.classList.remove('expanded');
+                        }
+                    });
+
+                    // Toggle current sub-list
+                    subList.classList.toggle('show');
+                    button.classList.toggle('expanded');
+
+                    // Set filter and fetch notes
+                    currentFilter = filterType;
+                    currentCategoryId = null; // Reset category ID when changing main filters
+
+                    if (filterType === 'pinned') {
+                        mainHeaderTitle.textContent = 'Pinned Notes';
+                        fetchAndDisplayNotes();
+                    } else if (filterType === 'categories') {
+                        mainHeaderTitle.textContent = 'Categories';
+                        // When categories are expanded, the main note list remains 'all' or previously selected category
+                        // Notes will only filter when a specific category is clicked.
+                        // For now, let's show all active notes.
+                        currentFilter = 'all'; 
+                        fetchAndDisplayNotes(); 
+                    } else if (filterType === 'archived') {
+                        mainHeaderTitle.textContent = 'Archived Notes';
+                        fetchAndDisplayNotes();
+                    } else if (filterType === 'hidden') {
+                        mainHeaderTitle.textContent = 'Hidden Notes';
+                        fetchAndDisplayNotes();
+                    }
+                    // Do NOT close sidebar here, only when a specific sub-item is clicked or overlay is clicked
+                });
+            });
+
+            function closeAllSidebarSubLists() {
+                document.querySelectorAll('.sidebar-sub-list.show').forEach(list => {
+                    list.classList.remove('show');
+                    list.previousElementSibling.classList.remove('expanded');
+                });
+            }
+
+            // --- Add New Category Button ---
+            addCategoryButton.addEventListener('click', async () => {
+                const categoryName = prompt('ป้อนชื่อหมวดหมู่ใหม่:');
+                if (!categoryName || categoryName.trim() === '') {
+                    return; // User cancelled or entered empty name
+                }
+
+                const iconClass = prompt('ป้อนคลาสไอคอนสำหรับหมวดหมู่ (เช่น "fa-solid fa-folder"):');
+                // Allow empty iconClass
+                
+                const iconColor = prompt('ป้อนรหัสสีไอคอน (เช่น "#FF0000" หรือ "blue"):');
+                // Allow empty iconColor
+
+                const { data, error } = await supabase
+                    .from('NOTE_CATEGORY')
+                    .insert([{ 
+                        name: categoryName.trim(),
+                        icon: iconClass ? iconClass.trim() : null, // Store icon class
+                        color: iconColor ? iconColor.trim() : null  // Store icon color
+                    }]);
+
+                if (error) {
+                    console.error('Error adding new category:', error.message);
+                    alert('เกิดข้อผิดพลาดในการเพิ่มหมวดหมู่: ' + error.message);
+                } else {
+                    console.log('New category added:', data);
+                    fetchAndDisplaySidebarLists(); // Refresh sidebar to show new category
+                }
+            });
+
+
+            // --- Initial Load ---
+            document.addEventListener('DOMContentLoaded', () => {
+                fetchAndDisplayNotes(); // Load initial notes (all active notes)
+                fetchAndDisplaySidebarLists(); // Load sidebar content
+            });
+
+            // --- Add New Note Button (FAB) ---
             addNewNoteButton.addEventListener('click', () => {
-                // Navigate to the edit page to create a new note
                 window.location.href = 'edit.html';
             });
         </script>
