@@ -1,0 +1,1340 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Timeline Chat</title>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
+    <style>
+         @import url("https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700;800&display=swap");
+         :root {
+            --bg-light: #FFFFFF; /* เปลี่ยนเป็นสีขาว */
+            --bg-dark: #1e1e1e; /* ยังคงไว้สำหรับกรณีที่มี Dark Mode อื่นๆ (แต่ในที่นี้จะไม่มีผลถ้าลบปุ่มสลับธีม) */
+            --card-light: #ffffff;
+            --card-dark: #2c2c2c;
+            --text-light: #333;
+            --text-dark: #eee;
+            --primary-color: #1a73e8; /* สีน้ำเงินหลัก */
+            --youtube-red: #ff0000;
+            --note-blue: #1976d2;
+            --emotion-yellow: #fbbc05;
+            --upload-green: #34a853;
+            --moment-purple: #9c27b0;
+        }
+
+        body {
+            font-family: "Space Grotesk", sans-serif;
+            background: var(--bg-light);
+            color: var(--text-light);
+            margin: 0;
+            padding-bottom: 7rem; /* ปรับให้มีที่ว่างสำหรับ input area */
+            max-width: 900px;
+            margin-inline: auto;
+            position: relative; /* สำหรับ bottom sheet และ popover */
+        }
+
+        .chat-container {
+            display: flex;
+            padding: 1rem;
+            flex-direction: column;
+            overflow-y: auto;
+
+            gap: 1rem; /* ลดระยะห่างระหว่าง Card */
+            height: calc(100vh - 7rem); /* ปรับให้เหมาะสม */
+            scroll-behavior: smooth;
+        }
+
+        .chat-card {
+            background: var(--card-light);
+            padding: 1rem;
+            border-radius: 16px;
+            margin-bottom: 0.5rem; /* ลด margin-bottom */
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+            position: relative;
+            transition: background 0.3s;
+            border: 1px solid #ddd; /* เพิ่มเส้นขอบบางๆ */
+        }
+
+        body.dark .chat-card {
+            background: var(--card-dark);
+            border-color: #444;
+        }
+
+        .chat-meta {
+            font-size: 0.75rem;
+            color: gray;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .chat-type-label {
+            display: inline-block;
+            font-size: 0.65rem; /* เล็กลง */
+            color: white;
+            padding: 0.2rem 0.5rem;
+            border-radius: 4px; /* เหลี่ยมขึ้นเล็กน้อย */
+            text-transform: uppercase; /* ตัวพิมพ์ใหญ่ */
+            font-weight: bold;
+        }
+
+        .chat-type-label.emotion { background-color: var(--emotion-yellow); }
+        .chat-type-label.note { background-color: var(--note-blue); }
+        .chat-type-label.upload { background-color: var(--upload-green); }
+        .chat-type-label.youtube { background-color: var(--youtube-red); }
+        .chat-type-label.moment { background-color: var(--moment-purple); } /* เพิ่ม Moment Type */
+
+        .chat-img-group {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(100px, 1fr)); /* ปรับขนาดรูปภาพเริ่มต้น */
+            gap: 0.5rem;
+            margin-top: 0.5rem;
+        }
+
+        .chat-img-group img {
+            width: 100%;
+            border-radius: 8px; /* ปรับขอบโค้ง */
+            object-fit: contain; /* แสดงรูปทั้งหมดในกรอบ */
+            background-color: #eee; /* ป้องกันภาพกระพริบขณะโหลด */
+            cursor: pointer; /* เพิ่ม cursor pointer เพื่อบ่งบอกว่าคลิกได้ */
+        }
+
+        .chat-img-group .more-images {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: rgba(0, 0, 0, 0.5);
+            color: white;
+            font-size: 1.2rem;
+            border-radius: 8px;
+            height: 80px;
+            cursor: pointer; /* เพิ่ม cursor pointer */
+        }
+
+        iframe {
+            width: 100%;
+            height: 200px;
+            margin-top: 0.5rem;
+            border-radius: 12px;
+        }
+
+        .chat-text {
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            line-height: 1.5; /* เพิ่มความห่างบรรทัด */
+            color: var(--text-light); /* ใช้สีตามธีม */
+        }
+
+        body.dark .chat-text {
+            color: var(--text-dark);
+        }
+
+        .note-link {
+            color: var(--note-blue);
+            text-decoration: none; /* ไม่มีขีดเส้นใต้ */
+            cursor: pointer;
+            font-weight: 500;
+        }
+
+        .header-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.5rem 1rem;
+            background: var(--card-light);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            position: sticky;
+            top: 0;
+            z-index: 90;
+            border-bottom-left-radius: 8px;
+            border-bottom-right-radius: 8px;
+        }
+
+        body.dark .header-bar {
+            background: var(--card-dark);
+        }
+
+        .header-bar .left-icons, .header-bar .right-icons {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .header-bar .icon-button {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: gray;
+        }
+
+        .header-bar .title {
+            font-size: 1.1rem;
+            font-weight: 500;
+        }
+
+        .note-form {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: var(--card-light);
+            padding: 1rem;
+            box-shadow: 0 -4px 10px rgba(0, 0, 0, 0.08);
+            border-top-left-radius: 16px;
+            border-top-right-radius: 16px;
+            max-width: 900px;
+            margin: auto;
+            gap: 0.5rem;
+            z-index: 99;
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+            align-items: center; /* จัดให้อยู่ตรงกลาง */
+        }
+
+        body.dark .note-form {
+            background: var(--card-dark);
+        }
+
+        .input-row {
+            display: flex;
+            align-items: flex-end; /* Change to flex-end to align items to the bottom */
+            gap: 0.5rem;
+            width: 100%;
+            position: relative; /* เพื่อให้สามารถจัดตำแหน่งปุ่มภายใน input ได้ */
+        }
+
+        .input-row .text-input-wrapper {
+            flex: 1;
+            position: relative;
+        }
+
+        .input-row textarea {
+            width: 100%; /* Make textarea take full width of its wrapper */
+            box-sizing: border-box;
+            padding: 0.75rem 1rem;
+            padding-right: 80px; /* เพิ่ม padding ด้านขวาเพื่อเว้นที่ให้ปุ่ม */
+            font-size: 1rem;
+            border: 1px solid #ccc;
+            border-radius: 25px; /* ทำให้โค้งมน */
+            margin: 0;
+            background: var(--bg-light);
+            color: var(--text-light);
+            resize: none; /* ป้องกันไม่ให้ผู้ใช้ปรับขนาดเอง */
+            min-height: 40px; /* กำหนดความสูงขั้นต่ำ */
+            overflow-y: auto; /* ให้มี scrollbar เมื่อเนื้อหาเกิน */
+            line-height: 1.5; /* เพื่อให้อ่านง่าย */
+        }
+
+        body.dark .input-row textarea {
+            background: #444;
+            border-color: #555;
+            color: var(--text-dark);
+        }
+
+        .input-row .input-buttons-right {
+            position: absolute;
+            right: 8px; /* ปรับตำแหน่งจากขอบขวาของ textarea */
+            top: 50%;
+            transform: translateY(-50%);
+            display: flex;
+            gap: 0.25rem;
+            height: 100%;
+            align-items: center;
+        }
+
+
+        .input-row .icon-button.send-button {
+            background: var(--primary-color);
+            color: white;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 1.2rem;
+            padding: 0;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+            flex-shrink: 0; /* Prevent shrinking */
+        }
+
+        .input-row .upload-label,
+        .input-row .emoji-trigger-button,
+        .input-row .camera-button { /* เพิ่ม selector สำหรับปุ่มกล้อง */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 32px; /* เล็กลงเล็กน้อย */
+            height: 32px; /* เล็กลงเล็กน้อย */
+            font-size: 1.2rem; /* เล็กลง */
+            cursor: pointer;
+            color: gray;
+            background: none; /* Make sure it doesn't have a default button background */
+            border: none;
+            padding: 0;
+            flex-shrink: 0; /* Prevent shrinking */
+        }
+
+        /* Bottom Sheet Styles */
+        .bottom-sheet-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            display: flex;
+            justify-content: center;
+            align-items: flex-end;
+            z-index: 1000;
+            visibility: hidden;
+            opacity: 0;
+            transition: visibility 0.3s, opacity 0.3s;
+        }
+
+        .bottom-sheet-overlay.active {
+            visibility: visible;
+            opacity: 1;
+        }
+
+        .bottom-sheet {
+            background: var(--card-light);
+            border-top-left-radius: 16px;
+            border-top-right-radius: 16px;
+            width: 100%;
+            max-width: 900px;
+            padding: 1.5rem 1rem;
+            transform: translateY(100%);
+            transition: transform 0.3s ease-out;
+        }
+
+        body.dark .bottom-sheet {
+            background: var(--card-dark);
+        }
+
+        .bottom-sheet-overlay.active .bottom-sheet {
+            transform: translateY(0);
+        }
+
+        .bottom-sheet-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .bottom-sheet-header h3 {
+            margin: 0;
+            font-size: 1.2rem;
+            color: var(--text-light);
+        }
+        body.dark .bottom-sheet-header h3 {
+            color: var(--text-dark);
+        }
+
+        .bottom-sheet-header .close-button {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: gray;
+        }
+
+        .filter-options {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.75rem;
+        }
+
+        .filter-options button {
+            background: var(--bg-light);
+            border: 1px solid #ccc;
+            padding: 0.75rem 1rem;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 1rem;
+            color: var(--text-light);
+            transition: background 0.2s, border-color 0.2s;
+        }
+        body.dark .filter-options button {
+            background: #333;
+            border-color: #555;
+            color: var(--text-dark);
+        }
+
+        .filter-options button.active {
+            background: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+        }
+
+        /* Pinned Cards Container */
+        .pinned-cards-container {
+            position: sticky;
+            top: 60px; /* Adjust based on header bar height */
+            background: var(--card-light);
+            padding: 0.5rem 1rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            z-index: 80;
+            white-space: nowrap; /* Prevent wrapping */
+            overflow-x: auto; /* Enable horizontal scrolling */
+            display: flex;
+            gap: 0.5rem;
+            border-bottom: 1px solid #eee;
+            -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
+        }
+
+        body.dark .pinned-cards-container {
+            background: var(--card-dark);
+            border-bottom-color: #444;
+        }
+
+        .pinned-card {
+            display: inline-flex; /* Use inline-flex to keep items in a row */
+            align-items: center;
+            background: #e0f2f7; /* Light blue background for pinned card */
+            color: #007bb6;
+            padding: 0.4rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            cursor: pointer;
+            flex-shrink: 0; /* Prevent shrinking */
+            gap: 0.5rem;
+            border: 1px solid #b3e5fc;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        body.dark .pinned-card {
+            background: #004c6d;
+            color: #e0f2f7;
+            border-color: #007bb6;
+        }
+
+        .pinned-card .close-pin-button {
+            background: none;
+            border: none;
+            font-size: 1rem;
+            cursor: pointer;
+            color: #007bb6;
+            padding: 0;
+            line-height: 1;
+        }
+
+        body.dark .pinned-card .close-pin-button {
+            color: #e0f2f7;
+        }
+
+        /* Bottom Sheet for Delete/Pin actions */
+        .action-options {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .action-options .action-button {
+            background: var(--bg-light);
+            border: 1px solid #ccc;
+            padding: 0.75rem 1rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1rem;
+            color: var(--text-light);
+            transition: background 0.2s, border-color 0.2s;
+            width: 100%;
+            text-align: center;
+        }
+        body.dark .action-options .action-button {
+            background: #333;
+            border-color: #555;
+            color: var(--text-dark);
+        }
+
+        .action-options .action-button.delete-action {
+            background: #ffe0e0;
+            color: #d32f2f;
+            border-color: #ffcdd2;
+        }
+
+        body.dark .action-options .action-button.delete-action {
+            background: #6a0000;
+            color: #ffcdd2;
+            border-color: #9a0000;
+        }
+
+        .action-options .action-button.pin-action {
+            background: #e0f2f7;
+            color: #007bb6;
+            border-color: #b3e5fc;
+        }
+        body.dark .action-options .action-button.pin-action {
+            background: #004c6d;
+            color: #e0f2f7;
+            border-color: #007bb6;
+        }
+
+        .action-options .action-button.cancel-action {
+            /* default style */
+        }
+
+        /* Adjust chat container height when pinned cards are visible */
+        body.has-pinned-cards .chat-container {
+            height: calc(100vh - 7rem - 4rem); /* Adjust 4rem for pinned container height + padding */
+            padding-top: 0.5rem; /* Space between pinned cards and first chat card */
+        }
+
+        /* Ensure header bar is above pinned container */
+        .header-bar {
+            z-index: 90;
+            position: sticky; /* Keep it sticky */
+            top: 0;
+        }
+
+        /* Emoji Selection Popover */
+        #emojiSelectionPopover {
+            position: absolute;
+            bottom: calc(7rem + 0.5rem); /* Adjust based on note-form height (7rem) + desired gap */
+            left: 50%;
+            transform: translateX(-50%);
+            width: calc(100% - 2rem); /* Full width minus padding */
+            max-width: 400px; /* Optional: limit max width */
+            background: var(--card-light);
+            border-radius: 16px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            padding: 1rem;
+            display: none; /* Hidden by default */
+            z-index: 98; /* Below note-form, above chat */
+            box-sizing: border-box;
+            max-height: 200px; /* Limit height for scrolling */
+            overflow-y: auto; /* Enable scrolling for many emojis */
+            border: 1px solid #ddd;
+        }
+        body.dark #emojiSelectionPopover {
+            background: var(--card-dark);
+            border-color: #444;
+        }
+
+        #emojiSelectionPopover .emoji-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(40px, 1fr)); /* Auto-fit emojis, min size 40px */
+            gap: 0.5rem;
+            justify-items: center; /* Center emojis in their grid cells */
+        }
+
+        #emojiSelectionPopover .emoji-button {
+            font-size: 1.8rem;
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 0.2rem;
+            border-radius: 8px; /* Slightly rounded for individual emoji buttons */
+            transition: background 0.1s;
+        }
+        #emojiSelectionPopover .emoji-button:hover {
+            background: #eee;
+        }
+        body.dark #emojiSelectionPopover .emoji-button:hover {
+            background: #555;
+        }
+
+        /* New Image Modal Styles */
+        .image-modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.8);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1001; /* สูงกว่า bottom sheet */
+            visibility: hidden;
+            opacity: 0;
+            transition: visibility 0.3s, opacity 0.3s;
+        }
+
+        .image-modal-overlay.active {
+            visibility: visible;
+            opacity: 1;
+        }
+
+        .image-modal-content {
+            position: relative;
+            background: #222; /* พื้นหลังสีเข้มสำหรับรูปภาพ */
+            padding: 1rem;
+            border-radius: 16px;
+            max-width: 90vw;
+            max-height: 90vh;
+            overflow: hidden; /* ซ่อน scrollbar หลักของ modal */
+            display: flex;
+            flex-direction: column;
+        }
+
+        .image-modal-close-button {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 36px; /* ใหญ่ขึ้นเล็กน้อย */
+            height: 36px; /* ใหญ่ขึ้นเล็กน้อย */
+            font-size: 1.2rem;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1002; /* เหนือรูปภาพ */
+        }
+
+        .full-image-container {
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start; /* **ปรับตรงนี้** เพื่อให้รูปภาพเริ่มต้นจากด้านบนสุด */
+            align-items: center;
+            width: 100%;
+            height: 100%; /* สำคัญ: ต้องมี height เพื่อให้ overflow ทำงาน */
+            overflow-y: auto; /* เปิด Scroll เมื่อมีหลายรูป/รูปใหญ่ */
+            gap: 10px; /* ระยะห่างระหว่างรูปใน Gallery */
+            padding: 20px; /* Padding ภายใน container */
+            box-sizing: border-box; /* ให้ padding อยู่ข้างใน */
+            scroll-behavior: smooth; /* เพื่อการเลื่อนที่ราบรื่น */
+        }
+
+        .full-image-container img {
+            max-width: 100%;
+            max-height: 100%; /* เพื่อให้มีพื้นที่เหลือด้านบน/ล่าง */
+            object-fit: contain;
+            border-radius: 8px;
+            background-color: #000; /* พื้นหลังสีดำเผื่อรูปเป็น PNG โปร่งใส */
+        }
+
+        /* Camera Modal Styles */
+        #cameraModal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.9);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 1003; /* สูงกว่า modal อื่นๆ */
+            visibility: hidden;
+            opacity: 0;
+            transition: visibility 0.3s, opacity 0.3s;
+        }
+
+        #cameraModal.active {
+            visibility: visible;
+            opacity: 1;
+        }
+
+        #cameraModal video {
+            max-width: 95vw;
+            max-height: 80vh;
+            background-color: black;
+            border-radius: 8px;
+            transform: scaleX(-1); /* Mirror the video for selfie-like experience */
+        }
+
+        #cameraModal .camera-controls {
+            margin-top: 1rem;
+            display: flex;
+            gap: 1rem;
+        }
+
+        #cameraModal .camera-controls button {
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 0.8rem 1.5rem;
+            border-radius: 50px;
+            font-size: 1rem;
+            cursor: pointer;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+        }
+
+        #cameraModal .camera-controls button.close-camera-button {
+            background: #d32f2f; /* Red for close */
+        }
+    </style>
+
+</head>
+
+<body>
+
+    <div class="header-bar">
+        <div class="left-icons">
+            <button class="icon-button"><i class="fas fa-bars"></i></button> <div class="title">I'm overthinking about you,</div>
+        </div>
+        <div class="right-icons">
+            <button class="icon-button"><i class="fas fa-search"></i></button> <button class="icon-button"><i class="fas fa-calendar-alt"></i></button> <button class="icon-button" onclick="showFilterOptions()"><i class="fas fa-filter"></i></button> <button class="icon-button"><i class="fas fa-ellipsis-v"></i></button> </div>
+    </div>
+
+    <div class="pinned-cards-container" id="pinnedCardsContainer">
+        </div>
+
+    <div class="chat-container" id="chatContainer">
+        <div id="notesContainer"></div>
+    </div>
+
+    <div id="emojiSelectionPopover">
+        <div class="emoji-grid">
+            <button class="emoji-button">😊</button>
+            <button class="emoji-button">😢</button>
+            <button class="emoji-button">😭</button>
+            <button class="emoji-button">😡</button>
+            <button class="emoji-button">😍</button>
+            <button class="emoji-button">😴</button>
+            <button class="emoji-button">🥹</button>
+            <button class="emoji-button">😂</button>
+            <button class="emoji-button">🥰</button>
+            <button class="emoji-button">👍</button>
+            <button class="emoji-button">❤️</button>
+            <button class="emoji-button">🔥</button>
+            <button class="emoji-button">🤔</button>
+            <button class="emoji-button">👍</button>
+            <button class="emoji-button">😂</button>
+            <button class="emoji-button">🤩</button>
+            <button class="emoji-button">🥳</button>
+            <button class="emoji-button">🤯</button>
+            <button class="emoji-button">🥺</button>
+            <button class="emoji-button">😇</button>
+            <button class="emoji-button">💔</button>
+            <button class="emoji-button">💯</button>
+            <button class="emoji-button">🎉</button>
+            <button class="emoji-button">✨</button>
+            <button class="emoji-button">💡</button>
+            <button class="emoji-button">💬</button>
+        </div>
+    </div>
+
+    <div class="note-form">
+        <div class="input-row">
+            <button class="icon-button camera-button" title="ถ่ายรูป" onclick="openCameraModal()">
+                <i class="fas fa-camera"></i>
+            </button>
+            <div class="text-input-wrapper">
+                <textarea id="titleInput" placeholder="Type a message..." rows="1"></textarea>
+                <div class="input-buttons-right" id="inputButtonsRight">
+                    <label class="upload-label" title="แนบรูปภาพ">
+                        <i class="fas fa-image"></i> <input type="file" id="imageInput" accept="image/*" multiple hidden />
+                    </label>
+                    <button class="icon-button emoji-trigger-button" onclick="toggleEmojiPopover()">😊</button>
+                </div>
+            </div>
+            <button class="icon-button send-button" onclick="saveFeeling()"><i class="fas fa-paper-plane"></i></button>
+        </div>
+    </div>
+
+    <div class="bottom-sheet-overlay" id="filterBottomSheet">
+        <div class="bottom-sheet">
+            <div class="bottom-sheet-header">
+                <h3>Filter by Type</h3>
+                <button class="close-button" onclick="hideFilterOptions()"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="filter-options" id="filterOptions">
+                <button class="active" data-filter="all">All</button>
+                <button data-filter="emotion">Emotion</button>
+                <button data-filter="note">Note</button>
+                <button data-filter="upload">Upload</button>
+                <button data-filter="youtube">Youtube</button>
+                <button data-filter="moment">Moment</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="bottom-sheet-overlay" id="deleteBottomSheet">
+        <div class="bottom-sheet">
+            <div class="bottom-sheet-header">
+                <h3>Action on Card</h3>
+                <button class="close-button" onclick="hideDeleteOptions()"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="action-options">
+                <button class="action-button delete-action" onclick="confirmDelete()">Delete Card</button>
+                <button class="action-button pin-action" onclick="togglePinCard()">Pin Card</button>
+                <button class="action-button cancel-action" onclick="hideDeleteOptions()">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="image-modal-overlay" id="imageModal">
+        <div class="image-modal-content">
+            <button class="image-modal-close-button" onclick="closeImageModal()"><i class="fas fa-times"></i></button>
+            <div class="full-image-container" id="fullImageContainer">
+                </div>
+        </div>
+    </div>
+
+    <div class="image-modal-overlay" id="cameraModal">
+        <div class="image-modal-content" style="max-width: 95vw; max-height: 95vh; padding: 0;">
+            <button class="image-modal-close-button close-camera-button" onclick="closeCameraModal()"><i class="fas fa-times"></i></button>
+            <video id="cameraFeed" autoplay playsinline style="width: 100%; height: 100%; object-fit: cover;"></video>
+            <div class="camera-controls">
+                <button onclick="capturePhoto()"><i class="fas fa-camera"></i> Capture</button>
+            </div>
+        </div>
+    </div>
+
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@1.35.6/dist/umd/supabase.min.js"></script>
+
+    <script>
+        const supabase = window.supabase.createClient(
+
+            'https://fkntlawaawawiusmjsez.supabase.co',
+
+            'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZrbnRsYXdhYXdhd2l1c21qc2V6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDk5ODcxMjAsImV4cCI6MjA2NTU2MzEyMH0.G-_fLzcpvPla3dUYNCV7qh0j-JHo1Ahr5fS7fQkHdpw'
+
+        );
+
+
+        let currentFilter = 'all'; // สถานะ filter ปัจจุบัน
+        let selectedCard = null; // เก็บ reference ของ card ที่ถูก Long Click
+        let pinnedCards = []; // Array ที่จะเก็บข้อมูลที่ดึงมาจาก DB
+
+        // No longer attach click handlers directly here for emojis as they are in a popover
+        // document.querySelectorAll(".emoji-buttons button").forEach(btn => { ... });
+
+        async function saveFeeling() {
+            const title = document.getElementById("titleInput").value.trim();
+            const imageInput = document.getElementById("imageInput");
+            if (!title && !imageInput.files.length) {
+                return;
+            }
+
+            if (imageInput.files.length) {
+                const urls = [];
+                for (let file of imageInput.files) {
+                    const formData = new FormData();
+                    formData.append("file", file);
+
+                    const res = await fetch("https://uploads2.ballland10.workers.dev/upload", {
+                        method: "POST",
+                        body: formData
+                    });
+
+                    const json = await res.json();
+                    if (json.error) {
+                        alert("❌ Upload Failed: " + json.error);
+                        return;
+                    }
+                    urls.push(json.url);
+                }
+                await supabase.from('uploads').insert({
+                    file_url: JSON.stringify(urls),
+                    note: title
+                });
+            } else {
+                await supabase.from('feelings').insert({
+                    title
+                });
+            }
+
+            document.getElementById("titleInput").value = '';
+            imageInput.value = '';
+            fetchTimeline();
+        }
+
+        async function deleteItem(type, id) {
+            // Updated table name logic: 'note' now maps to 'NOTE'
+            const table = type === 'emotion' || type === 'youtube' ? 'feelings' : (type === 'note' ? 'NOTE' : type + 's');
+            const {
+                error
+            } = await supabase.from(table).delete().eq('id', id);
+
+            if (error) console.error(error);
+            fetchTimeline(); // เรียก fetchTimeline เพื่ออัปเดต UI และ Pinned Cards
+        }
+
+        async function fetchTimeline() {
+            const [feelingsRes, notesRes, uploadsRes] = await Promise.all([
+                supabase.from('feelings').select('*, is_pinned').order('created_at', {
+                    ascending: true
+                }),
+                // Changed from 'notes' to 'NOTE' and added is_showtimeline filter
+                // Ensure 'title' column exists in your 'NOTE' table and contains the note text.
+                // If your note content is in a different column (e.g., 'content' or 'note_text'),
+                // you might need to adjust `item.title` in `renderTimeline` and when populating pinnedCards.
+                supabase.from('NOTE').select('*, is_pinned, is_showtimeline').eq('is_showtimeline', true).order('created_at', { 
+                    ascending: true
+                }),
+                supabase.from('uploads').select('*, is_pinned').order('created_at', {
+                    ascending: false
+                })
+            ]);
+
+            if (feelingsRes.error || notesRes.error || uploadsRes.error) {
+                console.error(feelingsRes.error || notesRes.error || uploadsRes.error);
+                return;
+            }
+
+            let timeline = [];
+            pinnedCards = []; // เคลียร์ pinnedCards ก่อนดึงข้อมูลใหม่
+
+            feelingsRes.data.forEach(item => {
+                const isYoutube = isYouTubeUrl(item.title);
+                const itemType = isYoutube ? 'youtube' : 'emotion';
+                timeline.push({
+                    type: itemType,
+                    ...item
+                });
+                if (item.is_pinned) {
+                    // ดึง thumbnailUrl สำหรับ pinned card ที่เป็น youtube
+                    let thumbnailUrl = '';
+                    if (itemType === 'youtube') {
+                        const vid = extractYouTubeID(item.title);
+                        if (vid) thumbnailUrl = `https://img.youtube.com/vi/${vid}/mqdefault.jpg`;
+                    }
+                    pinnedCards.push({ type: itemType, id: item.id, title: item.title, thumbnailUrl: thumbnailUrl });
+                }
+            });
+
+            notesRes.data.forEach(item => {
+                timeline.push({
+                	 ...item,
+                    type: 'note'
+                    // `item.title` here refers to the 'title' column from the 'NOTE' table.
+                    // If your actual note text is in a different column (e.g., 'content'),
+                    // you should change `item.title` to `item.content` here and in `pinnedCards.push` below.
+                   
+                });
+                if (item.is_pinned) {
+                    pinnedCards.push({ type: 'note', id: item.id, title: item.title, thumbnailUrl: '' });
+                }
+            });
+
+            uploadsRes.data.forEach(item => {
+                timeline.push({
+                    type: 'upload',
+                    ...item
+                });
+                if (item.is_pinned) {
+                    let urls = [];
+                    try {
+                        urls = JSON.parse(item.file_url);
+                        if (!Array.isArray(urls)) urls = [urls];
+                    } catch {
+                        urls = [item.file_url];
+                    }
+                    const thumbnailUrl = urls.length > 0 ? urls[0] : ''; // ใช้รูปแรกเป็น thumbnail
+                    pinnedCards.push({ type: 'upload', id: item.id, title: item.note || '', thumbnailUrl: thumbnailUrl });
+                }
+            });
+
+            timeline.sort((a, b) => new Date(a.created_at) - new Date(b.created_at));
+
+            // Apply filter
+            const filteredTimeline = currentFilter === 'all' ? timeline : timeline.filter(item => item.type === currentFilter);
+
+            await renderTimeline(filteredTimeline); 
+    
+            renderTimeline(filteredTimeline);
+            renderPinnedCards(); // เรียก renderPinnedCards หลังจาก fetch และ populate แล้ว
+            scrollToBottom();
+        }
+
+        async function renderTimeline(items) { // ฟังก์ชันยังคงเป็น async
+    const container = document.getElementById('notesContainer');
+    container.innerHTML = '';
+
+    // ลบส่วนที่เคยใช้ Promise.all(imageLoadPromises) ออกไป
+
+    items.forEach(item => {
+        const card = document.createElement('div');
+        card.className = 'chat-card';
+        card.setAttribute('data-type', item.type);
+        card.setAttribute('data-id', item.id);
+        
+        // Long Click Event Listener
+                let longPressTimer;
+                const longPressDuration = 500; // milliseconds
+
+                card.addEventListener('touchstart', (e) => {
+                    longPressTimer = setTimeout(() => {
+                        showDeleteOptions(card);
+                    }, longPressDuration);
+                });
+
+                card.addEventListener('touchend', (e) => {
+                    clearTimeout(longPressTimer);
+                });
+
+                card.addEventListener('touchmove', (e) => {
+                    clearTimeout(longPressTimer); // Cancel if user moves finger
+                });
+
+
+        const time = new Date(item.created_at).toLocaleString('th-TH', {
+            month: 'short', 
+            day: 'numeric',
+            year: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit',
+            hour12: false
+        }).replace('พ.ค.', 'พฤษภาคม');
+
+        let html = `<div class="chat-meta"><span class="chat-type-label ${item.type}">${item.type}</span> 🕒 ${time}</div>`;
+
+        if (item.type === 'emotion') {
+            html += `<div class="chat-text">${item.title}</div>`;
+        } else if (item.type === 'youtube') {
+            const vid = extractYouTubeID(item.title);
+            html += `<div class="chat-text">${item.title}</div>`;
+            if (vid) html += `<iframe src="https://www.youtube.com/embed/${vid}" frameborder="0" allowfullscreen></iframe>`;
+        } else if (item.type === 'note') {
+            html += `<div class="chat-text"><span class="note-link" onclick="openNote('${item.id}')">${item.title}</span></div>`;
+        } else if (item.type === 'upload') {
+            html += `<div class="chat-text">${item.note || ''}</div>`;
+            let urls = [];
+            try {
+                urls = JSON.parse(item.file_url);
+                if (!Array.isArray(urls)) urls = [urls];
+            } catch {
+                urls = [item.file_url];
+            }
+
+            html += `<div class="chat-img-group">`;
+            const imagesToShow = urls.slice(0, 4); 
+            imagesToShow.forEach(url => {
+                html += `<img src="${url}" alt="upload" loading="lazy" onclick="openImageModal('${url}')"/>`;
+            });
+
+            if (urls.length > 4) {
+                html += `<div class="more-images" onclick="openImageModal([${urls.map(url => `'${url}'`).join(',')}])">`;
+                html += `+${urls.length - 4}`;
+                html += `</div>`;
+            }
+            html += `</div>`;
+        }
+
+        card.innerHTML = html;
+        container.appendChild(card); // เพิ่ม Card เข้าไปใน DOM ก่อน
+    });
+
+    // *** เลื่อนลงทันที หลังจากที่การ์ดทั้งหมดถูกเพิ่มเข้า DOM ***
+    scrollToBottom();
+
+    // *** แนบ Event Listener สำหรับการโหลดรูปภาพแต่ละรูป เพื่อเลื่อนอีกครั้งเมื่อรูปภาพโหลดเสร็จ ***
+    const allImages = container.querySelectorAll('.chat-img-group img');
+    allImages.forEach(img => {
+        // หากรูปภาพยังโหลดไม่เสร็จ (เช่น ไม่ได้มาจาก cache) ให้แนบ listener
+        if (!img.complete) {
+            img.onload = () => scrollToBottom(); // เมื่อรูปภาพโหลดเสร็จ ให้เรียก scrollToBottom
+            img.onerror = () => scrollToBottom(); // หากโหลดผิดพลาด ก็ให้เรียก scrollToBottom เช่นกัน
+        }
+    });
+
+    // ไม่ต้องมี Promise.all() แล้ว
+}
+        
+        function scrollToBottom() {
+            const container = document.getElementById("chatContainer");
+            container.scrollTop = container.scrollHeight;
+        }
+
+        function extractYouTubeID(url) {
+            const match = url.match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/|shorts\/))([^\s&?/]+)/);
+            return match ? match[1] : '';
+        }
+
+        // Updated isYouTubeUrl to correctly identify YouTube URLs from various forms
+        function isYouTubeUrl(url) {
+            return url.includes('youtube.com/') || url.includes('youtu.be/');
+        }
+
+        function openNote(id) {
+            location.href = `/note.html?id=${id}`;
+        }
+
+        // Filter Logic
+        function showFilterOptions() {
+            document.getElementById('filterBottomSheet').classList.add('active');
+        }
+
+        function hideFilterOptions() {
+            document.getElementById('filterBottomSheet').classList.remove('active');
+        }
+
+        document.getElementById('filterOptions').addEventListener('click', (event) => {
+            if (event.target.tagName === 'BUTTON') {
+                document.querySelectorAll('#filterOptions button').forEach(btn => btn.classList.remove('active'));
+                event.target.classList.add('active');
+                currentFilter = event.target.dataset.filter;
+                fetchTimeline();
+                hideFilterOptions(); // ปิด Bottom Sheet หลังจากเลือก Filter
+            }
+        });
+
+        // Functions for Delete/Pin Bottom Sheet
+        function showDeleteOptions(cardElement) {
+            selectedCard = cardElement;
+            document.getElementById('deleteBottomSheet').classList.add('active');
+
+            // Update Pin/Unpin button text
+            const pinButton = document.querySelector('#deleteBottomSheet .pin-action');
+            const type = selectedCard.getAttribute('data-type');
+            const id = parseInt(selectedCard.getAttribute('data-id')); // Ensure ID is integer for comparison
+            const isPinned = pinnedCards.some(p => p.type === type && p.id === id); 
+            pinButton.textContent = isPinned ? 'Unpin Card' : 'Pin Card';
+        }
+
+        function hideDeleteOptions() {
+            document.getElementById('deleteBottomSheet').classList.remove('active');
+            selectedCard = null;
+        }
+
+        async function confirmDelete() {
+            if (selectedCard) {
+                const type = selectedCard.getAttribute('data-type');
+                const id = selectedCard.getAttribute('data-id');
+                await deleteItem(type, id); // deleteItem จะเรียก fetchTimeline ให้อัตโนมัติ
+                hideDeleteOptions();
+            }
+        }
+
+        async function togglePinCard() {
+            if (selectedCard) {
+                const type = selectedCard.getAttribute('data-type');
+                const id = parseInt(selectedCard.getAttribute('data-id')); // Ensure ID is integer
+                // Updated table name logic: 'note' now maps to 'NOTE'
+                const table = type === 'emotion' || type === 'youtube' ? 'feelings' : (type === 'note' ? 'NOTE' : type + 's');
+
+                // ตรวจสอบสถานะปัจจุบันของ is_pinned จาก pinnedCards array
+                const isCurrentlyPinned = pinnedCards.some(p => p.type === type && p.id === id);
+                const newPinnedState = !isCurrentlyPinned;
+
+                const { data, error } = await supabase.from(table)
+                    .update({ is_pinned: newPinnedState })
+                    .eq('id', id);
+
+                if (error) {
+                    console.error('Error updating pin status:', error);
+                    alert('Failed to update pin status.');
+                } else {
+                    console.log('Pin status updated:', data);
+                    fetchTimeline(); // เรียก fetchTimeline เพื่อดึงข้อมูลและอัปเดต UI ทั้งหมด
+                }
+                hideDeleteOptions();
+            }
+        }
+
+        // Render Pinned Cards
+        function renderPinnedCards() {
+            const container = document.getElementById('pinnedCardsContainer');
+            container.innerHTML = '';
+
+            if (pinnedCards.length > 0) {
+                document.body.classList.add('has-pinned-cards');
+            } else {
+                document.body.classList.remove('has-pinned-cards');
+            }
+
+            pinnedCards.forEach(pin => {
+                const pinnedCardDiv = document.createElement('div');
+                pinnedCardDiv.className = 'pinned-card';
+                pinnedCardDiv.setAttribute('data-type', pin.type);
+                pinnedCardDiv.setAttribute('data-id', pin.id);
+                pinnedCardDiv.onclick = () => scrollToCard(pin.id, pin.type);
+
+                let contentHtml = `<span class="chat-type-label ${pin.type}">${pin.type}</span>`;
+                if (pin.thumbnailUrl) {
+                    contentHtml += `<img src="${pin.thumbnailUrl}" alt="thumbnail" style="width:30px; height:30px; border-radius:50%; object-fit:cover;">`;
+                }
+                contentHtml += `<span>${pin.title.substring(0, 30)}${pin.title.length > 30 ? '...' : ''}</span>`;
+                contentHtml += `<button class="close-pin-button" onclick="event.stopPropagation(); removePin('${pin.type}', '${pin.id}')"><i class="fas fa-times"></i></button>`;
+
+                pinnedCardDiv.innerHTML = contentHtml;
+                container.appendChild(pinnedCardDiv);
+            });
+        }
+
+        function removePin(type, id) {
+            const actualId = parseInt(id);
+            const actualType = type;
+            // Updated table name logic: 'note' now maps to 'NOTE'
+            const table = actualType === 'emotion' || actualType === 'youtube' ? 'feelings' : (actualType === 'note' ? 'NOTE' : actualType + 's');
+
+            supabase.from(table)
+                .update({ is_pinned: false })
+                .eq('id', actualId)
+                .then(({ data, error }) => {
+                    if (error) {
+                        console.error('Error unpinning from DB:', error);
+                        alert('Failed to unpin card.');
+                    } else {
+                        console.log('Unpinned from DB:', data);
+                        fetchTimeline(); // Re-fetch to update all UI
+                    }
+                });
+        }
+
+
+        function scrollToCard(id, type) {
+            const cardElement = document.querySelector(`.chat-card[data-id="${id}"][data-type="${type}"]`);
+            if (cardElement) {
+                cardElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        }
+
+        // New Emoji Popover Functions
+        function toggleEmojiPopover() {
+            const popover = document.getElementById('emojiSelectionPopover');
+            popover.style.display = popover.style.display === 'block' ? 'none' : 'block';
+        }
+
+        // Attach click handlers to emojis inside the popover
+        document.querySelectorAll("#emojiSelectionPopover .emoji-button").forEach(btn => {
+            btn.onclick = () => {
+                const input = document.getElementById("titleInput");
+                input.value += btn.textContent + " ";
+                input.focus();
+                toggleEmojiPopover(); // Hide after selection
+            };
+        });
+
+        // Hide emoji popover when clicking outside
+        document.addEventListener('click', function(event) {
+            const popover = document.getElementById('emojiSelectionPopover');
+            const trigger = document.querySelector('.emoji-trigger-button');
+            const inputField = document.getElementById('titleInput');
+
+            // If popover is visible and click is not on popover itself, trigger, or input field
+            if (popover.style.display === 'block' && 
+                !popover.contains(event.target) && 
+                !trigger.contains(event.target) &&
+                event.target !== inputField) { // Also don't close if clicking input field
+                popover.style.display = 'none';
+            }
+        });
+
+        // Image Modal Functions
+        function openImageModal(data) {
+        	
+            const modal = document.getElementById('imageModal');
+            const imageContainer = document.getElementById('fullImageContainer');
+            imageContainer.innerHTML = ''; // Clear previous images
+
+            if (typeof data === 'string') { // Single image URL
+                const img = document.createElement('img');
+                img.src = data;
+                imageContainer.appendChild(img);
+            } else if (Array.isArray(data)) { // Array of image URLs for gallery
+                data.forEach(url => {
+                    const img = document.createElement('img');
+                    img.src = url;
+                    imageContainer.appendChild(img);
+                });
+            }
+
+
+            modal.classList.add('active');
+        }
+
+        function closeImageModal() {
+            document.getElementById('imageModal').classList.remove('active');
+            document.getElementById('fullImageContainer').innerHTML = ''; // Clear images when closing
+        }
+
+        // Close modal if clicking outside content
+        document.getElementById('imageModal').addEventListener('click', (event) => {
+            if (event.target.id === 'imageModal') { // Only if clicked on the overlay itself, not its children
+                closeImageModal();
+            }
+        });
+        
+                // Camera Functions
+        const cameraModal = document.getElementById('cameraModal');
+        const cameraFeed = document.getElementById('cameraFeed');
+
+        async function openCameraModal() {
+            cameraModal.classList.add('active');
+            try {
+                // Request access to the camera
+                cameraStream = await navigator.mediaDevices.getUserMedia({ video: true });
+                cameraFeed.srcObject = cameraStream;
+            } catch (err) {
+                console.error("Error accessing camera: ", err);
+                alert("Cannot access camera. Please ensure you have granted camera permissions.");
+                closeCameraModal(); // Close modal if camera access fails
+            }
+        }
+
+        function closeCameraModal() {
+            if (cameraStream) {
+                cameraStream.getTracks().forEach(track => track.stop()); // Stop all tracks (video, audio)
+                cameraStream = null;
+            }
+            cameraFeed.srcObject = null; // Disconnect the stream from the video element
+            cameraModal.classList.remove('active');
+        }
+
+         function capturePhoto() {
+            const canvas = document.createElement('canvas');
+            canvas.width = cameraFeed.videoWidth;
+            canvas.height = cameraFeed.videoHeight;
+            const context = canvas.getContext('2d');
+            context.drawImage(cameraFeed, 0, 0, canvas.width, canvas.height);
+
+            canvas.toBlob(async (blob) => {
+                if (blob) {
+                    const capturedFile = new File([blob], 'captured_image.png', { type: 'image/png' });
+                    const imageInput = document.getElementById("imageInput");
+
+                    // สร้าง DataTransfer object และเพิ่มไฟล์เข้าไป
+                    const dataTransfer = new DataTransfer();
+                    dataTransfer.items.add(capturedFile);
+
+                    // กำหนด files ของ input element ด้วย DataTransfer's files
+                    // หมายเหตุ: การทำเช่นนี้เป็นการจัดการ property 'files' ของ input โดยตรง
+                    // ซึ่งโดยทั่วไปแล้วจะถูกจำกัดด้วยมาตรการความปลอดภัยของเบราว์เซอร์
+                    // หากไม่สามารถอัปโหลดได้ หรือไม่แสดงผลบน UI ของ input file
+                    // แสดงว่าเป็นข้อจำกัดด้านความปลอดภัยของเบราว์เซอร์นั้นๆ
+                    imageInput.files = dataTransfer.files;
+
+                    // เรียกใช้ saveFeeling ซึ่งจะอ่านไฟล์จาก imageInput โดยอัตโนมัติ
+                    //await saveFeeling();
+                    closeCameraModal(); // ปิด Modal กล้องหลังจากถ่ายภาพเสร็จ
+                } else {
+                    console.error('Failed to create blob from canvas.');
+                    alert('Could not capture photo.');
+                }
+            }, 'image/png');
+        }
+
+
+        // Toggle visibility of upload and emoji buttons based on input focus/content
+        const titleInput = document.getElementById("titleInput");
+        const inputButtonsRight = document.getElementById("inputButtonsRight");
+
+        function toggleInputButtons() {
+            if (titleInput.value.length > 0 || document.activeElement === titleInput) {
+                inputButtonsRight.style.display = 'none';
+            } else {
+                inputButtonsRight.style.display = 'flex';
+            }
+        }
+
+        titleInput.addEventListener('focus', toggleInputButtons);
+        titleInput.addEventListener('blur', toggleInputButtons);
+        titleInput.addEventListener('input', toggleInputButtons);
+        
+
+
+        // Initial load
+        window.addEventListener('DOMContentLoaded', () => {
+            fetchTimeline(); // fetchTimeline จะจัดการการดึง pinned cards และ render เอง
+        });
+    </script>
+
+</body>
+
+</html>
