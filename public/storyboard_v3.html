@@ -1,0 +1,2671 @@
+<!DOCTYPE html>
+<html lang="th">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <title>Storyboard</title>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" />
+        <link rel="stylesheet" href="./css/navbar.css" />
+        <script src="https://www.youtube.com/iframe_api"></script>
+
+        <link rel="stylesheet" href="./node_modules/material-icons/iconfont/material-icons.css" />
+        <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@1.35.6/dist/umd/supabase.min.js"></script>
+        <style>
+
+
+
+
+
+
+
+
+                @font-face {
+                  font-family: 'Eng';
+                  src: url('./css/SFProDisplay-Regular.woff2') format('woff2');
+                  unicode-range: U+0000-00FF;
+                }
+                @font-face {
+                  font-family: 'Thai';
+                  src: url('./css/SFThonburi-Regularr.woff2') format('woff2');
+                  unicode-range: U+0E00-0E7F;
+                }
+                @font-face {
+                  font-family: 'Emoji';
+                  src: url('./css/NotoColorEmoji.ttf') format('truetype');
+                  unicode-range: U+1F300-1FAFF, U+2600-26FF;
+                }
+                @font-face {
+                   font-family: 'Playwrite HU';
+                   src: url('./css/PlaywriteHU.ttf') format('truetype');
+                }
+
+
+
+
+
+
+
+
+                html {
+              font-size: 85%; /* 0.85 × 16px = 13.6px */
+            }
+
+
+
+
+
+
+                    body {
+                        font-family: 'Eng', 'Thai', 'Emoji', sans-serif;
+                        color: #0f1419;'
+                        margin: 0;
+                        padding-bottom: 0;
+                        max-width: 900px;
+                        margin-inline: auto;
+                        position: relative;
+                    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                    .feed-container {
+                        display: flex;
+
+                        flex-direction: column;
+                        overflow-y: auto;
+                        padding-top: 46px !important;
+                        height: calc(100vh - 60px); /*Adjust based on header height, minus potential pinned cards */
+                        scroll-behavior: smooth;
+                    }
+
+
+
+                    .feed-post {
+                        background: #ffffff;
+                        padding: 16px 20px;
+                        position: relative;
+                        border: 1px solid #eff3f4;
+                    }
+
+                    .feed-post-cardview .feed-post {
+                    	margin: 1rem;
+                    	border-radius: 8px; /*16*/
+                        box-shadow: 0 2px 4px rgba(239, 243, 244, 1); /*4,8*/
+                        transition: background 0.3s;
+                        margin-bottom: 16px;
+                    }
+
+                    .feed-post-hidden {
+                        padding: 6px 20px;
+                        background: #eff3f4;
+                        color: #536471;
+                        }
+                        .feed-post-hidden-icons {
+
+                        }
+
+
+
+
+
+
+                    .post-meta {
+                        gap: 0.5rem;
+                        display: flex;
+                         justify-content: space-between;
+                        align-items: center;
+                    }
+                    
+                    .post-type-useraccount{
+                        display: inline-flex;
+                                      align-items: center;
+                        font-size: 1.1rem;
+                        font-weight: bold;
+                        }
+                        
+                        .profile-container {
+  width: 32px; /* กำหนดขนาดความกว้างของรูป */
+  height: 32px; /* กำหนดขนาดความสูงของรูป ให้เท่ากับความกว้าง */
+  overflow: hidden; /* ซ่อนส่วนที่เกินจากขอบเขต */
+  border-radius: 50%; /* ทำให้ขอบโค้งมนเป็นวงกลม */
+  margin-right:8px;
+}
+
+.profile-pic {
+  width: 100%;
+  height: 100%;
+  object-fit: cover; /* ทำให้รูปภาพเต็มพื้นที่โดยไม่ผิดสัดส่วน */
+}
+
+                    .post-type-label {
+                        display: inline-flex;
+                        Padding: 4px 16px;
+                        align-items: center;
+                        font-size: 0.925rem;
+                        color: white;
+                        border-radius: 100px;
+                        text-transform: uppercase;
+                        font-weight: bold;
+                    }
+                    .post-type-label.mood { background-color:  #0f1419}
+                    .post-type-label.note { background-color: #ffb300}
+                    .post-type-label.ig-pics {
+            		  background: #f09433; /* fallback for older browsers */
+            		  background: -moz-linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%);
+            		  background: -webkit-linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%);
+            		  background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%);
+            		  filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#f09433', endColorstr='#bc1888',GradientType=1 );
+            		 }
+                    .post-type-label.youtube { background-color: #ff0000 }
+                    .post-type-label.quote { background-color: #03a9f4; }
+
+
+                    .post-type-icon {
+                            font-family: 'Material Icons';
+                            font-weight: normal;
+                            font-style: normal;
+            			    font-size: 0.925rem;
+            			    line-height: 1;
+            			    letter-spacing: normal;
+            			    text-transform: none;
+            			    display: inline-block;
+            			    white-space: nowrap;
+            			    word-wrap: normal;
+            			    direction: ltr;
+            		        -webkit-font-smoothing: antialiased;
+            		        margin-right: 4px;
+                     }
+
+                    .post-type-time {
+                    	font-size: 0.875rem; /*0.9rem*/
+                        color: #536471;
+                        flex-ditection: row-reverse;
+                    }
+
+
+
+
+
+
+
+
+
+
+                   .post-text {
+                        white-space: pre-wrap;
+                        word-wrap: break-word;
+                        line-height: 1.5;
+                        font-size:1.1rem;
+
+                        margin-top: 12px;
+                    }
+
+                    .feed-post.child-post {
+                    margin-top:12px;
+                    border-radius: 12px;
+               /* margin-left: 20px; /* เพิ่มระยะห่างด้านซ้าย */
+                border-left: 2px solid #eff3f4; /* เพิ่มเส้นแบ่งทางซ้าย */
+               /* padding-left: 16px; /* ระยะห่างระหว่างเส้นกับเนื้อหา */
+                /*border-top: none; /* ลบเส้นขอบด้านบน */
+                   }
+
+
+
+
+                    .post-quote {
+                    	margin-top: 12px;
+                    	position: relative;
+                        white-space: pre-wrap;
+                        word-wrap: break-word;
+                        line-height: 1.5;
+                        font-size:1.1rem;
+                        /*'font-style: italic;*/
+                        padding-left: 15px;
+                        color: black;
+                    }
+
+                    .post-quote::before {
+                       content: '';
+                       position: absolute;
+                       top: 0;
+                       left: 0;
+                      width: 5px;
+                      height: 100%;
+                      background-color: #536471;
+                      border-radius: 5px;
+                      }
+
+
+
+
+
+                .post-tags {
+              display: flex;
+              flex-wrap: wrap; /* ให้แถวใหม่เกิดขึ้นถ้าไม่พอพื้นที่ */
+              gap: 8px; /* ช่องว่างระหว่าง tag ทั้งแนวนอนและแนวตั้ง */
+              margin-top: 12px;
+            }
+
+            .post-tags .tag {
+              font-size: 1.1rem;
+              color: white;
+              white-space: nowrap; /* ไม่ให้ข้อความ tag ห่อบรรทัด */
+              user-select: none;
+            }
+
+
+
+
+                  .post-location {
+                      margin-top: 12px;
+                     padding: 8px 16px;
+                     border-radius:12px;
+                     border: 1px solid #eff3f4;
+                     font-size: 1.1rem;
+                     display:flex;
+                     align-items:center;
+                     gap:12px;
+
+                      }
+
+                      .post-location-icon {
+                            font-family: 'Material Icons';
+                            font-weight: normal;
+                            font-style: normal;
+            			    font-size: 36px;
+            			color: red;
+            			    line-height: 1;
+            			    letter-spacing: normal;
+            			    text-transform: none;
+            			    display: inline-block;
+            			    white-space: nowrap;
+            			    word-wrap: normal;
+            			    direction: ltr;
+            		        -webkit-font-smoothing: antialiased;
+
+                     }
+
+                    .location-title {
+                        font-weight:bold;
+                     }
+
+
+
+
+
+
+
+
+
+                  .yt-card {
+                      margin-top: 12px;
+                     background:#222;
+                     padding:12px;
+                     border-radius:12px;
+                     max-width:500px;
+                     color:#fff;
+                     display:flex;
+                     align-items:center;
+                     gap:12px;
+                  }
+
+
+                  .yt-thumb {
+                      aspect-ratio: 16 / 9;
+                     border-radius:8px;
+                     object-fit:cover;
+                     width:120px; height:80px;
+
+                  }
+
+                  .yt-title {
+                      font-weight:bold;
+                      font-size:1rem;
+                      white-space:nowrap;
+                      overflow:hidden;
+                      text-overflow:ellipsis;
+                  }
+
+                  .yt-channel {
+                     color:#ccc;
+                     font-size:0.85rem;
+                  }
+
+                  .controls button {
+              background: #444;
+              border: none;
+              color: white;
+              font-size: 24px;
+              border-radius: 50%;
+              padding: 8px;
+
+              transition: background 0.2s;
+            }
+
+            .controls button {
+              background: #444;
+              border: none;
+              color: white;
+              font-size: 24px;
+              border-radius: 50%;
+              padding: 8px;
+
+              transition: background 0.2s;
+            }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            /*
+                สำหรับ Card View ถ้ามีการ Group Post
+                อาจต้องพิจารณาปรับสไตล์เพิ่มเติม
+            */
+            .feed-post-cardview .feed-post.child-post {
+                margin-left: 20px;
+                border-left: 2px solid #ccc;
+                padding-left: 16px;
+                border-radius: 0;
+                margin-top: 0;
+                margin-bottom: 0;
+                box-shadow: none;
+            }
+
+            .hidden-posts-container {
+                display: flex;
+                flex-direction: column;
+                gap: 1rem;
+                padding: 1rem 0;
+            }
+
+            .hidden-post-card {
+                background: #f1f1f1;
+                border-radius: 8px;
+                padding: 1rem;
+                position: relative;
+                box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            }
+
+            .hidden-post-card .post-text {
+                color: #555;
+            }
+
+
+
+
+
+
+
+
+                    .post-img-group {
+                        display: grid;
+                        grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+                        gap: 0.5rem;
+                        margin-top: 0.5rem;
+                    }
+
+                    .post-img-group img {
+                        width: 100%;
+                        border-radius: 8px;
+                        object-fit: contain;
+                        background-color: #eee;
+                        cursor: pointer;
+                    }
+
+                    .post-img-group .more-images {
+                        display: flex;
+                        justify-content: center;
+                        align-items: center;
+                        background-color: rgba(0, 0, 0, 0.5);
+                        color: white;
+                        font-size: 1.2rem;
+                        border-radius: 8px;
+                        height: 80px;
+                        cursor: pointer;
+                    }
+
+
+
+                    iframe {
+                        width: 100%;
+                        height: 200px;
+                        margin-top: 0.5rem;
+                        border-radius: 12px;
+                    }
+
+
+
+
+                    .note-link {
+                        color: var(--note-blue);
+                        text-decoration: none;
+                        cursor: pointer;
+                        font-weight: 500;
+                    }
+
+
+
+
+                    /* Floating Action Button (FAB) */
+                    .fab-button {
+                        position: fixed;
+                        bottom: 20px;
+                        right: 20px;
+                        background: #0F1419;
+                        border: none;
+                        border-radius: 50%;
+                        width: 56px;
+                        height: 56px;
+                        font-size: 2rem;
+                        display: flex;
+                        justify-content: center;
+                        align-items: center;
+                        box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+                        cursor: pointer;
+                        z-index: 100;
+                        transition: transform 0.2s ease-in-out;
+                    }
+
+                    .fab-button:active {
+                        transform: scale(0.95);
+                    }
+
+                    /* Input Bottom Sheet (replaces note-form) */
+                    .input-bottom-sheet-overlay {
+                        position: fixed;
+                        top: 0;
+                        left: 0;
+                        right: 0;
+                        bottom: 0;
+                        background: rgba(0, 0, 0, 0.5);
+                        display: flex;
+                        justify-content: center;
+                        align-items: flex-end;
+                        z-index: 1000;
+                        visibility: hidden;
+                        opacity: 0;
+                        transition: visibility 0.3s, opacity 0.3s;
+                    }
+
+                    .input-bottom-sheet-overlay.active {
+                        visibility: visible;
+                        opacity: 1;
+                    }
+
+                    .input-bottom-sheet {
+                        background: white;
+                        border-top-left-radius: 16px;
+                        border-top-right-radius: 16px;
+                        width: 100%;
+                        max-width: 900px;
+                        padding: 1.5rem 1rem;
+                        transform: translateY(100%);
+                        transition: transform 0.3s ease-out;
+                        box-sizing: border-box;
+                        display: flex;
+                        flex-direction: column;
+                        gap: 1rem;
+                    }
+
+
+                    .input-bottom-sheet-overlay.active .input-bottom-sheet {
+                        transform: translateY(0);
+                    }
+
+                    .input-bottom-sheet-header {
+                        display: flex;
+                        justify-content: space-between;
+                        align-items: center;
+                        margin-bottom: 0.5rem;
+                    }
+
+                    .input-bottom-sheet-header h3 {
+                        margin: 0;
+                        font-size: 1.2rem;
+                        color: var(--text-light);
+                    }
+
+
+                    .input-bottom-sheet-header .close-button {
+                        background: none;
+                        border: none;
+                        font-size: 1.5rem;
+                        cursor: pointer;
+                        color: gray;
+                    }
+
+                    .input-row-sheet {
+                        display: flex;
+                        align-items: flex-end;
+                        gap: 0.5rem;
+                        width: 100%;
+                        position: relative;
+                    }
+
+                    .input-row-sheet textarea {
+                        flex: 1;
+                        box-sizing: border-box;
+                        padding: 0.75rem 1rem;
+                        font-size: 1rem;
+                        border: 1px solid #ccc;
+                        border-radius: 25px;
+                        background: var(--bg-light);
+                        color: var(--text-light);
+                        resize: none;
+                        min-height: 40px;
+                        overflow-y: auto;
+                        line-height: 1.5;
+                    }
+
+
+
+                    .input-sheet-actions {
+                        display: flex;
+                        justify-content: space-between;
+                        align-items: center;
+                        width: 100%;
+                    }
+
+                    .input-sheet-actions .left-actions,
+                    .input-sheet-actions .right-actions {
+                        display: flex;
+                        gap: 0.5rem;
+                    }
+
+                    .input-sheet-actions .icon-button {
+                        background: none;
+                        border: none;
+                        font-size: 1.5rem;
+                        cursor: pointer;
+                        color: gray;
+                        padding: 0.5rem;
+                        border-radius: 50%;
+                        transition: background 0.2s;
+                    }
+
+                    .input-sheet-actions .icon-button:hover {
+                        background: #eee;
+                    }
+
+
+                    .input-sheet-actions .send-button {
+                        background: var(--primary-color);
+                        color: white;
+                        border-radius: 50%;
+                        width: 40px;
+                        height: 40px;
+                        display: flex;
+                        justify-content: center;
+                        align-items: center;
+                        font-size: 1.2rem;
+                        padding: 0;
+                        box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+                    }
+
+                    /* Emoji Selection Popover - Position adjusted for bottom sheet */
+                    #emojiSelectionPopover {
+                        position: absolute; /* Changed to absolute to be within the bottom sheet context */
+                        bottom: calc(1rem + 60px); /* Adjust based on input area height in bottom sheet */
+                        left: 50%;
+                        transform: translateX(-50%);
+                        width: calc(100% - 2rem);
+                        max-width: 400px;
+                        background: var(--card-light);
+                        border-radius: 16px;
+                        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+                        padding: 1rem;
+                        display: none;
+                        z-index: 99; /* Below bottom sheet, above general content */
+                        box-sizing: border-box;
+                        max-height: 200px;
+                        overflow-y: auto;
+                        border: 1px solid #ddd;
+                    }
+                    body.dark #emojiSelectionPopover {
+                        background: var(--card-dark);
+                        border-color: #444;
+                    }
+
+                    #emojiSelectionPopover .emoji-grid {
+                        display: grid;
+                        grid-template-columns: repeat(auto-fill, minmax(40px, 1fr));
+                        gap: 0.5rem;
+                        justify-items: center;
+                    }
+
+                    #emojiSelectionPopover .emoji-button {
+                        font-size: 1.8rem;
+                        background: none;
+                        border: none;
+                        cursor: pointer;
+                        padding: 0.2rem;
+                        border-radius: 8px;
+                        transition: background 0.1s;
+                    }
+                    #emojiSelectionPopover .emoji-button:hover {
+                        background: #eee;
+                    }
+                    body.dark #emojiSelectionPopover .emoji-button:hover {
+                        background: #555;
+                    }
+
+                    /* Other Bottom Sheets (Filter, Delete) - Remain similar positioning */
+                    .bottom-sheet-overlay {
+                        position: fixed;
+                        top: 0;
+                        left: 0;
+                        right: 0;
+                        bottom: 0;
+                        background: rgba(0, 0, 0, 0.5);
+                        display: flex;
+                        justify-content: center;
+                        align-items: flex-end;
+                        z-index: 1000;
+                        visibility: hidden;
+                        opacity: 0;
+                        transition: visibility 0.3s, opacity 0.3s;
+                    }
+
+                    .bottom-sheet-overlay.active {
+                        visibility: visible;
+                        opacity: 1;
+                    }
+
+                    .bottom-sheet {
+                        position: fixed;
+                        background: white;
+                        border-top-left-radius: 16px;
+                        border-top-right-radius: 16px;
+                        width: 100%;
+                        max-width: 900px;
+                        height: auto;
+                        bottom:0;
+                        padding: 1.5rem 1rem;
+                        transform: translateY(100%);
+                        transition: transform 0.3s ease-out;
+                    }
+
+                    .bottom-sheet-overlay.active .bottom-sheet {
+                        transform: translateY(0);
+                    }
+                    
+                    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                    .bottom-sheet-header {
+                        display: flex;
+                        justify-content: space-between;
+                        align-items: center;
+                        margin-bottom: 1rem;
+                    }
+
+                    .bottom-sheet-header h3 {
+                        margin: 0;
+                        font-size: 1.2rem;
+                        color: var(--text-light);
+                    }
+
+                    .bottom-sheet-header .close-button {
+                        background: none;
+                        border: none;
+                        font-size: 1.5rem;
+                        cursor: pointer;
+                        color: gray;
+                    }
+
+                    .filter-options, .action-options {
+                        display: flex;
+                        flex-wrap: wrap;
+                        gap: 0.75rem;
+                    }
+
+                    .filter-options button, .action-options .action-button {
+                        background: var(--bg-light);
+                        border: 1px solid #ccc;
+                        padding: 0.5rem 0.75rem;
+                        border-radius: 20px;
+                        cursor: pointer;
+                        font-size: 1rem;
+                        color: var(--text-light);
+                        /*transition: background 0.2s, border-color 0.2s;*/
+                        width: auto; /* For filter buttons */
+                        text-align: center;
+                    }
+
+
+                    .filter-options button.active {
+                        background: var(--primary-color);
+                        color: white;
+                        border-color: var(--primary-color);
+                    }
+
+                    /* Action buttons specific styles */
+                    .action-options {
+                        flex-direction: column; /* Force vertical stacking for action buttons */
+                    }
+
+                    .action-options .action-button {
+                        width: 100%; /* Full width for action buttons */
+                        border-radius: 8px; /* Slightly less rounded than filter buttons */
+                    }
+
+                    .action-options .action-button.delete-action {
+                        background: #ffe0e0;
+                        color: #d32f2f;
+                        border-color: #ffcdd2;
+                    }
+
+
+
+                    .action-options .action-button.pin-action {
+                        background: #e0f2f7;
+                        color: #007bb6;
+                        border-color: #b3e5fc;
+                    }
+
+
+                    /* Image Modal Styles - Stays similar */
+                    .image-modal-overlay {
+                        position: fixed;
+                        top: 0;
+                        left: 0;
+                        right: 0;
+                        bottom: 0;
+                        background: rgba(0, 0, 0, 0.8);
+                        display: flex;
+                        justify-content: center;
+                        align-items: center;
+                        z-index: 1001;
+                        visibility: hidden;
+                        opacity: 0;
+                        transition: visibility 0.3s, opacity 0.3s;
+                    }
+
+                    .image-modal-overlay.active {
+                        visibility: visible;
+                        opacity: 1;
+                    }
+
+                    .image-modal-content {
+                        position: relative;
+                        background: #222;
+                        padding: 1rem;
+                        border-radius: 16px;
+                        max-width: 90vw;
+                        max-height: 90vh;
+                        overflow: hidden;
+                        display: flex;
+                        flex-direction: column;
+                    }
+
+                    .image-modal-close-button {
+                        position: absolute;
+                        top: 10px;
+                        right: 10px;
+                        background: rgba(255, 255, 255, 0.2);
+                        color: white;
+                        border: none;
+                        border-radius: 50%;
+                        width: 36px;
+                        height: 36px;
+                        font-size: 1.2rem;
+                        cursor: pointer;
+                        display: flex;
+                        justify-content: center;
+                        align-items: center;
+                        z-index: 1002;
+                    }
+
+                    .full-image-container {
+                        display: flex;
+                        flex-direction: column;
+                        justify-content: flex-start;
+                        align-items: center;
+                        width: 100%;
+                        height: 100%;
+                        overflow-y: auto;
+                        gap: 10px;
+                        padding: 20px;
+                        box-sizing: border-box;
+                        scroll-behavior: smooth;
+                    }
+
+                    .full-image-container img {
+                        max-width: 100%;
+                        max-height: 100%;
+                        object-fit: contain;
+                        border-radius: 8px;
+                        background-color: #000;
+                    }
+
+                    /* Camera Modal Styles - Stays similar */
+                    #cameraModal {
+                        position: fixed;
+                        top: 0;
+                        left: 0;
+                        right: 0;
+                        bottom: 0;
+                        background: rgba(0, 0, 0, 0.9);
+                        display: flex;
+                        flex-direction: column;
+                        justify-content: center;
+                        align-items: center;
+                        z-index: 1003;
+                        visibility: hidden;
+                        opacity: 0;
+                        transition: visibility 0.3s, opacity 0.3s;
+                    }
+
+                    #cameraModal.active {
+                        visibility: visible;
+                        opacity: 1;
+                    }
+
+                    #cameraModal video {
+                        max-width: 95vw;
+                        max-height: 80vh;
+                        background-color: black;
+                        border-radius: 8px;
+                        transform: scaleX(-1);
+                    }
+
+                    #cameraModal .camera-controls {
+                        margin-top: 1rem;
+                        display: flex;
+                        gap: 1rem;
+                    }
+
+                    #cameraModal .camera-controls button {
+                        background: var(--primary-color);
+                        color: white;
+                        border: none;
+                        padding: 0.8rem 1.5rem;
+                        border-radius: 50px;
+                        font-size: 1rem;
+                        cursor: pointer;
+                        box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+                    }
+
+                    #cameraModal .camera-controls button.close-camera-button {
+                        background: #d32f2f;
+                    }
+
+                    .header-bar {
+                       transition: transform 0.3s ease;
+                     }
+
+                     .post-text p,
+            .post-text h1,
+            .post-text h2,
+            .post-text h3,
+            .post-text h4,
+            .post-text h5,
+            .post-text h6,
+            .post-text ul,
+            .post-text ol{
+              margin: 0px;
+              padding: 0px;
+              display: inline;
+            }
+
+                     .post-quote p,
+            .post-quote h1,
+            .post-quote h2,
+            .post-quote h3,
+            .post-quote h4,
+            .post-quote h5,
+            .post-quote h6,
+            .post-quote ul,
+            .post-quote ol{
+              margin: 0px;
+              padding: 0px;
+              display: inline;
+            }
+
+
+
+
+
+
+
+
+
+
+
+                .bottom-sheet2 {
+                  position: fixed;
+                  bottom: 0;
+                  left: 0;
+                  right: 0;
+                  background: white;
+                  border-top-left-radius: 20px;
+                  border-top-right-radius: 20px;
+                  padding: 16px 20px;
+                  box-shadow: 0 -2px 12px rgba(0, 0, 0, 0.2);
+                }
+
+
+            /* Container ที่ห่อหุ้ม textarea */
+            .input-wrapper {
+                margin-top: 12px;
+              position: relative;
+              width: 100%;
+              box-sizing: border-box;
+
+              /* CSS Custom Properties (Variables) */
+              --before-background-color: transparent;
+              --before-margin-right: 0px; /* สำหรับควบคุมช่องว่างด้านขวา */
+
+              /* เพิ่ม transition เพื่อให้ขยับ smooth ขึ้น */
+              transition: padding-left 0.2s ease-in-out;
+            }
+
+            /* ใช้ ::before กับ container แทน textarea */
+            .input-wrapper::before {
+              content: '';
+              position: absolute;
+              top: 0;
+              left: 0;
+              width: 5px;
+              height: 100%;
+              border-radius: 5px;
+              background-color: var(--before-background-color);
+              transition: background-color 0.2s ease-in-out;
+            }
+
+            /* สำหรับ textarea โดยเฉพาะ */
+            .input-area {
+              font-family: 'Eng', 'Thai', 'Emoji', sans-serif;
+              font-size: 1.25rem;
+              color: #333;
+              line-height: 1.5;
+              min-height: 120px;
+
+              padding: 0;
+              width: 100%;
+              box-sizing: border-box;
+              border: none;
+              outline: none;
+              resize: none;
+
+              /*
+                แก้ไข: เราจะใช้ padding-left เพื่อดัน textarea ให้เว้นช่องว่าง
+                แทนที่จะใช้ margin-right
+              */
+              padding-left: calc(var(--before-margin-right));
+              transition: padding-left 0.2s ease-in-out;
+            }
+
+            /* สำหรับ placeholder */
+            .input-area::placeholder {
+              color: #aaa;
+            }
+
+
+
+
+              .input-area2 {
+              font-size: 1.25rem;
+              color: #333;
+              line-height: 1.5;
+              margin-bottom:20px;
+              margin-top: 12px;
+              width: 100%; /* เพิ่ม width เพื่อให้เต็มพื้นที่ */
+              padding:0;
+              box-sizing: border-box; /* สำคัญมาก! */
+              border: none; /* ลบเส้นขอบเริ่มต้นออก */
+              outline: none;
+              resize: none; /* ป้องกันไม่ให้ผู้ใช้ปรับขนาด textarea */
+            }
+
+
+
+
+
+
+
+
+
+
+
+            .post-type-label2 {
+                margin-top:12px;
+                        display: inline-flex;
+                        Padding: 4px 16px;
+                        align-items: center;
+                        font-size: 0.925rem;
+                        background-color:  #0f1419;
+                        color: white;
+                        border-radius: 100px;
+                        text-transform: uppercase;
+                        font-weight: bold;
+                    }
+
+            .post-type-label2.mood {
+                background-color:  #0f1419;
+                            }
+            .post-type-label2.youtube {
+                background-color:  red;
+                            }
+
+                    .post-type-icon2 {
+                            font-family: 'Material Icons';
+                            font-weight: normal;
+                            font-style: normal;
+            			    font-size: 0.925rem;
+            			    line-height: 1;
+            			    letter-spacing: normal;
+            			    text-transform: none;
+            			    display: inline-block;
+            			    white-space: nowrap;
+            			    word-wrap: normal;
+            			    direction: ltr;
+            		        -webkit-font-smoothing: antialiased;
+            		        margin-right: 4px;
+                     }
+
+
+                /*---  ---*/
+                .actions {
+                  display: flex;
+                  align-items: center;
+                  border-top: 2px solid #eff3f4;
+                  padding-top: 12px;
+                  justify-content: space-between;
+                  gap: 16px; /*  */
+                }
+
+                .left-actions {
+                  display: flex;
+                  flex: 1; /*  */
+                  overflow-x: auto; /*  */
+                  -webkit-overflow-scrolling: touch; /*  iOS */
+                 /* padding-bottom: 4px; /*  */
+                }
+
+                /*  scrollbar  */
+                .left-actions::-webkit-scrollbar {
+                  display: none;
+                }
+
+                .right-actions {
+                  display: flex;
+                  align-items: center;
+                  gap: 16px; /*  archived  POST */
+                }
+
+                .icons {
+                  display: flex;
+                  gap: 16px;
+                  font-size: 2rem;
+                  color: #666;
+                }
+
+                .post-btn {
+                  flex-shrink: 0; /*  */
+                  background: black;
+                  color: white;
+                  border: none;
+                  padding: 8px 16px;
+                  border-radius: 100px;
+                  font-weight: bold;
+                  cursor: pointer;
+                }
+
+                .post-btn:hover {
+                  background: #222;
+                }
+
+                .input-bottom-sheet-header {
+                        display: flex;
+                        justify-content: space-between;
+                        align-items: center;
+                        margin-bottom: 0.5rem;
+                    }
+
+                    .input-bottom-sheet-header h3 {
+                        margin: 0;
+                        font-size: 1.25rem;
+
+                    }
+
+                    .input-bottom-sheet-header .close-button {
+                        background: none;
+                        border: none;
+                        font-size: 1.5rem;
+                        cursor: pointer;
+                        color: gray;
+                    }
+
+
+                          .sheet-icon {
+                            font-family: 'Material Icons Outlined';
+                            font-weight: normal;
+                            font-style: normal;
+            			    font-size: 1.75rem;
+            			    color: #6b7280;
+
+            			    letter-spacing: normal;
+            			    text-transform: none;
+            			    display: inline-block;
+            			    white-space: nowrap;
+            			    word-wrap: normal;
+            			    direction: ltr;
+            		        -webkit-font-smoothing: antialiased;
+
+                     }
+
+
+
+                             #tagInputContainer {
+
+                        margin-bottom: 15px;
+
+
+
+
+                        font-size: 1.25rem;
+              color: #333;
+              margin-bottom:20px;
+              margin-top: 12px;
+              box-sizing: border-box; /* สำคัญมาก! */
+              border: none; /* ลบเส้นขอบเริ่มต้นออก */
+              outline: none;
+
+
+                    }
+
+                    #tagInputContainer[contenteditable="true"]:empty:before {
+                        content: "#";
+                        color: #aaa;
+                    }
+
+                    .tag-in-input {
+                        color: #007bff; /* สีน้ำเงินสำหรับ Tag */
+                        font-weight: bold;
+                        white-space: nowrap;
+                    }
+
+                            .hashtag {
+                        color: #3897F0; /* สีน้ำเงินสำหรับ Hashtag */
+                       /* font-weight: bold;*/
+                        white-space: nowrap;
+                    }
+
+                    .mention {
+                        color: #D10869; /* สีแดงสำหรับ Mention */
+                        /*font-weight: bold;*/
+                        white-space: nowrap;
+                    }
+
+                    .space-span {
+                        white-space: pre;
+                        color: #000;
+                    }
+
+                    #tagList {
+                        list-style: none;
+                        padding: 0;
+                        margin-top: 10px;
+                        text-align: left;
+                    }
+
+                    #tagList li {
+                        background: #e9ecef;
+                        padding: 8px 12px;
+                        border-radius: 4px;
+                        margin-bottom: 8px;
+                        color: #333;
+                    }
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    #image-upload {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            cursor: pointer;
+        }
+
+        #image-preview-area {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 10px;
+            
+        }
+
+        .image-card {
+            position: relative;
+            width: 90px;
+            height: 90px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            overflow: hidden;
+            background-color: #f9f9f9;
+        }
+        
+        .image-card img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+
+        .delete-btn {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            background-color: rgba(0, 0, 0, 0.5);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            font-size: 14px;
+            line-height: 14px;
+            text-align: center;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .delete-btn:hover {
+            background-color: rgba(0, 0, 0, 0.7);
+        }
+                    
+                    
+        </style>
+    </head>
+
+    <body>
+        <!-- NAVBAR -->
+        <div class="navbar" id="navbar">
+            <div class="left-icons">
+                <button class="icon-button"><span class="title" style="font-family: 'Playwrite HU'; text-align: center; line-height: 1.5;">Storyboard</span></button>
+            </div>
+            <div class="right-icons">
+                <button class="icon-button"><span class="material-icons icon">search</span></button>
+                <button class="icon-button"><span class="material-icons icon" style="display: none;">calendar_today</span></button>
+                <button class="icon-button" onclick="showFilterOptions()"><span class="material-icons icon">more_vert</span></button>
+            </div>
+        </div>
+
+        <!-- FEED -->
+        <div class="feed-container" id="feedContainer"><div id="postsContainer"></div></div>
+
+        <!-- FAB INPUT -->
+        <button class="fab-button" onclick="showInputBottomSheet()">
+            <span class="material-icons icon" style="color: white;">post_add</span>
+        </button>
+
+        <!-- INPUT BOTTOM SHEET -->
+        <div class="input-bottom-sheet-overlay" id="inputBottomSheet">
+            <div class="bottom-sheet2">
+                <div class="input-bottom-sheet-header">
+                    <h3>สร้างโพสต์</h3>
+                            
+                    <button class="close-button" onclick="hideInputBottomSheet()"><i class="fas fa-times"></i></button>
+                </div>
+                
+                <div id="image-preview-area">
+            </div>
+                
+                <div id="chipsArea">
+                    <span class="post-type-label2 mood" id="dynamicChip"><i class="post-type-icon2 mood" id="chipIcon">favorite_border</i><span id="chipText">mood</span></span>
+                </div>
+                <div class="input-row-sheet5">
+                    <div class="input-wrapper">
+                        <textarea class="input-area" id="titleInput" placeholder="วันนี้คุณรู้สึกยังไง..."></textarea>
+                    </div>
+                    <div class="input-area2" id="tagInputContainer" contenteditable="true"></div>
+
+                    <button id="submitButton" style="display: none;">ยืนยัน</button>
+                    <ul id="tagList"></ul>
+                </div>
+
+                <div class="actions">
+                    <div class="left-actions">
+                        <div class="icons">
+                            <label><span class="sheet-icon">image</span><input type="file" id="imageInput" accept="image/*" multiple hidden /></label>
+                            <span class="sheet-icon">mic</span>
+                            <span class="sheet-icon" style="font-family: 'Material Icons';">location_on</span>
+                            <span class="sheet-icon" onclick="toggleEmojiPopover()">add_reaction</span>
+                            <span class="sheet-icon" onclick="openCameraModal()">alternate_email</span>
+                            <span class="sheet-icon" onclick="openCameraModal()">camera_alt</span>
+                            <span class="sheet-icon" id="quoteedit-bt">format_quote</span>
+                        </div>
+                    </div>
+                    <div class="right-actions">
+                        <span class="sheet-icon">archive</span>
+                        <button class="post-btn" onclick="saveFeeling()">POST</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="emojiSelectionPopover">
+            <div class="emoji-grid">
+                <button class="emoji-button">😊</button>
+                <button class="emoji-button">😢</button>
+                <button class="emoji-button">😭</button>
+                <button class="emoji-button">😡</button>
+                <button class="emoji-button">😍</button>
+                <button class="emoji-button">😴</button>
+                <button class="emoji-button">🥹</button>
+                <button class="emoji-button">😂</button>
+                <button class="emoji-button">🥰</button>
+                <button class="emoji-button">👍</button>
+                <button class="emoji-button">❤️</button>
+                <button class="emoji-button">🔥</button>
+                <button class="emoji-button">🤔</button>
+                <button class="emoji-button">👍</button>
+                <button class="emoji-button">😂</button>
+                <button class="emoji-button">🤩</button>
+                <button class="emoji-button">🥳</button>
+                <button class="emoji-button">🤯</button>
+                <button class="emoji-button">🥺</button>
+                <button class="emoji-button">😇</button>
+                <button class="emoji-button">💔</button>
+                <button class="emoji-button">💯</button>
+                <button class="emoji-button">🎉</button>
+                <button class="emoji-button">✨</button>
+                <button class="emoji-button">💡</button>
+                <button class="emoji-button">💬</button>
+            </div>
+        </div>
+
+        <div class="bottom-sheet-overlay" id="hiddenPostsBottomSheet">
+            <div class="bottom-sheet">
+                <div class="bottom-sheet-header">
+                    <h3>โพสต์ที่ถูกซ่อน</h3>
+                    <button class="close-button" onclick="hideHiddenPosts()"><i class="fas fa-times"></i></button>
+                </div>
+                <div class="hidden-posts-container" id="hiddenPostsContainer"></div>
+            </div>
+        </div>
+
+        <!-- SETTING BOTTOM SHEET-->
+        <div class="bottom-sheet-overlay" id="filterBottomSheet">
+            <div class="bottom-sheet">
+                <div class="bottom-sheet-header">
+                    <h3>Filter by Type</h3>
+                    <button class="close-button" onclick="hideFilterOptions()"><i class="fas fa-times"></i></button>
+                </div>
+                <div class="filter-options" id="filterOptions">
+                    <button class="active" data-filter="all">All</button>
+                    <button data-filter="emotion">Emotion</button>
+                    <button data-filter="note">Note</button>
+                    <button data-filter="upload">Upload</button>
+                    <button data-filter="youtube">Youtube</button>
+                    <button data-filter="moment">Moment</button>
+                </div>
+                <h3>Post View</h3>
+                <div class="filter-options" id="postView">
+                    <button class="active">Thread View</button>
+                    <button>Card View</button>
+                </div>
+                <h3>Order Position</h3>
+                <div class="filter-options" id="sort">
+                    <button class="active">Bottom</button>
+                    <button>Top</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- CARD ACTION BOTTOM SHEET-->
+        <div class="bottom-sheet-overlay" id="deleteBottomSheet">
+            <div class="bottom-sheet">
+                <div class="bottom-sheet-header">
+                    <h3>Action on Card</h3>
+                    <button class="close-button" onclick="hideDeleteOptions()"><i class="fas fa-times"></i></button>
+                </div>
+                <div class="action-options">
+                    <button class="action-button delete-action" onclick="confirmDelete()">Delete Card</button>
+                    <button class="action-button pin-action" onclick="togglePinCard()">Pin Card</button>
+                    <button class="action-button cancel-action" onclick="hideDeleteOptions()">Cancel</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="image-modal-overlay" id="imageModal">
+            <div class="image-modal-content">
+                <button class="image-modal-close-button" onclick="closeImageModal()"><i class="fas fa-times"></i></button>
+                <div class="full-image-container" id="fullImageContainer"></div>
+            </div>
+        </div>
+
+        <div class="image-modal-overlay" id="cameraModal">
+            <div class="image-modal-content" style="max-width: 95vw; max-height: 95vh; padding: 0;">
+                <button class="image-modal-close-button close-camera-button" onclick="closeCameraModal()"><i class="fas fa-times"></i></button>
+                <video id="cameraFeed" autoplay playsinline style="width: 100%; height: 100%; object-fit: cover;"></video>
+                <div class="camera-controls">
+                    <button onclick="capturePhoto()"><i class="fas fa-camera"></i> Capture</button>
+                </div>
+            </div>
+        </div>
+        
+        
+        
+        
+        
+        <script>
+            document.addEventListener('DOMContentLoaded', () => {
+    const bottomSheet = document.querySelector('.bottom-sheet2');
+    const inputElement = bottomSheet.querySelector('input-area'); // หรือ element ที่คุณต้องการให้โฟกัส
+
+    // ใช้ Visual Viewport API เพื่อจัดการกับคีย์บอร์ดบน Android
+    if (window.visualViewport) {
+        window.visualViewport.addEventListener('resize', () => {
+            // คำนวณความสูงของคีย์บอร์ด
+            const viewportHeight = window.visualViewport.height;
+            const fullViewportHeight = window.innerHeight;
+            const keyboardHeight = fullViewportHeight - viewportHeight;
+
+            // ปรับตำแหน่ง Bottom Sheet โดยเลื่อนขึ้นให้พ้นคีย์บอร์ด
+            if (keyboardHeight > 0) {
+                // คีย์บอร์ดแสดง
+                bottomSheet.style.bottom = `${keyboardHeight}px`;
+            } else {
+                // คีย์บอร์ดซ่อน
+                bottomSheet.style.bottom = '0px';
+            }
+        });
+    }
+
+    // เมื่อ Bottom Sheet เปิดและ input โฟกัส
+    const bottomSheetOverlay = document.querySelector('.bottom-sheet-overlay');
+    bottomSheetOverlay.addEventListener('transitionend', (e) => {
+        if (e.target.classList.contains('active')) {
+            // โฟกัส input ทันทีเมื่อ Bottom Sheet เปิดเต็มที่
+            inputElement.focus();
+        }
+    });
+});
+            </script>
+        
+        
+        
+        
+        
+        <script>
+            
+            
+            
+            
+            
+            
+            
+            
+    const imageUpload = document.getElementById('imageInput');
+    const imagePreviewArea = document.getElementById('image-preview-area');
+    
+    let selectedFiles = [];
+
+    // ฟังก์ชันสำหรับแสดงรูปภาพทั้งหมดที่อยู่ใน Array
+    function renderPreviews() {
+        imagePreviewArea.innerHTML = ''; // ลบ preview เก่าทั้งหมด
+        
+        
+        
+        
+        selectedFiles.forEach((file, index) => {
+            const reader = new FileReader();
+            
+            
+            
+            reader.onload = function(e) {
+                const imageCard = document.createElement('div');
+                imageCard.classList.add('image-card');
+                
+                const img = document.createElement('img');
+                img.src = e.target.result;
+                img.alt = file.name;
+                
+                const deleteBtn = document.createElement('button');
+                deleteBtn.classList.add('delete-btn');
+                deleteBtn.innerHTML = '&times;';
+                
+                // ใช้ Closure เพื่อให้ปุ่มแต่ละอันจำ index ของตัวเองได้อย่างถูกต้อง
+                // โดยการส่งค่า index เข้าไปในฟังก์ชันทันที
+                (function(currentIndex) {
+                    deleteBtn.addEventListener('click', function() {
+                        selectedFiles.splice(currentIndex, 1);
+                        renderPreviews();
+                    });
+                })(index);
+
+                imageCard.appendChild(img);
+                imageCard.appendChild(deleteBtn);
+                imagePreviewArea.appendChild(imageCard);
+            };
+            
+            reader.readAsDataURL(file);
+        });
+    }
+
+    imageUpload.addEventListener('change', function(event) {
+        const files = Array.from(event.target.files);
+        
+        // เพิ่มไฟล์ใหม่ทั้งหมดเข้าไปใน Array
+        selectedFiles = selectedFiles.concat(files);
+        
+        /*imageUpload.value = '';*/
+
+        renderPreviews();
+        });
+</script>
+        
+        
+        
+        
+        
+
+        <script>
+            document.addEventListener("DOMContentLoaded", () => {
+                const inputWrapper = document.querySelector(".input-wrapper");
+                const inputArea = document.getElementById("titleInput");
+
+                const runOnceBtn = document.getElementById("quoteedit-bt");
+
+                /*function quoteedit() {*/
+
+                runOnceBtn.addEventListener("click", () => {
+                    // ตรวจสอบว่าปุ่มยังไม่ถูกปิดการใช้งาน
+                    if (!runOnceBtn.disabled) {
+                        // เมื่อมีข้อความ
+                        inputWrapper.style.setProperty("--before-background-color", "#536471");
+                        // กำหนดค่า margin-right ที่ต้องการให้เส้นมีช่องว่าง
+                        inputWrapper.style.setProperty("--before-margin-right", "15px");
+
+                        runOnceBtn.disabled = true;
+                    } else {
+                       // console.log("999");
+                        runOnceBtn.disabled = false;
+
+                        inputWrapper.style.setProperty("--before-background-color", "transparent");
+                        inputWrapper.style.setProperty("--before-margin-right", "0px");
+                    }
+                });
+
+                /*inputArea.addEventListener('input', () => {
+      console.log("titleinput");
+      
+      
+      
+    if (inputArea.value.trim().length > 0) {
+      // เมื่อมีข้อความ
+      inputWrapper.style.setProperty('--before-background-color', '#536471');
+      // กำหนดค่า margin-right ที่ต้องการให้เส้นมีช่องว่าง
+      inputWrapper.style.setProperty('--before-margin-right', '15px'); 
+    } else {
+      // เมื่อไม่มีข้อความ
+      inputWrapper.style.setProperty('--before-background-color', 'transparent');
+      inputWrapper.style.setProperty('--before-margin-right', '0px');
+    }
+  });*/
+            });
+        </script>
+
+        <script>
+            document.addEventListener("DOMContentLoaded", () => {
+                const tagInputContainer = document.getElementById("tagInputContainer");
+                const submitButton = document.getElementById("submitButton");
+                const resultDialog = document.getElementById("resultDialog");
+                const tagList = document.getElementById("tagList");
+                const closeDialog = document.getElementById("closeDialog");
+
+                function getTagsFromHtml(html) {
+                    const tempDiv = document.createElement("div");
+                    tempDiv.innerHTML = html;
+                    const spans = tempDiv.querySelectorAll(".hashtag, .mention");
+                    const tags = Array.from(spans).map((span) => span.textContent.trim());
+                    return tags.filter((tag) => tag !== "");
+                }
+
+                tagInputContainer.addEventListener("input", (e) => {
+                    const text = e.target.innerText;
+                    const words = text.split(/\s+/);
+
+                    let html = "";
+                    words.forEach((word, index) => {
+                        const trimmedWord = word.trim();
+                        if (trimmedWord !== "") {
+                            if (trimmedWord.startsWith("#")) {
+                                html += `<span class="hashtag">${trimmedWord}</span>`;
+                            } else if (trimmedWord.startsWith("@")) {
+                                html += `<span class="mention">${trimmedWord}</span>`;
+                            } else {
+                                // ข้อความปกติไม่มีสี
+                                html += `<span class="normal-text">${trimmedWord}</span>`;
+                            }
+                        }
+                        if (index < words.length - 1) {
+                            html += `<span class="space-span"> </span>`;
+                        }
+                    });
+
+                    tagInputContainer.innerHTML = html;
+
+                    // Keep the cursor at the end
+                    const range = document.createRange();
+                    const selection = window.getSelection();
+                    range.selectNodeContents(tagInputContainer);
+                    range.collapse(false);
+                    selection.removeAllRanges();
+                    selection.addRange(range);
+                });
+
+                submitButton.addEventListener("click", () => {
+                    const tags = getTagsFromHtml(tagInputContainer.innerHTML);
+
+                    tagList.innerHTML = "";
+                    if (tags.length > 0) {
+                        tags.forEach((tagText) => {
+                            const li = document.createElement("li");
+                            li.textContent = tagText;
+                            tagList.appendChild(li);
+                        });
+                    } else {
+                        const li = document.createElement("li");
+                        li.textContent = "ไม่มี Tags & Mentions ที่สร้าง";
+                        tagList.appendChild(li);
+                    }
+
+                    resultDialog.showModal();
+                });
+            });
+        </script>
+
+        <script>
+            const textarea = document.getElementById("titleInput");
+            const dynamicChip = document.getElementById("dynamicChip");
+            const chipText = document.getElementById("chipText");
+            const chipIcon = document.getElementById("chipIcon");
+
+            textarea.addEventListener("input", () => {
+                const text = textarea.value;
+
+                const hashtags = [...text.matchAll(/#([\p{L}\p{N}_]+)/gu)].map((m) => m[0]);
+                const youtubeLinks = [...text.matchAll(/https?:\/\/(?:www\.)?youtu\S*/g)].map((m) => m[0]);
+
+                if (youtubeLinks.length > 0) {
+                    // ถ้าเจอลิงก์ YouTube
+                    chipText.textContent = "YouTube";
+                    chipIcon.textContent = "smart_display"; // เปลี่ยนไอคอน
+                    dynamicChip.className = "post-type-label2 youtube";
+                } else {
+                    // ถ้าไม่เจอทั้งสองอย่าง
+                    chipText.textContent = "mood";
+                    chipIcon.textContent = "favorite_border"; // เปลี่ยนไอคอน
+                    dynamicChip.className = "post-type-label2 mood";
+                }
+            });
+        </script>
+
+        <script>
+            const ua = navigator.userAgent;
+            const isAndroid = /Android/i.test(ua);
+            const isWebView = /\bwv\b/.test(ua) || /Version\/[\d.]+/.test(ua);
+
+            console.log({ isAndroid, isWebView });
+
+            if (isAndroid && isWebView) {
+                document.documentElement.style.fontSize = "100%"; // 16 / 13.6 ≈ 1.176
+            }
+
+            const supabase = window.supabase.createClient(
+                "https://fkntlawaawawiusmjsez.supabase.co",
+
+                "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZrbnRsYXdhYXdhd2l1c21qc2V6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDk5ODcxMjAsImV4cCI6MjA2NTU2MzEyMH0.G-_fLzcpvPla3dUYNCV7qh0j-JHo1Ahr5fS7fQkHdpw"
+            );
+
+            let currentFilter = "all"; // สถานะ filter ปัจจุบัน
+            let selectedCard = null; // เก็บ reference ของ card ที่ถูก Long Click
+            let pinnedCards = []; // Array ที่จะเก็บข้อมูลที่ดึงมาจาก DB
+            let cameraStream; // สำหรับเก็บ Stream จากกล้อง
+
+            async function saveFeeling() {
+                const title = document.getElementById("titleInput").value.trim();
+                const imageInput = document.getElementById("imageInput");
+
+                if (!title && !imageInput.files.length) {
+                    return;
+                }
+
+
+                if (imageInput.files.length) {
+                    const urls = [];
+                    for (let file of imageInput.files) {
+                        const formData = new FormData();
+                        formData.append("file", file);
+
+                        const res = await fetch("https://uploads2.ballland10.workers.dev/upload", {
+                            method: "POST",
+                            body: formData,
+                        });
+
+                        const json = await res.json();
+                        if (json.error) {
+                            alert("❌ Upload Failed: " + json.error);
+                            return;
+                        }
+                        urls.push(json.url);
+                    }
+                    await supabase.from("storyboard").insert({
+                        type: "ig-pics",
+                        file_url: JSON.stringify(urls),
+                        title,
+                    });
+                    
+                } else {
+                    // ประกาศตัวแปรด้วย let เพื่อให้สามารถกำหนดค่าใหม่ได้
+                    let typex = "mood"; // กำหนดค่าเริ่มต้นเป็น "mood"
+
+                    // ใช้ .includes() เพื่อตรวจสอบว่ามีคำว่า 'youtube' ใน title หรือไม่
+                    if (title.includes("youtube.com") || title.includes("youtu.be")) {
+                        typex = "youtube";
+                    }
+
+                    await supabase.from("storyboard").insert({
+                        type: typex,
+                        title,
+                    });
+                }
+
+                document.getElementById("titleInput").value = "";
+                imageInput.value = "";
+                
+                
+                
+                const imageUpload = document.getElementById('imageInput');
+                const imagePreviewArea = document.getElementById('image-preview-area');
+                imageUpload.value = ''; // เคลียร์ค่าใน input file
+                imagePreviewArea.innerHTML = ''; // ลบ preview เก่าทั้งหมด                                                                    
+                hideInputBottomSheet();
+                fetchTimeline();
+            }
+
+            async function fetchTimeline() {
+                const [feelingsRes, notesRes, placesRes, posttagsRes, tagsRes] = await Promise.all([
+                    supabase.from("storyboard").select("*, is_pinned, is_hidden,storyboard_places(id,name,address,latitude,longitude)").order("created_at", { ascending: true }),
+                    supabase.from("NOTE").select("*, is_pinned, is_showtimeline, is_hidden").eq("is_showtimeline", true).order("created_at", { ascending: true }),
+                    supabase.from("storyboard_places").select("*").order("created_at", { ascending: false }),
+                    supabase.from("storyboard_posttags").select("*").order("created_at", { ascending: false }),
+                    supabase.from("storyboard_typetags").select("*").order("created_at", { ascending: false }),
+                ]);
+
+                if (feelingsRes.error || notesRes.error) {
+                    console.error(feelingsRes.error || notesRes.error);
+                    return;
+                }
+
+                const posts = feelingsRes.data;
+                const places = placesRes.data;
+                const tags = tagsRes.data;
+                const postTags = posttagsRes.data;
+
+                // สร้าง Map จาก UUID สถานที่ -> สถานที่
+                const placeMap = new Map();
+                places.forEach((place) => {
+                    placeMap.set(place.id, place);
+                });
+
+                // เติมข้อมูลสถานที่เข้าไปในแต่ละโพสต์
+                posts.forEach((post) => {
+                    post.place = placeMap.get(post.location) || null;
+                });
+
+                const tagsMap = new Map();
+                tags.forEach((tag) => {
+                    tagsMap.set(tag.id, tag);
+                });
+
+                const tagsByPostId = new Map();
+                postTags.forEach((postTag) => {
+                    if (!tagsByPostId.has(postTag.post_id)) {
+                        tagsByPostId.set(postTag.post_id, []);
+                    }
+                    const tagInfo = tagsMap.get(postTag.tag_id);
+                    if (tagInfo) {
+                        tagsByPostId.get(postTag.post_id).push(tagInfo);
+                    }
+                });
+
+                let timeline = [];
+                pinnedCards = [];
+                hiddenPosts = [];
+
+                // รวมข้อมูลจากตารางต่างๆ เข้าด้วยกัน
+                feelingsRes.data.forEach((item) => {
+                    const tags = tagsByPostId.get(item.id) || [];
+                    /*console.log('postTags sample:', postTags[0]);*/
+                    /*console.log(tags.find(t => t.id === "6c83a4ad-4d63-4817-b6fc-3e481eed3477"));*/
+
+                    timeline.push({ ...item, tags, place: item.place, type: item.type }); // เพิ่มโพสต์ทั้งหมดเข้า timeline
+                    if (item.is_hidden) {
+                        hiddenPosts.push({ ...item, type: item.type });
+                    }
+                    if (item.is_pinned) {
+                        pinnedCards.push({ type: item.type, id: item.id, title: item.title, thumbnailUrl: "" });
+                    }
+                });
+
+                notesRes.data.forEach((item) => {
+                    timeline.push({ ...item, type: "note" }); // เพิ่มโพสต์ทั้งหมดเข้า timeline
+                    if (item.is_hidden) {
+                        hiddenPosts.push({ ...item, type: "note" });
+                    }
+                    if (item.is_pinned) {
+                        pinnedCards.push({ type: "note", id: item.id, title: item.title, thumbnailUrl: "" });
+                    }
+                });
+
+                // สร้าง Map เพื่อจัดกลุ่มโพสต์ตาม parent id (โค้ดส่วนนี้ยังใช้ได้ตามเดิม)
+                const postsMap = new Map();
+                timeline.forEach((post) => {
+                    if (!post.group) {
+                        postsMap.set(post.id, { ...post, children: [] });
+                    }
+                });
+
+                // ... (ส่วนที่เหลือของฟังก์ชัน fetchTimeline ยังคงเดิม) ...
+                timeline.forEach((post) => {
+                    if (post.group && postsMap.has(post.group)) {
+                        postsMap.get(post.group).children.push(post);
+                    }
+                });
+
+                postsMap.forEach((parentPost) => {
+                    parentPost.children.sort((a, b) => new Date(a.created_at) - new Date(b.created_at));
+                });
+
+                let groupedTimeline = Array.from(postsMap.values());
+
+                //sort(a,b)
+                groupedTimeline.sort((a, b) => new Date(a.created_at) - new Date(b.created_at));
+
+                const filteredTimeline = currentFilter === "all" ? groupedTimeline : groupedTimeline.filter((item) => item.type === currentFilter);
+
+                await renderTimeline(filteredTimeline);
+                if (typeof YT !== "undefined" && YT && YT.Player) {
+                    setupYouTubePlayers();
+                } else {
+                    // ถ้า YouTube API ยังไม่โหลด อาจต้องรอ หรือจัดการโหลดใหม่
+                    window.onYouTubeIframeAPIReady = function () {
+                        setupYouTubePlayers();
+                    };
+                }
+                // renderPinnedCards();
+                // scrollToBottom();
+            }
+
+            // Global variable to store hidden posts
+            let hiddenPosts = [];
+
+            // ฟังก์ชันใหม่สำหรับ Hidden Posts Bottom Sheet
+            function showHiddenPosts(id, type) {
+                document.getElementById("hiddenPostsBottomSheet").classList.add("active");
+                renderHiddenPosts(id, type);
+            }
+
+            function hideHiddenPosts() {
+                document.getElementById("hiddenPostsBottomSheet").classList.remove("active");
+            }
+
+            async function renderHiddenPosts(postId, postType) {
+                const container = document.getElementById("hiddenPostsContainer");
+                container.innerHTML = "";
+
+                // ค้นหาโพสต์ที่ถูกซ่อนเฉพาะอันที่ตรงกับ id และ type ที่ส่งมา
+                const post = hiddenPosts.find((p) => p.id === postId && p.type === postType);
+
+                if (post) {
+                    const postCard = document.createElement("div");
+                    postCard.className = "hidden-post-card";
+                    postCard.innerHTML = `
+            <div class="post-meta">
+                <span class="post-type-label ${post.type}">
+                
+                ${post.type}</span>
+                <span class="post-type-time">${getTimeAgo(post.created_at)}</span>
+            </div>
+            <div class="post-text">${marked.parse(post.title)}</div>
+            <button class="action-button" onclick="unhidePost(${post.id}, '${post.type}')">เลิกซ่อนโพสต์</button>
+        `;
+                    container.appendChild(postCard);
+                } else {
+                    container.innerHTML = `<p>ไม่พบโพสต์ที่ถูกซ่อน</p>`;
+                }
+            }
+
+            async function renderTimeline(items) {
+                const container = document.getElementById("postsContainer");
+                container.innerHTML = "";
+
+                items.forEach((item) => {
+                    //console.log(item.is_hidden);
+
+                    // สร้างโพสต์หลัก
+                    const parentCard = document.createElement("div");
+
+                    // --- ส่วนที่แก้ไข ---
+                    // ตรวจสอบว่าโพสต์ถูกซ่อนหรือไม่
+                    if (item.is_hidden != null) {
+                        parentCard.className = "feed-post-hidden";
+                    } else {
+                        parentCard.className = "feed-post";
+                    }
+                    // ------------------
+
+                    parentCard.setAttribute("data-type", item.type);
+                    parentCard.setAttribute("data-id", item.id);
+
+                    // HTML ของโพสต์หลัก (parent)
+                    let html = renderPostContent(item, false);
+
+                    // เพิ่ม container สำหรับ child post
+                    html += `<div class="child-container"></div>`;
+                    parentCard.innerHTML = html;
+
+                    container.appendChild(parentCard);
+
+                    // Event toggle parent
+                    const parentToggleButtons = parentCard.querySelectorAll(".toggle-detail");
+                    parentToggleButtons.forEach((btn) => {
+                        btn.addEventListener("click", () => {
+                            showDeleteOptions(parentCard);
+                        });
+                    });
+
+                    // หา child container
+                    const childContainer = parentCard.querySelector(".child-container");
+
+                    // วนสร้าง child post
+                    if (item.children && item.children.length > 0) {
+                        item.children.forEach((child) => {
+                            const childCard = document.createElement("div");
+                            childCard.className = "feed-post child-post";
+                            childCard.setAttribute("data-type", child.type);
+                            childCard.setAttribute("data-id", child.id);
+
+                            // HTML ของโพสต์ลูก (child)
+                            childCard.innerHTML = renderPostContent(child, true);
+
+                            childContainer.appendChild(childCard);
+
+                            // Event toggle child
+                            const childToggleButtons = childCard.querySelectorAll(".toggle-detail");
+                            childToggleButtons.forEach((btn) => {
+                                btn.addEventListener("click", () => {
+                                    showDeleteOptions(childCard);
+                                });
+                            });
+                        });
+                    }
+                });
+
+                //scrollToBottom();
+            }
+
+            let players = {}; // เก็บ player แต่ละ video id
+            let playingVideoId = null; // video id ที่กำลังเล่นอยู่
+
+            function setupYouTubePlayers() {
+                const ytCards = document.querySelectorAll(".yt-card[data-video-id]");
+
+                ytCards.forEach((card) => {
+                    const vid = card.getAttribute("data-video-id");
+                    const playBtn = card.querySelector(".play-btn");
+                    const openBtn = card.querySelector(".open-btn");
+
+                    if (!playBtn || !vid) return;
+
+                    // ถ้ายังไม่มี player สำหรับ video id นี้ ให้สร้าง
+                    if (!players[vid]) {
+                        let playerDiv = document.getElementById(`player-${vid}`);
+                        if (!playerDiv) {
+                            playerDiv = document.createElement("div");
+                            playerDiv.id = `player-${vid}`;
+                            playerDiv.style.width = "1px";
+                            playerDiv.style.height = "1px";
+                            playerDiv.style.opacity = "0";
+                            playerDiv.style.position = "absolute";
+                            playerDiv.style.pointerEvents = "none";
+                            document.body.appendChild(playerDiv);
+                        }
+                        players[vid] = new YT.Player(playerDiv.id, {
+                            height: "1",
+                            width: "1",
+                            videoId: vid,
+                            playerVars: {
+                                autoplay: 0,
+                                controls: 0,
+                                modestbranding: 1,
+                                rel: 0,
+                                loop: 1,
+                                playlist: vid,
+                            },
+                            events: {
+                                onStateChange: onPlayerStateChange,
+                            },
+                        });
+                    }
+
+                    // ปุ่ม Play/Pause
+                    playBtn.onclick = () => {
+                        const player = players[vid];
+                        if (!player) return;
+
+                        if (playingVideoId === vid) {
+                            // หยุดวิดีโอ
+                            player.pauseVideo();
+                            playingVideoId = null;
+                            playBtn.textContent = "play_arrow";
+                        } else {
+                            // หยุดวิดีโอก่อนหน้าถ้ามี
+                            if (playingVideoId && players[playingVideoId]) {
+                                players[playingVideoId].pauseVideo();
+                                const prevBtn = document.querySelector(`.yt-card[data-video-id="${playingVideoId}"] .play-btn`);
+                                if (prevBtn) prevBtn.textContent = "play_arrow";
+                            }
+                            // เล่นวิดีโอใหม่
+                            player.playVideo();
+                            playingVideoId = vid;
+                            playBtn.textContent = "pause";
+                        }
+                    };
+
+                    // ปุ่มเปิดลิงก์ YouTube
+                    if (openBtn) {
+                        openBtn.onclick = () => {
+                            window.open(`https://www.youtube.com/watch?v=${vid}`, "_blank");
+                        };
+                    }
+                });
+            }
+
+            // ฟังชั่นจับสถานะเปลี่ยนของ player (ไม่จำเป็นต้องใช้ แต่ถ้าจะ sync UI ดี)
+            function onPlayerStateChange(event) {
+                if (event.data === YT.PlayerState.ENDED) {
+                    // เมื่อเล่นจบ เปลี่ยนปุ่มกลับ
+                    const endedVid = event.target.getVideoData().video_id;
+                    const btn = document.querySelector(`.yt-card[data-video-id="${endedVid}"] .play-btn`);
+                    if (btn) btn.textContent = "▶️";
+                    if (playingVideoId === endedVid) playingVideoId = null;
+                }
+            }
+
+            // เรียกฟังก์ชันนี้ หลังจากโหลด timeline แล้ว และ YouTube API พร้อม
+            function onYouTubeIframeAPIReady() {
+                setupYouTubePlayers();
+            }
+
+            function getTimeAgo(dateString) {
+                const now = new Date();
+                const postDate = new Date(dateString);
+                const diff = (now - postDate) / 1000;
+
+                if (diff < 60) return "เมื่อกี้นี้";
+                if (diff < 3600) {
+                    const mins = Math.floor(diff / 60);
+                    return `${mins} นาที`;
+                }
+                if (diff < 86400) {
+                    const hours = Math.floor(diff / 3600);
+                    return `${hours} ชั่วโมง`;
+                }
+                if (diff < 2592000) {
+                    const days = Math.floor(diff / 86400);
+                    return `${days} วัน`;
+                }
+                if (diff < 31536000) {
+                    const months = Math.floor(diff / 2592000);
+                    return `${months} เดือน`;
+                }
+                const years = Math.floor(diff / 31536000);
+                return `${years} ปี`;
+            }
+
+            function renderPostContent(item, isChild = false) {
+                const timeRelative = getTimeAgo(item.created_at);
+                /* const time = new Date(item.created_at).toLocaleString('th-TH', {
+        month: 'short', day: 'numeric', year: 'numeric',
+        hour: '2-digit', minute: '2-digit', hour12: false
+    }).replace('พ.ค.', 'พฤษภาคม');*/
+
+                /* const time = new Date(item.created_at).toLocaleString('th-TH', {
+    day: '2-digit',
+    month: 'short',
+    year: '2-digit',
+    hour: '2-digit',
+    minute: '2-digit',
+    hour12: false
+});*/
+                const d = new Date(item.created_at);
+                const day = String(d.getDate()).padStart(2, "0");
+                const monthNames = ["ม.ค.", "ก.พ.", "มี.ค.", "เม.ย.", "พ.ค.", "มิ.ย.", "ก.ค.", "ส.ค.", "ก.ย.", "ต.ค.", "พ.ย.", "ธ.ค."];
+                const month = monthNames[d.getMonth()];
+                // ปี ค.ศ. 2 หลัก ตัดแค่ 2 ตัวท้ายของปีเต็ม
+                const year = String(d.getFullYear()).slice(-2);
+                const hour = String(d.getHours()).padStart(2, "0");
+                const minute = String(d.getMinutes()).padStart(2, "0");
+
+                const time = `${day} ${month} ${year} ${hour}:${minute}`;
+
+                //ตัวซ่อน
+
+                if (item.is_hidden) {
+                    const hiddenReason = item.is_hidden;
+                    return `
+        
+        <div class="post-hide" style="text-align: center;" onclick="showHiddenPosts(${item.id}, '${item.type}')">โพสต์นี้ถูกซ่อน: "${hiddenReason}"</div>
+            
+            
+        `;
+                }
+
+                let html = `<div class="post-meta">`;
+                if (!isChild) {
+                    html += `<span class="post-type-label ${item.type}"><i class="post-type-icon">favorite_border</i>${item.type}</span>`;
+                    /*html += `<span class="post-type-useraccount"><div class="profile-container"><img src="https://pub-bcd0954facce440ca60e0171468dafc9.r2.dev/1755085151580_1000017534.jpg" class="profile-pic"></div>takahiro199x</span>`;*/
+                    
+                }
+                html += `<span class="post-type-time toggle-detail"> ${timeRelative} • ${time}</span></div>`;
+
+                if (item.type === "mood" || item.type === "moment") {
+                    let text = item.title; // ข้อความดิบ
+                    let htmlContent = text.replace(/\n/g, "<br>");
+                    html += `<div class="post-text">${htmlContent}</div>`;
+                } else if (item.type === "youtube") {
+                    const vid = extractYouTubeID(item.title);
+                    const cleanedTitle = item.title.replace(/https?:\/\/(www\.)?(youtube\.com|youtu\.be)\/[^\s]+/g, "").trim();
+                    html += `<div class="post-text">${cleanedTitle}</div>`;
+
+                    /*if (vid) html += `<iframe src="https://www.youtube.com/embed/${vid}" frameborder="0" allowfullscreen></iframe>`;*/
+
+                    if (vid) {
+                        html += `
+         <div class="yt-card" data-video-id="${vid}">
+        <img class="yt-thumb" src="https://img.youtube.com/vi/${vid}/maxresdefault.jpg" alt="Thumbnail" crossorigin="anonymous"/>
+        <div style="flex:1; overflow:hidden;">
+          <div class="yt.title">${cleanedTitle || "YouTube Video"}</div>
+          <div class="yt-channel">YouTube</div>
+        </div>
+            
+        <div class="controls" style="display:flex; flex-direction:column; gap:4px;">
+            <button class="material-icons open-btn">open_in_new</button>                       
+            <button class="material-icons play-btn">play_arrow</button>
+               
+        </div>
+      </div>
+    `;
+                    }
+                } else if (item.type === "note") {
+                    html += `<div class="post-text"><span class="note-link" onclick="openNote('${item.id}')">${item.title}</span></div>`;
+                } else if (item.type === "quote") {
+                    html += `<div class="post-quote">${marked.parse(item.title)}</div>`;
+                } else if (item.type === "ig-pics") {
+                    html += `<div class="post-text">${item.note || ""}</div>`;
+                    let urls = [];
+                    try {
+                        urls = JSON.parse(item.file_url);
+                        if (!Array.isArray(urls)) urls = [urls];
+                    } catch {
+                        urls = [item.file_url];
+                    }
+
+                    html += `<div class="post-img-group">`;
+                    const imagesToShow = urls.slice(0, 4);
+                    imagesToShow.forEach((url) => {
+                        html += `<img src="${url}" alt="upload" loading="lazy" onclick="openImageModal('${url}')"/>`;
+                    });
+
+                    if (urls.length > 4) {
+                        html += `<div class="more-images" onclick="openImageModal([${urls.map((url) => `'${url}'`).join(",")}])">`;
+                        html += `+${urls.length - 4}`;
+                        html += `</div>`;
+                    }
+                    html += `</div>`;
+                }
+
+                if (item.place) {
+                    html += `
+      <div class="post-location">
+       <span class="post-location-icon">place</span>
+        <div style="flex:1; overflow:hidden;">
+          <div class="location-title">${item.place.name}</div>
+          <div class="location-address">${item.place.address || ""}</div>
+        </div>      
+      </div>
+    `;
+                }
+
+                /*  console.log('tags:', item.tags);*/
+                if (item.tags && item.tags.length > 0) {
+                    html += '<div class="post-tags">';
+                    item.tags.forEach((tag) => {
+                        html += `<span class="tag ${tag.tag_type}" style="color:${tag.color}">${tag.tag_text}</span>`;
+                    });
+                    html += "</div>";
+                }
+
+                return html;
+            }
+
+            async function unhidePost(id, type) {
+                const table = type === "mood" || type === "youtube" ? "storyboard" : type === "note" ? "NOTE" : type + "s";
+
+                const { error } = await supabase
+                    .from(table)
+                    .update({ is_hidden: null }) // อัปเดตกลับเป็น null
+                    .eq("id", id);
+
+                if (error) {
+                    console.error("Error unhiding post:", error);
+                    alert("Failed to unhide post.");
+                } else {
+                    alert("โพสต์ถูกนำกลับมาแสดงแล้ว");
+                    hideHiddenPosts(); // ปิด Bottom Sheet
+                    fetchTimeline(); // โหลดข้อมูลใหม่ทั้งหมด
+                }
+            }
+
+            //scrollToBottom();
+
+            /* const allImages = container.querySelectorAll('.post-img-group img'); // Changed to post-img-group
+            allImages.forEach(img => {
+                if (!img.complete) {
+                    img.onload = () => scrollToBottom();
+                    img.onerror = () => scrollToBottom();
+                }
+            });
+        }*/
+
+            function scrollToBottom() {
+                const container = document.getElementById("feedContainer"); // Changed to feedContainer
+                container.scrollTop = container.scrollHeight;
+            }
+
+            function extractYouTubeID(url) {
+                const match = url.match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/|shorts\/))([^\s&?/]+)/);
+                return match ? match[1] : "";
+            }
+
+            function isYouTubeUrl(url) {
+                return url.includes("youtube.com") || url.includes("youtu.be");
+            }
+
+            function openNote(id) {
+                location.href = `/edit.html?noteId=${id}`;
+            }
+
+            // Filter Logic
+            function showFilterOptions() {
+                //document.getElementById('filterBottomSheet').classList.add('active');
+
+                const notesContainer = document.getElementById("feedContainer");
+
+                const isCard = notesContainer.classList.toggle("feed-post-cardview");
+                // toggleBtn.textContent = isCard ? "format_list_bulleted" : "dashboard";
+            }
+
+            function hideFilterOptions() {
+                document.getElementById("filterBottomSheet").classList.remove("active");
+            }
+
+            document.getElementById("filterOptions").addEventListener("click", (event) => {
+                if (event.target.tagName === "BUTTON") {
+                    document.querySelectorAll("#filterOptions button").forEach((btn) => btn.classList.remove("active"));
+                    event.target.classList.add("active");
+                    currentFilter = event.target.dataset.filter;
+                    fetchTimeline();
+                    hideFilterOptions(); // ปิด Bottom Sheet หลังจากเลือก Filter
+                }
+            });
+
+            // Functions for Delete/Pin Bottom Sheet
+            function showDeleteOptions(cardElement) {
+                selectedCard = cardElement;
+                document.getElementById("deleteBottomSheet").classList.add("active");
+
+                // Update Pin/Unpin button text
+                const pinButton = document.querySelector("#deleteBottomSheet .pin-action");
+                const type = selectedCard.getAttribute("data-type");
+                const id = parseInt(selectedCard.getAttribute("data-id")); // Ensure ID is integer for comparison
+                const isPinned = pinnedCards.some((p) => p.type === type && p.id === id);
+
+                console.log(id);
+
+                /*   const post = hiddenPosts.find(p => p.id === postId && p.type === postType);*/
+
+                const postTextElement = selectedCard.querySelector(".post-text");
+
+                console.log(postTextElement.textContent);
+            }
+
+            function hideDeleteOptions() {
+                document.getElementById("deleteBottomSheet").classList.remove("active");
+                selectedCard = null;
+            }
+
+            async function confirmDelete() {
+                if (selectedCard) {
+                    const type = selectedCard.getAttribute("data-type");
+                    const id = selectedCard.getAttribute("data-id");
+                    await deleteItem(type, id); // deleteItem จะเรียก fetchTimeline ให้อัตโนมัติ
+                    hideDeleteOptions();
+                }
+            }
+
+            async function togglePinCard() {
+                if (selectedCard) {
+                    const type = selectedCard.getAttribute("data-type");
+                    const id = parseInt(selectedCard.getAttribute("data-id")); // Ensure ID is integer
+                    // Updated table name logic: 'note' now maps to 'NOTE'
+                    const table = type === "emotion" || type === "youtube" ? "feelings" : type === "note" ? "NOTE" : type + "s";
+
+                    // ตรวจสอบสถานะปัจจุบันของ is_pinned จาก pinnedCards array
+                    const isCurrentlyPinned = pinnedCards.some((p) => p.type === type && p.id === id);
+                    const newPinnedState = !isCurrentlyPinned;
+
+                    const { data, error } = await supabase.from(table).update({ is_pinned: newPinnedState }).eq("id", id);
+
+                    if (error) {
+                        console.error("Error updating pin status:", error);
+                        alert("Failed to update pin status.");
+                    } else {
+                        console.log("Pin status updated:", data);
+                        fetchTimeline(); // เรียก fetchTimeline เพื่อดึงข้อมูลและอัปเดต UI ทั้งหมด
+                    }
+                    hideDeleteOptions();
+                }
+            }
+
+            // Render Pinned Cards
+            /* function renderPinnedCards() {
+            const container = document.getElementById('pinnedCardsContainer');
+            container.innerHTML = '';
+
+            if (pinnedCards.length > 0) {
+                document.body.classList.add('has-pinned-cards');
+            } else {
+                document.body.classList.remove('has-pinned-cards');
+            }
+
+            pinnedCards.forEach(pin => {
+                const pinnedCardDiv = document.createElement('div');
+                pinnedCardDiv.className = 'pinned-card';
+                pinnedCardDiv.setAttribute('data-type', pin.type);
+                pinnedCardDiv.setAttribute('data-id', pin.id);
+                pinnedCardDiv.onclick = () => scrollToCard(pin.id, pin.type);
+
+                let contentHtml = `<span class="post-type-label ${pin.type}">${pin.type}</span>`; // Changed to post-type-label
+                if (pin.thumbnailUrl) {
+                    contentHtml += `<img src="${pin.thumbnailUrl}" alt="thumbnail" style="width:30px; height:30px; border-radius:50%; object-fit:cover;">`;
+                }
+                contentHtml += `<span>${pin.title.substring(0, 30)}${pin.title.length > 30 ? '...' : ''}</span>`;
+                contentHtml += `<button class="close-pin-button" onclick="event.stopPropagation(); removePin('${pin.type}', '${pin.id}')"><i class="fas fa-times"></i></button>`;
+
+                pinnedCardDiv.innerHTML = contentHtml;
+                container.appendChild(pinnedCardDiv);
+            });
+        }*/
+
+            /*  function removePin(type, id) {
+            const actualId = parseInt(id);
+            const actualType = type;
+            // Updated table name logic: 'note' now maps to 'NOTE'
+            const table = actualType === 'emotion' || actualType === 'youtube' ? 'feelings' : (actualType === 'note' ? 'NOTE' : actualType + 's');
+
+            supabase.from(table)
+                .update({ is_pinned: false })
+                .eq('id', actualId)
+                .then(({ data, error }) => {
+                    if (error) {
+                        console.error('Error unpinning from DB:', error);
+                        alert('Failed to unpin card.');
+                    } else {
+                        console.log('Unpinned from DB:', data);
+                        fetchTimeline(); // Re-fetch to update all UI
+                    }
+                });
+        }*/
+
+            function scrollToCard(id, type) {
+                const cardElement = document.querySelector(`.feed-post[data-id="${id}"][data-type="${type}"]`); // Changed to feed-post
+                if (cardElement) {
+                    cardElement.scrollIntoView({ behavior: "smooth", block: "start" });
+                }
+            }
+
+            // New Emoji Popover Functions
+            function toggleEmojiPopover() {
+                const popover = document.getElementById("emojiSelectionPopover");
+                popover.style.display = popover.style.display === "block" ? "none" : "block";
+            }
+
+            // Attach click handlers to emojis inside the popover
+            document.querySelectorAll("#emojiSelectionPopover .emoji-button").forEach((btn) => {
+                btn.onclick = () => {
+                    const input = document.getElementById("titleInput");
+                    input.value += btn.textContent + " ";
+                    input.focus();
+                    toggleEmojiPopover(); // Hide after selection
+                };
+            });
+
+            // Hide emoji popover when clicking outside
+            document.addEventListener("click", function (event) {
+                const popover = document.getElementById("emojiSelectionPopover");
+                const trigger = document.querySelector(".input-sheet-actions .icon-button:nth-child(1)"); // Targeted the emoji button in bottom sheet
+                const inputField = document.getElementById("titleInput");
+                const inputBottomSheet = document.getElementById("inputBottomSheet");
+
+                if (popover.style.display === "block" && !popover.contains(event.target) && !trigger.contains(event.target) && event.target !== inputField && !inputBottomSheet.contains(event.target)) {
+                    popover.style.display = "none";
+                }
+            });
+
+            // Image Modal Functions
+            function openImageModal(data) {
+                const modal = document.getElementById("imageModal");
+                const imageContainer = document.getElementById("fullImageContainer");
+                imageContainer.innerHTML = ""; // Clear previous images
+
+                if (typeof data === "string") {
+                    // Single image URL
+                    const img = document.createElement("img");
+                    img.src = data;
+                    imageContainer.appendChild(img);
+                } else if (Array.isArray(data)) {
+                    // Array of image URLs for gallery
+                    data.forEach((url) => {
+                        const img = document.createElement("img");
+                        img.src = url;
+                        imageContainer.appendChild(img);
+                    });
+                }
+
+                modal.classList.add("active");
+            }
+
+            function closeImageModal() {
+                document.getElementById("imageModal").classList.remove("active");
+                document.getElementById("fullImageContainer").innerHTML = ""; // Clear images when closing
+            }
+
+            // Close modal if clicking outside content
+            document.getElementById("imageModal").addEventListener("click", (event) => {
+                if (event.target.id === "imageModal") {
+                    // Only if clicked on the overlay itself, not its children
+                    closeImageModal();
+                }
+            });
+
+            // Camera Functions
+            const cameraModal = document.getElementById("cameraModal");
+            const cameraFeed = document.getElementById("cameraFeed");
+
+            async function openCameraModal() {
+                cameraModal.classList.add("active");
+                try {
+                    // Request access to the camera
+                    cameraStream = await navigator.mediaDevices.getUserMedia({ video: true });
+                    cameraFeed.srcObject = cameraStream;
+                } catch (err) {
+                    console.error("Error accessing camera: ", err);
+                    alert("Cannot access camera. Please ensure you have granted camera permissions.");
+                    closeCameraModal(); // Close modal if camera access fails
+                }
+            }
+
+            function closeCameraModal() {
+                if (cameraStream) {
+                    cameraStream.getTracks().forEach((track) => track.stop()); // Stop all tracks (video, audio)
+                    cameraStream = null;
+                }
+                cameraFeed.srcObject = null; // Disconnect the stream from the video element
+                cameraModal.classList.remove("active");
+            }
+
+            function capturePhoto() {
+                const canvas = document.createElement("canvas");
+                canvas.width = cameraFeed.videoWidth;
+                canvas.height = cameraFeed.videoHeight;
+                const context = canvas.getContext("2d");
+                context.drawImage(cameraFeed, 0, 0, canvas.width, canvas.height);
+
+                canvas.toBlob(async (blob) => {
+                    if (blob) {
+                        const capturedFile = new File([blob], "captured_image.png", { type: "image/png" });
+                        const imageInput = document.getElementById("imageInput");
+
+                        // สร้าง DataTransfer object และเพิ่มไฟล์เข้าไป
+                        const dataTransfer = new DataTransfer();
+                        dataTransfer.items.add(capturedFile);
+
+                        // กำหนด files ของ input element ด้วย DataTransfer's files
+                        // หมายเหตุ: การทำเช่นนี้เป็นการจัดการ property 'files' ของ input โดยตรง
+                        // ซึ่งโดยทั่วไปแล้วจะถูกจำกัดด้วยมาตรการความปลอดภัยของเบราว์เซอร์
+                        // หากไม่สามารถอัปโหลดได้ หรือไม่แสดงผลบน UI ของ input file
+                        // แสดงว่าเป็นข้อจำกัดด้านความปลอดภัยของเบราว์เซอร์นั้นๆ
+                        imageInput.files = dataTransfer.files;
+
+                        // เรียกใช้ saveFeeling ซึ่งจะอ่านไฟล์จาก imageInput โดยอัตโนมัติ
+                        //await saveFeeling();
+                        closeCameraModal(); // ปิด Modal กล้องหลังจากถ่ายภาพเสร็จ
+                    } else {
+                        console.error("Failed to create blob from canvas.");
+                        alert("Could not capture photo.");
+                    }
+                }, "image/png");
+            }
+
+            // Input Bottom Sheet Logic
+            const inputBottomSheet = document.getElementById("inputBottomSheet");
+            const titleInput = document.getElementById("titleInput");
+
+            function showInputBottomSheet() {
+                inputBottomSheet.classList.add("active");
+                console.log(titleInput);
+                titleInput.focus(); // Focus on the textarea when opened
+                setTimeout(() => {
+                    titleInput.focus();
+                }, 100); // หน่วงเวลา 100 มิลลิวินาที
+            }
+
+            function hideInputBottomSheet() {
+                inputBottomSheet.classList.remove("active");
+            }
+
+            // Hide input bottom sheet when clicking overlay itself
+            inputBottomSheet.addEventListener("click", (event) => {
+                if (event.target === inputBottomSheet) {
+                    hideInputBottomSheet();
+                }
+            });
+
+            // Initial load
+            window.addEventListener("DOMContentLoaded", () => {
+                fetchTimeline(); // fetchTimeline จะจัดการการดึง pinned cards และ render เอง
+            });
+
+            let lastScrollTop = 0;
+            const navbar = document.getElementById("navbar");
+            const feedContainer = document.getElementById("feedContainer");
+
+            feedContainer.addEventListener("scroll", function () {
+                const currentScroll = feedContainer.scrollTop;
+
+                if (currentScroll > lastScrollTop) {
+                    // เลื่อนลง → ซ่อน header
+                    navbar.style.transform = "translateY(-100%)";
+                } else {
+                    // เลื่อนขึ้น → แสดง header
+                    navbar.style.transform = "translateY(0)";
+                }
+
+                lastScrollTop = currentScroll <= 0 ? 0 : currentScroll;
+            });
+        </script>
+    </body>
+</html>
