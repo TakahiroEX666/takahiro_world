@@ -1,0 +1,47 @@
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-shrink: 0;
+            margin-bottom: 2px;
+            padding: 16px 16px;
+            background: #FFFFFF;
+            height: 56px; 
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            box-sizing: border-box; /* สำคัญสำหรับ padding/width */
+            position: fixed;
+            width: 100%;
+            top: 0; 
+            left: 0;
+            right: 0;
+            z-index: 90;
+            transition: transform 0.3s ease-in-out; /* เพิ่มความลื่น */
+            
+            /*border-bottom: 3px solid red;*/
+            /*border-bottom-left-radius: 8px;*/
+            /*border-bottom-right-radius: 8px;*/
+        }        
+
+        .navbar .left-icons, .right-icons   {
+            display: flex;
+            
+        }
+        
+        
+
+        .navbar .icon-button {
+            background: none;
+            border: none;
+        }
+
+        .material-icons.icon {
+            display: flex;
+            font-size: 1.8rem;
+            color: #0F1419;
+        }
+
+        .navbar .title {
+            font-size: 1.75rem;
+            font-weight: bold;
+            
+        }
