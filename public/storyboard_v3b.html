@@ -3,948 +3,800 @@
     <head>
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <title>Storyboard</title>
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+        	
+        <title>Storyboard By TKH</title>
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" />
         <link rel="stylesheet" href="./css/navbar.css" />
-        <script src="https://www.youtube.com/iframe_api"></script>
-
         <link rel="stylesheet" href="./node_modules/material-icons/iconfont/material-icons.css" />
         <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@1.35.6/dist/umd/supabase.min.js"></script>
+        <script src="https://www.youtube.com/iframe_api"></script>
         <style>
-
-
-
-
-
-
-
-
-                @font-face {
-                  font-family: 'Eng';
-                  src: url('./css/SFProDisplay-Regular.woff2') format('woff2');
-                  unicode-range: U+0000-00FF;
-                }
-                @font-face {
-                  font-family: 'Thai';
-                  src: url('./css/SFThonburi-Regularr.woff2') format('woff2');
-                  unicode-range: U+0E00-0E7F;
-                }
-                @font-face {
-                  font-family: 'Emoji';
-                  src: url('./css/NotoColorEmoji.ttf') format('truetype');
-                  unicode-range: U+1F300-1FAFF, U+2600-26FF;
-                }
-                @font-face {
-                   font-family: 'Playwrite HU';
-                   src: url('./css/PlaywriteHU.ttf') format('truetype');
-                }
-
-
-
-
-
-
-
-
-                html {
-              font-size: 85%; /* 0.85 × 16px = 13.6px */
+            @font-face {
+            font-family: 'Eng';
+            src: url('./css/SFProDisplay-Regular.woff2') format('woff2');
+            unicode-range: U+0000-00FF;
             }
-
-
-
-
-
-
-                    body {
-                        font-family: 'Eng', 'Thai', 'Emoji', sans-serif;
-                        color: #0f1419;'
-                        margin: 0;
-                        padding-bottom: 0;
-                        max-width: 900px;
-                        margin-inline: auto;
-                        position: relative;
-                    }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-                    .feed-container {
-                        display: flex;
-
-                        flex-direction: column;
-                        overflow-y: auto;
-                        padding-top: 46px !important;
-                        height: calc(100vh - 60px); /*Adjust based on header height, minus potential pinned cards */
-                        scroll-behavior: smooth;
-                    }
-
-
-
-                    .feed-post {
-                        background: #ffffff;
-                        padding: 16px 20px;
-                        position: relative;
-                        border: 1px solid #eff3f4;
-                    }
-
-                    .feed-post-cardview .feed-post {
-                    	margin: 1rem;
-                    	border-radius: 8px; /*16*/ฟ
-                        box-shadow: 0 2px 4px rgba(239, 243, 244, 1); /*4,8*/
-                        transition: background 0.3s;
-                        margin-bottom: 16px;
-                    }
-
-                    .feed-post-hidden {
-                        padding: 6px 20px;
-                        background: #eff3f4;
-                        color: #536471;
-                        }
-                        .feed-post-hidden-icons {
-
-                        }
-
-
-
-
-
-
-                    .post-meta {
-                        gap: 0.5rem;
-                        display: flex;
-                         justify-content: space-between;
-                        align-items: center;
-                    }
-                    
-                    .post-type-useraccount{
-                        display: inline-flex;
-                                      align-items: center;
-                        font-size: 1.1rem;
-                        /*font-weight: bold;*/
-                        }
-                        
-                        .profile-container {
-  width: 32px; /* กำหนดขนาดความกว้างของรูป */
-  height: 32px; /* กำหนดขนาดความสูงของรูป ให้เท่ากับความกว้าง */
-  overflow: hidden; /* ซ่อนส่วนที่เกินจากขอบเขต */
-  border-radius: 50%; /* ทำให้ขอบโค้งมนเป็นวงกลม */
-  margin-right:8px;
-}
-
-.profile-pic {
-  width: 100%;
-  height: 100%;
-  object-fit: cover; /* ทำให้รูปภาพเต็มพื้นที่โดยไม่ผิดสัดส่วน */
-}
-
-                    .post-type-label {
-                        display: inline-flex;
-                        Padding: 4px 16px;
-                        align-items: center;
-                        font-size: 0.925rem;
-                        color: white;
-                        border-radius: 100px;
-                        text-transform: uppercase;
-                        font-weight: bold;
-                    }
-                    .post-type-label.mood { background-color:  #0f1419}
-                    .post-type-label.note { background-color: #ffb300}
-                    .post-type-label.ig-pics {
-            		  background: #f09433; /* fallback for older browsers */
-            		  background: -moz-linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%);
-            		  background: -webkit-linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%);
-            		  background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%);
-            		  filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#f09433', endColorstr='#bc1888',GradientType=1 );
-            		 }
-                    .post-type-label.youtube { background-color: #ff0000 }
-                    .post-type-label.quote { background-color: #03a9f4; }
-
-
-                    .post-type-icon {
-                            font-family: 'Material Icons';
-                            font-weight: normal;
-                            font-style: normal;
-            			    font-size: 0.925rem;
-            			    line-height: 1;
-            			    letter-spacing: normal;
-            			    text-transform: none;
-            			    display: inline-block;
-            			    white-space: nowrap;
-            			    word-wrap: normal;
-            			    direction: ltr;
-            		        -webkit-font-smoothing: antialiased;
-            		        margin-right: 4px;
-                     }
-
-                    .post-type-time {
-                    	font-size: 0.875rem; /*0.9rem*/
-                        color: #536471;
-                        flex-ditection: row-reverse;
-                    }
-
-
-
-
-
-
-
-
-
-
-                   .post-text {
-                        white-space: pre-wrap;
-                        word-wrap: break-word;
-                        line-height: 1.5;
-                        font-size:1.1rem;
-
-                        margin-top: 12px;
-                    }
-
-                    .feed-post.child-post {
+            @font-face {
+            font-family: 'Thai';
+            src: url('./css/SFThonburi-Regularr.woff2') format('woff2');
+            unicode-range: U+0E00-0E7F;
+            }
+            @font-face {
+            font-family: 'Emoji';
+            src: url('./css/NotoColorEmoji.ttf') format('truetype');
+            unicode-range: U+1F300-1FAFF, U+2600-26FF;
+            }
+            @font-face {
+            font-family: 'Playwrite HU';
+            src: url('./css/PlaywriteHU.ttf') format('truetype');
+            }
+            html {
+            font-size: 85%; /* 0.85 × 16px = 13.6px */
+            }
+            
+            :root {                                                        
+                    /*var(--bg-light);*/                                                           
+                    --bg-light: #FFFFFF; /* เปลี่ยนเป็นสีขาว */
+                    --bg-dark: #1e1e1e; /* ยังคงไว้สำหรับกรณีที่มี Dark Mode อื่นๆ (แต่ในที่นี้จะไม่มีผลถ้าลบปุ่มสลับธีม) */
+                    --card-light: #ffffff;
+                    --card-dark: #2c2c2c;
+                    --text-light: #333;
+                    --text-dark: #eee;
+                    --primary-color: #1a73e8; /* สีน้ำเงินหลัก */
+                    --youtube-red: #ff0000;
+                    --note-blue: #1976d2;
+                    --emotion-yellow: #fbbc05;
+                    --upload-green: #34a853;
+                    --moment-purple: #9c27b0;
+            }
+            
+            
+            
+            body {
+                    font-family: 'Eng', 'Thai', 'Emoji', sans-serif;
+                    color: #0f1419;'
+                    margin: 0;
+                    padding-bottom: 0;
+                    margin-top:0;
+                    max-width: 900px;
+                    margin-inline: auto;
+                    position: relative;
+            }
+            
+            
+            .feed-container {
+                    display: flex;
+                    flex-direction: column;
+                    overflow-y: auto;
+                    padding-top: 56px !important;
+                    height: calc(100vh - 60px); /*Adjust based on header height, minus potential pinned cards */
+                    scroll-behavior: smooth;
+            }
+            
+            .feed-post {                        
+                    padding: 16px 20px;
+                    position: relative;
+                    border: 1px solid #eff3f4;
+            }
+            
+            .feed-post.child-post {
                     margin-top:12px;
                     border-radius: 12px;
-               /* margin-left: 20px; /* เพิ่มระยะห่างด้านซ้าย */
-                border-left: 2px solid #eff3f4; /* เพิ่มเส้นแบ่งทางซ้าย */
-               /* padding-left: 16px; /* ระยะห่างระหว่างเส้นกับเนื้อหา */
-                /*border-top: none; /* ลบเส้นขอบด้านบน */
-                   }
-
-
-
-
-                    .post-quote {
-                    	margin-top: 12px;
-                    	position: relative;
-                        white-space: pre-wrap;
-                        word-wrap: break-word;
-                        line-height: 1.5;
-                        font-size:1.1rem;
-                        /*'font-style: italic;*/
-                        padding-left: 15px;
-                        color: black;
-                    }
-
-                    .post-quote::before {
-                       content: '';
-                       position: absolute;
-                       top: 0;
-                       left: 0;
-                      width: 5px;
-                      height: 100%;
-                      background-color: #536471;
-                      border-radius: 5px;
-                      }
-
-
-
-
-
-                .post-tags {
-              display: flex;
-              flex-wrap: wrap; /* ให้แถวใหม่เกิดขึ้นถ้าไม่พอพื้นที่ */
-              gap: 8px; /* ช่องว่างระหว่าง tag ทั้งแนวนอนและแนวตั้ง */
-              margin-top: 12px;
-            }
-
-            .post-tags .tag {
-              font-size: 1.1rem;
-              color: white;
-              white-space: nowrap; /* ไม่ให้ข้อความ tag ห่อบรรทัด */
-              user-select: none;
+                    /* margin-left: 20px; /* เพิ่มระยะห่างด้านซ้าย */
+                    border-left: 2px solid #eff3f4; /* เพิ่มเส้นแบ่งทางซ้าย */
+                    /* padding-left: 16px; /* ระยะห่างระหว่างเส้นกับเนื้อหา */
+                    /*border-top: none; /* ลบเส้นขอบด้านบน */
             }
 
 
 
-
-                  .post-location {
-                      margin-top: 12px;
-                     padding: 8px 16px;
-                     border-radius:12px;
-                     border: 1px solid #eff3f4;
-                     font-size: 1.1rem;
-                     display:flex;
-                     align-items:center;
-                     gap:12px;
-
-                      }
-
-                      .post-location-icon {
-                            font-family: 'Material Icons';
-                            font-weight: normal;
-                            font-style: normal;
-            			    font-size: 36px;
-            			color: red;
-            			    line-height: 1;
-            			    letter-spacing: normal;
-            			    text-transform: none;
-            			    display: inline-block;
-            			    white-space: nowrap;
-            			    word-wrap: normal;
-            			    direction: ltr;
-            		        -webkit-font-smoothing: antialiased;
-
-                     }
-
-                    .location-title {
-                        font-weight:bold;
-                     }
-
-
-
-
-
-
-
-
-
-                  .yt-card {
-                      margin-top: 12px;
-                     background:#222;
-                     padding:12px;
-                     border-radius:12px;
-                     max-width:500px;
-                     color:#fff;
-                     display:flex;
-                     align-items:center;
-                     gap:12px;
-                  }
-
-
-                  .yt-thumb {
-                      aspect-ratio: 16 / 9;
-                     border-radius:8px;
-                     object-fit:cover;
-                     width:120px; height:80px;
-
-                  }
-
-                  .yt-title {
-                      font-weight:bold;
-                      font-size:1rem;
-                      white-space:nowrap;
-                      overflow:hidden;
-                      text-overflow:ellipsis;
-                  }
-
-                  .yt-channel {
-                     color:#ccc;
-                     font-size:0.85rem;
-                  }
-
-                  .controls button {
-              background: #444;
-              border: none;
-              color: white;
-              font-size: 24px;
-              border-radius: 50%;
-              padding: 8px;
-
-              transition: background 0.2s;
+            
+            .feed-post-cardview .feed-post {
+                    margin: 1rem;
+                    border-radius: 8px; /*16*/
+                    box-shadow: 0 2px 4px rgba(239, 243, 244, 1); /*4,8*/
+                    transition: background 0.3s;
+                    margin-bottom: 16px;
             }
-
-            .controls button {
-              background: #444;
-              border: none;
-              color: white;
-              font-size: 24px;
-              border-radius: 50%;
-              padding: 8px;
-
-              transition: background 0.2s;
-            }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-            /*
-                สำหรับ Card View ถ้ามีการ Group Post
-                อาจต้องพิจารณาปรับสไตล์เพิ่มเติม
-            */
+            
             .feed-post-cardview .feed-post.child-post {
-                margin-left: 20px;
-                border-left: 2px solid #ccc;
-                padding-left: 16px;
-                border-radius: 0;
-                margin-top: 0;
-                margin-bottom: 0;
-                box-shadow: none;
+                    margin-left: 20px;
+                    border-left: 2px solid #ccc;
+                    padding-left: 16px;
+                    border-radius: 0;
+                    margin-top: 0;
+                    margin-bottom: 0;
+                    box-shadow: none;
             }
+           
+            
+            
+            .feed-post-hidden {
+                    padding: 6px 20px;
+                    background: #eff3f4;
+                    color: #536471;
+            }            
+           
+            .feed-post-hidden-icons {
+            }
+            
+            
+            .post-meta {
+            gap: 0.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            }
+            
+            .post-type-useraccount{
+            display: inline-flex;
+            align-items: center;
+            font-size: 1.1rem;            
+            }
+            
+            .profile-container {
+            width: 32px; 
+            height: 32px; 
+            overflow: hidden; 
+            border-radius: 50%; 
+            margin-right:8px;
+            }
+            
+            
+            .profile-pic {
+            width: 100%;
+            height: 100%;
+            object-fit: cover; 
+            }
+            
+            
+            .post-type-label {
+            display: inline-flex;
+            Padding: 4px 16px;
+            align-items: center;
+            font-size: 0.925rem;
+            color: white;
+            border-radius: 100px;
+            text-transform: uppercase;
+            font-weight: bold;
+            }
+  
+
+
+            .post-type-label-text.mood { color:  #0f1419}
+            .post-type-label-text.note { color: #ffb300}
+            .post-type-label-text.ig-pics {                
+                    background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%);                                                        
+                    background-clip: text;
+                    -webkit-background-clip: text;                           
+                    color: transparent;            }
+            .post-type-label-text.youtube { color: #ff0000 }
+            .post-type-label-text.quote { color: #03a9f4; }
+            
+
+
+
+          
+            
+            .post-type-label.mood { background-color:  #0f1419}
+            .post-type-label.note { background-color: #ffb300}
+            .post-type-label.ig-pics {
+            background: #f09433; /* fallback for older browsers */
+            background: -moz-linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%);
+            background: -webkit-linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%);
+            background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%);
+            filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#f09433', endColorstr='#bc1888',GradientType=1 );
+            }
+            .post-type-label.youtube { background-color: #ff0000 }
+            .post-type-label.quote { background-color: #03a9f4; }
+            .post-type-icon {
+            font-family: 'Material Icons';
+            font-weight: normal;
+            font-style: normal;
+            font-size: 0.925rem;
+            line-height: 1;
+            letter-spacing: normal;
+            text-transform: none;
+            display: inline-block;
+            white-space: nowrap;
+            word-wrap: normal;
+            direction: ltr;
+            -webkit-font-smoothing: antialiased;
+            margin-right: 4px;
+            }
+                                       
+            
+            .post-type-time {
+            font-size: 0.875rem; /*0.9rem*/
+            color: #536471;
+            flex-ditection: row-reverse;
+            }
+            
+            
+            .post-text {
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            line-height: 1.5;
+            font-size:1.05rem;
+            
+            margin-top: 12px;
+            }
+                     
+            
+            .post-quote {
+            margin-top: 12px;
+            position: relative;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            line-height: 1.5;
+            font-size:1.1rem;
+            padding-left: 15px;
+            color: black;
+            }
+            
+            
+            .post-quote::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 5px;
+            height: 100%;
+            background-color: #536471;
+            border-radius: 5px;
+            }
+            
+            
+            
+            .post-tags {
+            display: flex;
+            flex-wrap: wrap; /* ให้แถวใหม่เกิดขึ้นถ้าไม่พอพื้นที่ */
+            gap: 8px; /* ช่องว่างระหว่าง tag ทั้งแนวนอนและแนวตั้ง */
+            margin-top: 12px;
+            }
+            .post-tags .tag {
+            font-size: 1.1rem;
+            color: white;
+            white-space: nowrap; /* ไม่ให้ข้อความ tag ห่อบรรทัด */
+            user-select: none;
+            }
+            .post-location {
+            margin-top: 12px;
+            padding: 8px 16px;
+            border-radius:12px;
+            border: 1px solid #eff3f4;
+            font-size: 1.1rem;
+            display:flex;
+            align-items:center;
+            gap:12px;
+            }
+            .post-location-icon {
+            font-family: 'Material Icons';
+            font-weight: normal;
+            font-style: normal;
+            font-size: 36px;
+            color: red;
+            line-height: 1;
+            letter-spacing: normal;
+            text-transform: none;
+            display: inline-block;
+            white-space: nowrap;
+            word-wrap: normal;
+            direction: ltr;
+            -webkit-font-smoothing: antialiased;
+            }
+            .location-title {
+            font-weight:bold;
+            }
+            
+            
+            
+            .yt-card {
+            margin-top: 12px;
+            background:#222;
+            padding:12px;
+            border-radius:12px;
+            max-width:500px;
+            color:#fff;
+            display:flex;
+            align-items:center;
+            gap:12px;
+            }
+            .yt-thumb {
+            aspect-ratio: 16 / 9;
+            border-radius:8px;
+            object-fit:cover;
+            width:120px; height:80px;
+            }
+            .yt-title {
+            font-weight:bold;
+            font-size:1rem;
+            white-space:nowrap;
+            overflow:hidden;
+            text-overflow:ellipsis;
+            }
+            .yt-channel {
+            color:#ccc;
+            font-size:0.85rem;
+            }
+            .controls button {
+            background: #444;
+            border: none;
+            color: white;
+            font-size: 24px;
+            border-radius: 50%;
+            padding: 8px;
+            transition: background 0.2s;
+            }
+            .controls button {
+            background: #444;
+            border: none;
+            color: white;
+            font-size: 24px;
+            border-radius: 50%;
+            padding: 8px;
+            transition: background 0.2s;
+            }
+
+
 
             .hidden-posts-container {
-                display: flex;
-                flex-direction: column;
-                gap: 1rem;
-                padding: 1rem 0;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            padding: 1rem 0;
             }
-
             .hidden-post-card {
-                background: #f1f1f1;
-                border-radius: 8px;
-                padding: 1rem;
-                position: relative;
-                box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            background: #f1f1f1;
+            border-radius: 8px;
+            padding: 1rem;
+            position: relative;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
             }
-
             .hidden-post-card .post-text {
-                color: #555;
+            color: #555;
             }
-
-
-
-
-
-
-
-
-                    .post-img-group {
-                        display: grid;
-                        grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
-                        gap: 0.5rem;
-                        margin-top: 0.5rem;
-                    }
-
-                    .post-img-group img {
-                        width: 100%;
-                        border-radius: 8px;
-                        object-fit: contain;
-                        background-color: #eee;
-                        cursor: pointer;
-                    }
-
-                    .post-img-group .more-images {
-                        display: flex;
-                        justify-content: center;
-                        align-items: center;
-                        background-color: rgba(0, 0, 0, 0.5);
-                        color: white;
-                        font-size: 1.2rem;
-                        border-radius: 8px;
-                        height: 80px;
-                        cursor: pointer;
-                    }
-
-
-
-                    iframe {
-                        width: 100%;
-                        height: 200px;
-                        margin-top: 0.5rem;
-                        border-radius: 12px;
-                    }
-
-
-
-
-                    .note-link {
-                        color: var(--note-blue);
-                        text-decoration: none;
-                        cursor: pointer;
-                        font-weight: 500;
-                    }
-
-
-
-
-                    /* Floating Action Button (FAB) */
-                    .fab-button {
-                        position: fixed;
-                        bottom: 20px;
-                        right: 20px;
-                        background: #0F1419;
-                        border: none;
-                        border-radius: 50%;
-                        width: 56px;
-                        height: 56px;
-                        font-size: 2rem;
-                        display: flex;
-                        justify-content: center;
-                        align-items: center;
-                        box-shadow: 0 4px 10px rgba(0,0,0,0.3);
-                        cursor: pointer;
-                        z-index: 100;
-                        transition: transform 0.2s ease-in-out;
-                    }
-
-                    .fab-button:active {
-                        transform: scale(0.95);
-                    }
-
-                    /* Input Bottom Sheet (replaces note-form) */
-                    .input-bottom-sheet-overlay {
-                        position: fixed;
-                        top: 0;
-                        left: 0;
-                        right: 0;
-                        bottom: 0;
-                        background: rgba(0, 0, 0, 0.5);
-                        display: flex;
-                        justify-content: center;
-                        align-items: flex-end;
-                        z-index: 1000;
-                        visibility: hidden;
-                        opacity: 0;
-                        transition: visibility 0.3s, opacity 0.3s;
-                    }
-
-                    .input-bottom-sheet-overlay.active {
-                        visibility: visible;
-                        opacity: 1;
-                    }
-
-                    .input-bottom-sheet {
-                        background: white;
-                        border-top-left-radius: 16px;
-                        border-top-right-radius: 16px;
-                        width: 100%;
-                        max-width: 900px;
-                        padding: 1.5rem 1rem;
-                        transform: translateY(100%);
-                        transition: transform 0.3s ease-out;
-                        box-sizing: border-box;
-                        display: flex;
-                        flex-direction: column;
-                        gap: 1rem;
-                    }
-
-
-                    .input-bottom-sheet-overlay.active .input-bottom-sheet {
-                        transform: translateY(0);
-                    }
-
-                    .input-bottom-sheet-header {
-                        display: flex;
-                        justify-content: space-between;
-                        align-items: center;
-                        margin-bottom: 0.5rem;
-                    }
-
-                    .input-bottom-sheet-header h3 {
-                        margin: 0;
-                        font-size: 1.2rem;
-                        color: var(--text-light);
-                    }
-
-
-                    .input-bottom-sheet-header .close-button {
-                        background: none;
-                        border: none;
-                        font-size: 1.5rem;
-                        cursor: pointer;
-                        color: gray;
-                    }
-
-                    .input-row-sheet {
-                        display: flex;
-                        align-items: flex-end;
-                        gap: 0.5rem;
-                        width: 100%;
-                        position: relative;
-                    }
-
-                    .input-row-sheet textarea {
-                        flex: 1;
-                        box-sizing: border-box;
-                        padding: 0.75rem 1rem;
-                        font-size: 1rem;
-                        border: 1px solid #ccc;
-                        border-radius: 25px;
-                        background: var(--bg-light);
-                        color: var(--text-light);
-                        resize: none;
-                        min-height: 40px;
-                        overflow-y: auto;
-                        line-height: 1.5;
-                    }
-
-
-
-                    .input-sheet-actions {
-                        display: flex;
-                        justify-content: space-between;
-                        align-items: center;
-                        width: 100%;
-                    }
-
-                    .input-sheet-actions .left-actions,
-                    .input-sheet-actions .right-actions {
-                        display: flex;
-                        gap: 0.5rem;
-                    }
-
-                    .input-sheet-actions .icon-button {
-                        background: none;
-                        border: none;
-                        font-size: 1.5rem;
-                        cursor: pointer;
-                        color: gray;
-                        padding: 0.5rem;
-                        border-radius: 50%;
-                        transition: background 0.2s;
-                    }
-
-                    .input-sheet-actions .icon-button:hover {
-                        background: #eee;
-                    }
-
-
-                    .input-sheet-actions .send-button {
-                        background: var(--primary-color);
-                        color: white;
-                        border-radius: 50%;
-                        width: 40px;
-                        height: 40px;
-                        display: flex;
-                        justify-content: center;
-                        align-items: center;
-                        font-size: 1.2rem;
-                        padding: 0;
-                        box-shadow: 0 2px 4px rgba(0,0,0,0.2);
-                    }
-
-                    /* Emoji Selection Popover - Position adjusted for bottom sheet */
-                    #emojiSelectionPopover {
-                        position: absolute; /* Changed to absolute to be within the bottom sheet context */
-                        bottom: calc(1rem + 60px); /* Adjust based on input area height in bottom sheet */
-                        left: 50%;
-                        transform: translateX(-50%);
-                        width: calc(100% - 2rem);
-                        max-width: 400px;
-                        background: var(--card-light);
-                        border-radius: 16px;
-                        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-                        padding: 1rem;
-                        display: none;
-                        z-index: 99; /* Below bottom sheet, above general content */
-                        box-sizing: border-box;
-                        max-height: 200px;
-                        overflow-y: auto;
-                        border: 1px solid #ddd;
-                    }
-                    body.dark #emojiSelectionPopover {
-                        background: var(--card-dark);
-                        border-color: #444;
-                    }
-
-                    #emojiSelectionPopover .emoji-grid {
-                        display: grid;
-                        grid-template-columns: repeat(auto-fill, minmax(40px, 1fr));
-                        gap: 0.5rem;
-                        justify-items: center;
-                    }
-
-                    #emojiSelectionPopover .emoji-button {
-                        font-size: 1.8rem;
-                        background: none;
-                        border: none;
-                        cursor: pointer;
-                        padding: 0.2rem;
-                        border-radius: 8px;
-                        transition: background 0.1s;
-                    }
-                    #emojiSelectionPopover .emoji-button:hover {
-                        background: #eee;
-                    }
-                    body.dark #emojiSelectionPopover .emoji-button:hover {
-                        background: #555;
-                    }
-
-                    /* Other Bottom Sheets (Filter, Delete) - Remain similar positioning */
-                    .bottom-sheet-overlay {
-                        position: fixed;
-                        top: 0;
-                        left: 0;
-                        right: 0;
-                        bottom: 0;
-                        background: rgba(0, 0, 0, 0.5);
-                        display: flex;
-                        justify-content: center;
-                        align-items: flex-end;
-                        z-index: 1000;
-                        visibility: hidden;
-                        opacity: 0;
-                        transition: visibility 0.3s, opacity 0.3s;
-                    }
-
-                    .bottom-sheet-overlay.active {
-                        visibility: visible;
-                        opacity: 1;
-                    }
-
-                    .bottom-sheet {
-                        
-                        background: white;
-                        border-top-left-radius: 16px;
-                        border-top-right-radius: 16px;
-                        width: 100%;
-                        max-width: 900px;
-                        
-                       
-                        padding: 1.5rem 1rem;
-                        transform: translateY(100%);
-                        transition: transform 0.3s ease-out;
-                    }
-
-                    .bottom-sheet-overlay.active .bottom-sheet {
-                        transform: translateY(0);
-                    }
+            .post-img-group {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+            gap: 0.5rem;
+            margin-top: 0.5rem;
+            }
+            .post-img-group img {
+            width: 100%;
+            border-radius: 8px;
+            object-fit: contain;
+            background-color: #eee;
+            cursor: pointer;
+            }
+            .post-img-group .more-images {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: rgba(0, 0, 0, 0.5);
+            color: white;
+            font-size: 1.2rem;
+            border-radius: 8px;
+            height: 80px;
+            cursor: pointer;
+            }
+            iframe {
+            width: 100%;
+            height: 200px;
+            margin-top: 0.5rem;
+            border-radius: 12px;
+            }
+            .note-link {
+            color: var(--note-blue);
+            text-decoration: none;
+            cursor: pointer;
+            font-weight: 500;
+            }
+            
+            
+            
+            /* Floating Action Button (FAB) */
+            .fab-button {
+                    position: fixed;
+                    bottom: 20px;
+                    right: 20px;
+                    /*background: #0F1419;*/
+                    /*background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%);        */
+                    background:#3C58A7;                                               
                     
-                    
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-                    .bottom-sheet-header {
-                        display: flex;
-                        justify-content: space-between;
-                        align-items: center;
-                        margin-bottom: 1rem;
-                    }
-
-                    .bottom-sheet-header h3 {
-                        margin: 0;
-                        font-size: 1.2rem;
-                        color: var(--text-light);
-                    }
-
-                    .bottom-sheet-header .close-button {
-                        background: none;
-                        border: none;
-                        font-size: 1.5rem;
-                        cursor: pointer;
-                        color: gray;
-                    }
-
-                    .filter-options, .action-options {
-                        display: flex;
-                        flex-wrap: wrap;
-                        gap: 0.75rem;
-                    }
-
-                    .filter-options button, .action-options .action-button {
-                        background: var(--bg-light);
-                        border: 1px solid #ccc;
-                        padding: 0.5rem 0.75rem;
-                        border-radius: 20px;
-                        cursor: pointer;
-                        font-size: 1rem;
-                        color: var(--text-light);
-                        /*transition: background 0.2s, border-color 0.2s;*/
-                        width: auto; /* For filter buttons */
-                        text-align: center;
-                    }
-
-
-                    .filter-options button.active {
-                        background: var(--primary-color);
-                        color: white;
-                        border-color: var(--primary-color);
-                    }
-
-                    /* Action buttons specific styles */
-                    .action-options {
-                        flex-direction: column; /* Force vertical stacking for action buttons */
-                    }
-
-                    .action-options .action-button {
-                        width: 100%; /* Full width for action buttons */
-                        border-radius: 8px; /* Slightly less rounded than filter buttons */
-                    }
-
-                    .action-options .action-button.delete-action {
-                        background: #ffe0e0;
-                        color: #d32f2f;
-                        border-color: #ffcdd2;
-                    }
-
-
-
-                    .action-options .action-button.pin-action {
-                        background: #e0f2f7;
-                        color: #007bb6;
-                        border-color: #b3e5fc;
-                    }
-
-
-                    /* Image Modal Styles - Stays similar */
-                    .image-modal-overlay {
-                        position: fixed;
-                        top: 0;
-                        left: 0;
-                        right: 0;
-                        bottom: 0;
-                        background: rgba(0, 0, 0, 0.8);
-                        display: flex;
-                        justify-content: center;
-                        align-items: center;
-                        z-index: 1001;
-                        visibility: hidden;
-                        opacity: 0;
-                        transition: visibility 0.3s, opacity 0.3s;
-                    }
-
-                    .image-modal-overlay.active {
-                        visibility: visible;
-                        opacity: 1;
-                    }
-
-                    .image-modal-content {
-                        position: relative;
-                        background: #222;
-                        padding: 1rem;
-                        border-radius: 16px;
-                        max-width: 90vw;
-                        max-height: 90vh;
-                        overflow: hidden;
-                        display: flex;
-                        flex-direction: column;
-                    }
-
-                    .image-modal-close-button {
-                        position: absolute;
-                        top: 10px;
-                        right: 10px;
-                        background: rgba(255, 255, 255, 0.2);
-                        color: white;
-                        border: none;
-                        border-radius: 50%;
-                        width: 36px;
-                        height: 36px;
-                        font-size: 1.2rem;
-                        cursor: pointer;
-                        display: flex;
-                        justify-content: center;
-                        align-items: center;
-                        z-index: 1002;
-                    }
-
-                    .full-image-container {
-                        display: flex;
-                        flex-direction: column;
-                        justify-content: flex-start;
-                        align-items: center;
-                        width: 100%;
-                        height: 100%;
-                        overflow-y: auto;
-                        gap: 10px;
-                        padding: 20px;
-                        box-sizing: border-box;
-                        scroll-behavior: smooth;
-                    }
-
-                    .full-image-container img {
-                        max-width: 100%;
-                        max-height: 100%;
-                        object-fit: contain;
-                        border-radius: 8px;
-                        background-color: #000;
-                    }
-
-                    /* Camera Modal Styles - Stays similar */
-                    #cameraModal {
-                        position: fixed;
-                        top: 0;
-                        left: 0;
-                        right: 0;
-                        bottom: 0;
-                        background: rgba(0, 0, 0, 0.9);
-                        display: flex;
-                        flex-direction: column;
-                        justify-content: center;
-                        align-items: center;
-                        z-index: 1003;
-                        visibility: hidden;
-                        opacity: 0;
-                        transition: visibility 0.3s, opacity 0.3s;
-                    }
-
-                    #cameraModal.active {
-                        visibility: visible;
-                        opacity: 1;
-                    }
-
-                    #cameraModal video {
-                        max-width: 95vw;
-                        max-height: 80vh;
-                        background-color: black;
-                        border-radius: 8px;
-                        transform: scaleX(-1);
-                    }
-
-                    #cameraModal .camera-controls {
-                        margin-top: 1rem;
-                        display: flex;
-                        gap: 1rem;
-                    }
-
-                    #cameraModal .camera-controls button {
-                        background: var(--primary-color);
-                        color: white;
-                        border: none;
-                        padding: 0.8rem 1.5rem;
-                        border-radius: 50px;
-                        font-size: 1rem;
-                        cursor: pointer;
-                        box-shadow: 0 2px 4px rgba(0,0,0,0.3);
-                    }
-
-                    #cameraModal .camera-controls button.close-camera-button {
-                        background: #d32f2f;
-                    }
-
-                    .header-bar {
-                       transition: transform 0.3s ease;
-                     }
-
-                     .post-text p,
+                    border: none;
+                    border-radius: 50%;
+                    width: 56px;
+                    height: 56px;
+                    font-size: 2rem;
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+                    cursor: pointer;
+                    z-index: 100;
+                    transition: transform 0.2s ease-in-out;
+            }
+            
+            .fab-button:active {
+            transform: scale(0.95);
+            }
+            
+            
+            
+            
+            
+            
+            /* Input Bottom Sheet (replaces note-form) */
+            .input-bottom-sheet-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            backdrop-filter: blur(1px);
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            display: flex;
+            justify-content: center;
+            align-items: flex-end;
+            z-index: 1000;
+            visibility: hidden;
+            opacity: 0;
+            transition: visibility 0.3s, opacity 0.3s;
+            }
+            .input-bottom-sheet-overlay.active {
+            visibility: visible;
+            opacity: 1;
+            }
+            .input-bottom-sheet {
+            background: white;
+            border-top-left-radius: 16px;
+            border-top-right-radius: 16px;
+            width: 100%;
+            max-width: 900px;
+            padding: 1.5rem 1rem;
+            transform: translateY(100%);
+            transition: transform 0.3s ease-out;
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            }
+            .input-bottom-sheet-overlay.active .input-bottom-sheet {
+            transform: translateY(0);
+            }
+            .input-bottom-sheet-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.5rem;
+            }
+            .input-bottom-sheet-header h3 {
+            margin: 0;
+            font-size: 1.2rem;
+            color: var(--text-light);
+            }
+            .input-bottom-sheet-header .close-button {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: gray;
+            }
+            .input-row-sheet {
+            display: flex;
+            align-items: flex-end;
+            gap: 0.5rem;
+            width: 100%;
+            position: relative;
+            }
+            .input-row-sheet textarea {
+            flex: 1;
+            box-sizing: border-box;
+            padding: 0.75rem 1rem;
+            font-size: 1rem;
+            border: 1px solid #ccc;
+            border-radius: 25px;
+            background: var(--bg-light);
+            color: var(--text-light);
+            resize: none;
+            min-height: 40px;
+            overflow-y: auto;
+            line-height: 1.5;
+            }
+            .input-sheet-actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+            }
+            .input-sheet-actions .left-actions,
+            .input-sheet-actions .right-actions {
+            display: flex;
+            gap: 0.5rem;
+            }
+            .input-sheet-actions .icon-button {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: gray;
+            padding: 0.5rem;
+            border-radius: 50%;
+            transition: background 0.2s;
+            }
+            .input-sheet-actions .icon-button:hover {
+            background: #eee;
+            }
+            .input-sheet-actions .send-button {
+            background: var(--primary-color);
+            color: white;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 1.2rem;
+            padding: 0;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+            }
+            /* Emoji Selection Popover - Position adjusted for bottom sheet */
+            #emojiSelectionPopover {
+            position: absolute; /* Changed to absolute to be within the bottom sheet context */
+            bottom: calc(1rem + 60px); /* Adjust based on input area height in bottom sheet */
+            left: 50%;
+            transform: translateX(-50%);
+            width: calc(100% - 2rem);
+            max-width: 400px;
+            background: var(--card-light);
+            border-radius: 16px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            padding: 1rem;
+            display: none;
+            z-index: 99; /* Below bottom sheet, above general content */
+            box-sizing: border-box;
+            max-height: 200px;
+            overflow-y: auto;
+            border: 1px solid #ddd;
+            }
+            body.dark #emojiSelectionPopover {
+            background: var(--card-dark);
+            border-color: #444;
+            }
+            #emojiSelectionPopover .emoji-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(40px, 1fr));
+            gap: 0.5rem;
+            justify-items: center;
+            }
+            #emojiSelectionPopover .emoji-button {
+            font-size: 1.8rem;
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 0.2rem;
+            border-radius: 8px;
+            transition: background 0.1s;
+            }
+            #emojiSelectionPopover .emoji-button:hover {
+            background: #eee;
+            }
+            body.dark #emojiSelectionPopover .emoji-button:hover {
+            background: #555;
+            }
+            /* Other Bottom Sheets (Filter, Delete) - Remain similar positioning */
+            .bottom-sheet-overlay {
+            position: fixed;
+            backdrop-filter: blur(10px);
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            display: flex;
+            justify-content: center;
+            align-items: flex-end;
+            z-index: 1000;
+            visibility: hidden;
+            opacity: 0;
+            transition: visibility 0.3s, opacity 0.3s;
+            }
+            .bottom-sheet-overlay.active {
+            visibility: visible;
+            opacity: 1;
+            }
+            .bottom-sheet {
+            background: white;
+            backdrop-filter: blur(10px);
+            border-top-left-radius: 16px;
+            border-top-right-radius: 16px;
+            width: 100%;
+            max-width: 900px;
+            padding: 1.5rem 1rem;
+            transform: translateY(100%);
+            transition: transform 0.3s ease-out;
+            }
+            .bottom-sheet-overlay.active .bottom-sheet {
+            transform: translateY(0);
+            }
+            .bottom-sheet-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+            }
+            .bottom-sheet-header h3 {
+            margin: 0;
+            font-size: 1.2rem;
+            color: var(--text-light);
+            }
+            .bottom-sheet-header .close-button {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: gray;
+            }
+            .filter-options, .action-options {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.75rem;
+            }
+            .filter-options button, .action-options .action-button {
+            background: var(--bg-light);
+            border: 1px solid #ccc;
+            padding: 0.5rem 0.75rem;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 1rem;
+            color: var(--text-light);
+            /*transition: background 0.2s, border-color 0.2s;*/
+            width: auto; /* For filter buttons */
+            text-align: center;
+            }
+            .filter-options button.active {
+            background: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+            }
+            /* Action buttons specific styles */
+            .action-options {
+            flex-direction: column; /* Force vertical stacking for action buttons */
+            }
+            .action-options .action-button {
+            width: 100%; /* Full width for action buttons */
+            border-radius: 8px; /* Slightly less rounded than filter buttons */
+            }
+            .action-options .action-button.delete-action {
+            background: #ffe0e0;
+            color: #d32f2f;
+            border-color: #ffcdd2;
+            }
+            .action-options .action-button.pin-action {
+            background: #e0f2f7;
+            color: #007bb6;
+            border-color: #b3e5fc;
+            }
+            /* Image Modal Styles - Stays similar */
+            .image-modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.8);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1001;
+            visibility: hidden;
+            opacity: 0;
+            transition: visibility 0.3s, opacity 0.3s;
+            }
+            .image-modal-overlay.active {
+            visibility: visible;
+            opacity: 1;
+            }
+            .image-modal-content {
+            position: relative;
+            background: #222;
+            padding: 1rem;
+            border-radius: 16px;
+            max-width: 90vw;
+            max-height: 90vh;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            }
+            .image-modal-close-button {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 36px;
+            height: 36px;
+            font-size: 1.2rem;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1002;
+            }
+            .full-image-container {
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            align-items: center;
+            width: 100%;
+            height: 100%;
+            overflow-y: auto;
+            gap: 10px;
+            padding: 20px;
+            box-sizing: border-box;
+            scroll-behavior: smooth;
+            }
+            .full-image-container img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+            border-radius: 8px;
+            background-color: #000;
+            }
+            /* Camera Modal Styles - Stays similar */
+            #cameraModal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.9);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 1003;
+            visibility: hidden;
+            opacity: 0;
+            transition: visibility 0.3s, opacity 0.3s;
+            }
+            #cameraModal.active {
+            visibility: visible;
+            opacity: 1;
+            }
+            #cameraModal video {
+            max-width: 95vw;
+            max-height: 80vh;
+            background-color: black;
+            border-radius: 8px;
+            transform: scaleX(-1);
+            }
+            #cameraModal .camera-controls {
+            margin-top: 1rem;
+            display: flex;
+            gap: 1rem;
+            }
+            #cameraModal .camera-controls button {
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 0.8rem 1.5rem;
+            border-radius: 50px;
+            font-size: 1rem;
+            cursor: pointer;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+            }
+            #cameraModal .camera-controls button.close-camera-button {
+            background: #d32f2f;
+            }
+            .header-bar {
+            transition: transform 0.3s ease;
+            }
+            .post-text p,
             .post-text h1,
             .post-text h2,
             .post-text h3,
@@ -953,12 +805,11 @@
             .post-text h6,
             .post-text ul,
             .post-text ol{
-              margin: 0px;
-              padding: 0px;
-              display: inline;
+            margin: 0px;
+            padding: 0px;
+            display: inline;
             }
-
-                     .post-quote p,
+            .post-quote p,
             .post-quote h1,
             .post-quote h2,
             .post-quote h3,
@@ -967,314 +818,237 @@
             .post-quote h6,
             .post-quote ul,
             .post-quote ol{
-              margin: 0px;
-              padding: 0px;
-              display: inline;
+            margin: 0px;
+            padding: 0px;
+            display: inline;
             }
-
-
-
-
-
-
-
-
-
-
-
-                .bottom-sheet2 {
-                  position: fixed;
-                  bottom: 0;
-                  left: 0;
-                  right: 0;
-                  background: white;
-                  border-top-left-radius: 20px;
-                  border-top-right-radius: 20px;
-                  padding: 16px 20px;
-                  box-shadow: 0 -2px 12px rgba(0, 0, 0, 0.2);
-                }
-
-
+            .bottom-sheet2 {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: white;
+            border-top-left-radius: 20px;
+            border-top-right-radius: 20px;
+            padding: 16px 20px;
+            box-shadow: 0 -2px 12px rgba(0, 0, 0, 0.2);
+            }
             /* Container ที่ห่อหุ้ม textarea */
             .input-wrapper {
-                margin-top: 12px;
-              position: relative;
-              width: 100%;
-              box-sizing: border-box;
-
-              /* CSS Custom Properties (Variables) */
-              --before-background-color: transparent;
-              --before-margin-right: 0px; /* สำหรับควบคุมช่องว่างด้านขวา */
-
-              /* เพิ่ม transition เพื่อให้ขยับ smooth ขึ้น */
-              transition: padding-left 0.2s ease-in-out;
+            margin-top: 12px;
+            position: relative;
+            width: 100%;
+            box-sizing: border-box;
+            /* CSS Custom Properties (Variables) */
+            --before-background-color: transparent;
+            --before-margin-right: 0px; /* สำหรับควบคุมช่องว่างด้านขวา */
+            /* เพิ่ม transition เพื่อให้ขยับ smooth ขึ้น */
+            transition: padding-left 0.2s ease-in-out;
             }
-
             /* ใช้ ::before กับ container แทน textarea */
             .input-wrapper::before {
-              content: '';
-              position: absolute;
-              top: 0;
-              left: 0;
-              width: 5px;
-              height: 100%;
-              border-radius: 5px;
-              background-color: var(--before-background-color);
-              transition: background-color 0.2s ease-in-out;
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 5px;
+            height: 100%;
+            border-radius: 5px;
+            background-color: var(--before-background-color);
+            transition: background-color 0.2s ease-in-out;
             }
-
             /* สำหรับ textarea โดยเฉพาะ */
             .input-area {
-              font-family: 'Eng', 'Thai', 'Emoji', sans-serif;
-              font-size: 1.25rem;
-              color: #333;
-              line-height: 1.5;
-              min-height: 120px;
-
-              padding: 0;
-              width: 100%;
-              box-sizing: border-box;
-              border: none;
-              outline: none;
-              resize: none;
-
-              /*
-                แก้ไข: เราจะใช้ padding-left เพื่อดัน textarea ให้เว้นช่องว่าง
-                แทนที่จะใช้ margin-right
-              */
-              padding-left: calc(var(--before-margin-right));
-              transition: padding-left 0.2s ease-in-out;
+            font-family: 'Eng', 'Thai', 'Emoji', sans-serif;
+            font-size: 1.25rem;
+            color: #333;
+            line-height: 1.5;
+            min-height: 120px;
+            padding: 0;
+            width: 100%;
+            box-sizing: border-box;
+            border: none;
+            outline: none;
+            resize: none;
+            /*
+            แก้ไข: เราจะใช้ padding-left เพื่อดัน textarea ให้เว้นช่องว่าง
+            แทนที่จะใช้ margin-right
+            */
+            padding-left: calc(var(--before-margin-right));
+            transition: padding-left 0.2s ease-in-out;
             }
-
             /* สำหรับ placeholder */
             .input-area::placeholder {
-              color: #aaa;
+            color: #aaa;
             }
-
-
-
-
-              .input-area2 {
-              font-size: 1.25rem;
-              color: #333;
-              line-height: 1.5;
-              margin-bottom:20px;
-              margin-top: 12px;
-              width: 100%; /* เพิ่ม width เพื่อให้เต็มพื้นที่ */
-              padding:0;
-              box-sizing: border-box; /* สำคัญมาก! */
-              border: none; /* ลบเส้นขอบเริ่มต้นออก */
-              outline: none;
-              resize: none; /* ป้องกันไม่ให้ผู้ใช้ปรับขนาด textarea */
+            .input-area2 {
+            font-size: 1.25rem;
+            color: #333;
+            line-height: 1.5;
+            margin-bottom:20px;
+            margin-top: 12px;
+            width: 100%; /* เพิ่ม width เพื่อให้เต็มพื้นที่ */
+            padding:0;
+            box-sizing: border-box; /* สำคัญมาก! */
+            border: none; /* ลบเส้นขอบเริ่มต้นออก */
+            outline: none;
+            resize: none; /* ป้องกันไม่ให้ผู้ใช้ปรับขนาด textarea */
             }
-
-
-
-
-
-
-
-
-
-
-
             .post-type-label2 {
-                margin-top:12px;
-                        display: inline-flex;
-                        Padding: 4px 16px;
-                        align-items: center;
-                        font-size: 0.925rem;
-                        background-color:  #0f1419;
-                        color: white;
-                        border-radius: 100px;
-                        text-transform: uppercase;
-                        font-weight: bold;
-                    }
-
+            margin-top:12px;
+            display: inline-flex;
+            Padding: 4px 16px;
+            align-items: center;
+            font-size: 0.925rem;
+            background-color:  #0f1419;
+            color: white;
+            border-radius: 100px;
+            text-transform: uppercase;
+            font-weight: bold;
+            }
             .post-type-label2.mood {
-                background-color:  #0f1419;
-                            }
+            background-color:  #0f1419;
+            }
             .post-type-label2.youtube {
-                background-color:  red;
-                            }
-
-                    .post-type-icon2 {
-                            font-family: 'Material Icons';
-                            font-weight: normal;
-                            font-style: normal;
-            			    font-size: 0.925rem;
-            			    line-height: 1;
-            			    letter-spacing: normal;
-            			    text-transform: none;
-            			    display: inline-block;
-            			    white-space: nowrap;
-            			    word-wrap: normal;
-            			    direction: ltr;
-            		        -webkit-font-smoothing: antialiased;
-            		        margin-right: 4px;
-                     }
-
-
-                /*---  ---*/
-                .actions {
-                  display: flex;
-                  align-items: center;
-                  border-top: 2px solid #eff3f4;
-                  padding-top: 12px;
-                  justify-content: space-between;
-                  gap: 16px; /*  */
-                }
-
-                .left-actions {
-                  display: flex;
-                  flex: 1; /*  */
-                  overflow-x: auto; /*  */
-                  -webkit-overflow-scrolling: touch; /*  iOS */
-                 /* padding-bottom: 4px; /*  */
-                }
-
-                /*  scrollbar  */
-                .left-actions::-webkit-scrollbar {
-                  display: none;
-                }
-
-                .right-actions {
-                  display: flex;
-                  align-items: center;
-                  gap: 16px; /*  archived  POST */
-                }
-
-                .icons {
-                  display: flex;
-                  gap: 16px;
-                  font-size: 2rem;
-                  color: #666;
-                }
-
-                .post-btn {
-                  flex-shrink: 0; /*  */
-                  background: black;
-                  color: white;
-                  border: none;
-                  padding: 8px 16px;
-                  border-radius: 100px;
-                  font-weight: bold;
-                  cursor: pointer;
-                }
-
-                .post-btn:hover {
-                  background: #222;
-                }
-
-                .input-bottom-sheet-header {
-                        display: flex;
-                        justify-content: space-between;
-                        align-items: center;
-                        margin-bottom: 0.5rem;
-                    }
-
-                    .input-bottom-sheet-header h3 {
-                        margin: 0;
-                        font-size: 1.25rem;
-
-                    }
-
-                    .input-bottom-sheet-header .close-button {
-                        background: none;
-                        border: none;
-                        font-size: 1.5rem;
-                        cursor: pointer;
-                        color: gray;
-                    }
-
-
-                          .sheet-icon {
-                            font-family: 'Material Icons Outlined';
-                            font-weight: normal;
-                            font-style: normal;
-            			    font-size: 1.75rem;
-            			    color: #6b7280;
-
-            			    letter-spacing: normal;
-            			    text-transform: none;
-            			    display: inline-block;
-            			    white-space: nowrap;
-            			    word-wrap: normal;
-            			    direction: ltr;
-            		        -webkit-font-smoothing: antialiased;
-
-                     }
-
-
-
-                             #tagInputContainer {
-
-                        margin-bottom: 15px;
-
-
-
-
-                        font-size: 1.25rem;
-              color: #333;
-              margin-bottom:20px;
-              margin-top: 12px;
-              box-sizing: border-box; /* สำคัญมาก! */
-              border: none; /* ลบเส้นขอบเริ่มต้นออก */
-              outline: none;
-
-
-                    }
-
-                    #tagInputContainer[contenteditable="true"]:empty:before {
-                        content: "#";
-                        color: #aaa;
-                    }
-
-                    .tag-in-input {
-                        color: #007bff; /* สีน้ำเงินสำหรับ Tag */
-                        font-weight: bold;
-                        white-space: nowrap;
-                    }
-
-                            .hashtag {
-                        color: #3897F0; /* สีน้ำเงินสำหรับ Hashtag */
-                       /* font-weight: bold;*/
-                        white-space: nowrap;
-                    }
-
-                    .mention {
-                        color: #D10869; /* สีแดงสำหรับ Mention */
-                        /*font-weight: bold;*/
-                        white-space: nowrap;
-                    }
-
-                    .space-span {
-                        white-space: pre;
-                        color: #000;
-                    }
-
-                    #tagList {
-                        list-style: none;
-                        padding: 0;
-                        margin-top: 10px;
-                        text-align: left;
-                    }
-
-                    #tagList li {
-                        background: #e9ecef;
-                        padding: 8px 12px;
-                        border-radius: 4px;
-                        margin-bottom: 8px;
-                        color: #333;
-                    }
-                    
-                    
-                    
-                    
-                    
-                    
-                    
-                    #image-upload {
+            background-color:  red;
+            }
+            .post-type-icon2 {
+            font-family: 'Material Icons';
+            font-weight: normal;
+            font-style: normal;
+            font-size: 0.925rem;
+            line-height: 1;
+            letter-spacing: normal;
+            text-transform: none;
+            display: inline-block;
+            white-space: nowrap;
+            word-wrap: normal;
+            direction: ltr;
+            -webkit-font-smoothing: antialiased;
+            margin-right: 4px;
+            }
+            /*---  ---*/
+            .actions {
+            display: flex;
+            align-items: center;
+            border-top: 2px solid #eff3f4;
+            padding-top: 12px;
+            justify-content: space-between;
+            gap: 16px; /*  */
+            }
+            .left-actions {
+            display: flex;
+            flex: 1; /*  */
+            overflow-x: auto; /*  */
+            -webkit-overflow-scrolling: touch; /*  iOS */
+            /* padding-bottom: 4px; /*  */
+            }
+            /*  scrollbar  */
+            .left-actions::-webkit-scrollbar {
+            display: none;
+            }
+            .right-actions {
+            display: flex;
+            align-items: center;
+            gap: 16px; /*  archived  POST */
+            }
+            .icons {
+            display: flex;
+            gap: 16px;
+            font-size: 2rem;
+            color: #666;
+            }
+            .post-btn {
+            flex-shrink: 0; /*  */
+            background: black;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 100px;
+            font-weight: bold;
+            cursor: pointer;
+            }
+            .post-btn:hover {
+            background: #222;
+            }
+            .input-bottom-sheet-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.5rem;
+            }
+            .input-bottom-sheet-header h3 {
+            margin: 0;
+            font-size: 1.25rem;
+            }
+            .input-bottom-sheet-header .close-button {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: gray;
+            }
+            .sheet-icon {
+            font-family: 'Material Icons Outlined';
+            font-weight: normal;
+            font-style: normal;
+            font-size: 1.75rem;
+            color: #6b7280;
+            letter-spacing: normal;
+            text-transform: none;
+            display: inline-block;
+            white-space: nowrap;
+            word-wrap: normal;
+            direction: ltr;
+            -webkit-font-smoothing: antialiased;
+            }
+            #tagInputContainer {
+            margin-bottom: 15px;
+            font-size: 1.25rem;
+            color: #333;
+            margin-bottom:20px;
+            margin-top: 12px;
+            box-sizing: border-box; /* สำคัญมาก! */
+            border: none; /* ลบเส้นขอบเริ่มต้นออก */
+            outline: none;
+            }
+            #tagInputContainer[contenteditable="true"]:empty:before {
+            content: "#";
+            color: #aaa;
+            }
+            .tag-in-input {
+            color: #007bff; /* สีน้ำเงินสำหรับ Tag */
+            font-weight: bold;
+            white-space: nowrap;
+            }
+            .hashtag {
+            color: #3897F0; /* สีน้ำเงินสำหรับ Hashtag */
+            /* font-weight: bold;*/
+            white-space: nowrap;
+            }
+            .mention {
+            color: #D10869; /* สีแดงสำหรับ Mention */
+            /*font-weight: bold;*/
+            white-space: nowrap;
+            }
+            .space-span {
+            white-space: pre;
+            color: #000;
+            }
+            #tagList {
+            list-style: none;
+            padding: 0;
+            margin-top: 10px;
+            text-align: left;
+            }
+            #tagList li {
+            background: #e9ecef;
+            padding: 8px 12px;
+            border-radius: 4px;
+            margin-bottom: 8px;
+            color: #333;
+            }
+            #image-upload {
             position: absolute;
             top: 0;
             left: 0;
@@ -1282,17 +1056,14 @@
             height: 100%;
             opacity: 0;
             cursor: pointer;
-        }
-
-        #image-preview-area {
+            }
+            #image-preview-area {
             display: flex;
             flex-wrap: wrap;
             gap: 10px;
             margin-top: 10px;
-            
-        }
-
-        .image-card {
+            }
+            .image-card {
             position: relative;
             width: 90px;
             height: 90px;
@@ -1300,16 +1071,14 @@
             border-radius: 8px;
             overflow: hidden;
             background-color: #f9f9f9;
-        }
-        
-        .image-card img {
+            }
+            .image-card img {
             width: 100%;
             height: 100%;
             object-fit: cover;
             display: block;
-        }
-
-        .delete-btn {
+            }
+            .delete-btn {
             position: absolute;
             top: 5px;
             right: 5px;
@@ -1326,64 +1095,211 @@
             display: flex;
             justify-content: center;
             align-items: center;
-        }
-        
-        .delete-btn:hover {
-            background-color: rgba(0, 0, 0, 0.7);
-        }
-   
-   
-   
-   /* สำหรับ textarea โดยเฉพาะ */
-            .input-area6 {
-              font-family: 'Eng', 'Thai', 'Emoji', sans-serif;
-              font-size: 1.25rem;
-              color: #333;
-              
-              height: 32px; /* กำหนดความสูงขั้นต่ำ */
-
-              padding: 0;
-              
-              width: 100%;
-              box-sizing: border-box;
-              border: none;
-              outline: none;
-              resize: none;
-
-              /*
-                แก้ไข: เราจะใช้ padding-left เพื่อดัน textarea ให้เว้นช่องว่าง
-                แทนที่จะใช้ margin-right
-              */
-              
-              
             }
-
+            .delete-btn:hover {
+            background-color: rgba(0, 0, 0, 0.7);
+            }
+            /* สำหรับ textarea โดยเฉพาะ */
+            .input-area6 {
+            font-family: 'Eng', 'Thai', 'Emoji', sans-serif;
+            font-size: 1.25rem;
+            color: #333;
+            height: 32px; /* กำหนดความสูงขั้นต่ำ */
+            padding: 0;
+            width: 100%;
+            box-sizing: border-box;
+            border: none;
+            outline: none;
+            resize: none;
+            /*
+            แก้ไข: เราจะใช้ padding-left เพื่อดัน textarea ให้เว้นช่องว่าง
+            แทนที่จะใช้ margin-right
+            */
+            }
             /* สำหรับ placeholder */
             .input-area::placeholder {
-              color: #aaa;
+            color: #aaa;
             }
-   
-   
-   
-                    
-                    .bottom-sheet-header6 {
-                        display: flex;
-                        justify-content: space-between;
-                        align-items: center;
-                        
+            .bottom-sheet-header6 {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 200px;
+            }
             
-                        margin-top: 200px;
-                    }
+            
+            
+            
+                        /* Overlay */
+            .overlayAI {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.35);
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+            z-index: 1000;
+            }
+            .overlayAI.active { opacity: 1; visibility: visible; }
+            /* Bottom Sheet */
+            
+            
+            .bottom-sheetAI         {
+            position: fixed;
+            bottom: -100%;
+            left: 0;
+            width: 100%;
+            height: 80vh; /* กำหนดความสูง 90% ของหน้าจอ */
+            /*max-height: 90%;*/
+            /*background: rgba(255,255,255,0.95);*/
+            background: white;
+            backdrop-filter: blur(10px);
+            border-top-left-radius: 24px;
+            border-top-right-radius: 24px;
+            box-shadow: 0 -8px 30px rgba(0,0,0,0.1);
+            display: flex;
+            flex-direction: column;
+            transition: bottom 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+            z-index: 1001;
+            transition: transform 0.3s ease-out;
+            }
+            .bottom-sheetAI.active { bottom: 0; }
+            /* Header */
+            .aichat_sheet-header {
+            padding: 16px 20px;
+            border-bottom: none;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            /*background: linear-gradient(90deg, #4facfe 0%, #00f2fe 100%);*/
+            border-top-left-radius: 24px;
+            border-top-right-radius: 24px;
+            font-weight: 600;
+            font-size: 1.25rem;
+            }
+            .close-btnAI {
+            font-size: 24px;
+            cursor: pointer;
+            transition: transform 0.2s ease;
+            }
+            .close-btn:hover { transform: rotate(90deg); }
+            /* Chat Body */
+            .chat-bodyAI {
+            flex: 1;
+            padding: 16px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            scroll-behavior: smooth;
+            }
+            .messageAI {
+            max-width: 70%;
+            border-radius: 28px;
+            font-size: 1rem;
+            line-height: 1.4;
+            word-wrap: break-word;
+            position: relative;
+            display: inline-block;
+            }
+            .messageAI.user {
+            align-self: flex-end;
+            /*background: #007AFF;*/
+            background: linear-gradient(135deg, #8b5cf6, #3b82f6); 
+            padding: 12px 18px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+            color: #fff;
+            border-bottom-right-radius: 6px;
+            }
+            .messageAI.bot {
+            align-self: flex-start;
+            margin-top: 12px;
+            max-width: 100%;
+            background: #f1f3f6
+            color: #333;
+            /*border-bottom-left-radius: 6px;*/
+            }
+            .chat-boxAI {
+            background: #fff;
+            /*border-radius: 1.5rem;*/
+            /*padding: 1.5rem;
+            border: 1px solid #f3f4f6;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);*/
+            padding:1rem;=
+            }
+            .chat-inputAI  {
+            position: relative;
+            }
+            .chat-inputAI textarea {
+            font-family: 'Eng', 'Thai', 'Emoji', sans-serif;
+            width: 100%;
+            border: none;
+            outline: none;
+            /*border: 1px solid #e5e7eb;*/
+            border: 1px solid #ccc;
+            border-radius: 28px;
+            padding: 1rem 3rem 1rem 1rem;
+            font-size: 1rem;
+            /*background: #f9fafb;*/
+            resize: none;
+            overflow: hidden;
+            transition: all 0.3s;
+            }
+            .btnAI {
+            position: absolute;
+            right: 0.75rem;
+            bottom: 0.45rem;
+            padding: 0.5rem;
+            border-radius: 50%;
+            cursor: pointer;
+            width: 36px;
+            height: 36px;
+            font-size: 20px;
+            border: none;
+            background: transparent;
+            transition: all 0.2s;
+            opacity: 1;
+            transform: scale(1);
+            }
+            .btnAI.hidden {
+            opacity: 0;
+            transform: scale(0);
+            }
+            .btnAI-photo {
+            color: #3b82f6;
+            }
+            .btnAI-photo:hover {
+            background: #eff6ff;
+            }
+            .btnAI-send {
+            /*background: #3b82f6;*/
+            background: linear-gradient(135deg, #8b5cf6, #3b82f6);
+            color: #fff;
+            /*box-shadow: 0 2px 6px rgba(59,130,246,0.3);*/
+            }
+            /* Scrollbar Minimal */
+            .chat-bodyAI::-webkit-scrollbar { width: 4px; }
+            .chat-bodyAI::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.2); border-radius: 2px; }
 
-        
-                    
-                    
+            
+            
+            .fab-button svg {
+            	width: 32px;
+            height: 32px;
+            fill: currentColor;
+            
+            }
+            
+            
+            
+            
+            
+            
         </style>
     </head>
-
     <body>
         <!-- NAVBAR -->
-        <div class="navbar" id="navbar">
+        <div class="navbar" id="navbar" style="box-shadow:none;">
             <div class="left-icons">
                 <button class="icon-button"><span class="title" style="font-family: 'Playwrite HU'; text-align: center; line-height: 1.5;">Storyboard</span></button>
             </div>
@@ -1393,27 +1309,75 @@
                 <button class="icon-button" onclick="showFilterOptions()"><span class="material-icons icon">more_vert</span></button>
             </div>
         </div>
-
         <!-- FEED -->
-        <div class="feed-container" id="feedContainer"><div id="postsContainer"></div></div>
-
+        <div class="feed-container" id="feedContainer">
+            <div id="postsContainer"></div>
+        </div>
         <!-- FAB INPUT -->
-        <button class="fab-button" onclick="showInputBottomSheet()">
+        	
+        <button class="fab-button" style="margin-bottom:128px;" id="openBtnSora">
+        <span style="color: white;">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640"><!--!Font Awesome Free 7.0.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2025 Fonticons, Inc.--><path d="M320.3 205C256.8 204.8 205.2 256.2 205 319.7C204.8 383.2 256.2 434.8 319.7 435C383.2 435.2 434.8 383.8 435 320.3C435.2 256.8 383.8 205.2 320.3 205zM319.7 245.4C360.9 245.2 394.4 278.5 394.6 319.7C394.8 360.9 361.5 394.4 320.3 394.6C279.1 394.8 245.6 361.5 245.4 320.3C245.2 279.1 278.5 245.6 319.7 245.4zM413.1 200.3C413.1 185.5 425.1 173.5 439.9 173.5C454.7 173.5 466.7 185.5 466.7 200.3C466.7 215.1 454.7 227.1 439.9 227.1C425.1 227.1 413.1 215.1 413.1 200.3zM542.8 227.5C541.1 191.6 532.9 159.8 506.6 133.6C480.4 107.4 448.6 99.2 412.7 97.4C375.7 95.3 264.8 95.3 227.8 97.4C192 99.1 160.2 107.3 133.9 133.5C107.6 159.7 99.5 191.5 97.7 227.4C95.6 264.4 95.6 375.3 97.7 412.3C99.4 448.2 107.6 480 133.9 506.2C160.2 532.4 191.9 540.6 227.8 542.4C264.8 544.5 375.7 544.5 412.7 542.4C448.6 540.7 480.4 532.5 506.6 506.2C532.8 480 541 448.2 542.8 412.3C544.9 375.3 544.9 264.5 542.8 227.5zM495 452C487.2 471.6 472.1 486.7 452.4 494.6C422.9 506.3 352.9 503.6 320.3 503.6C287.7 503.6 217.6 506.2 188.2 494.6C168.6 486.8 153.5 471.7 145.6 452C133.9 422.5 136.6 352.5 136.6 319.9C136.6 287.3 134 217.2 145.6 187.8C153.4 168.2 168.5 153.1 188.2 145.2C217.7 133.5 287.7 136.2 320.3 136.2C352.9 136.2 423 133.6 452.4 145.2C472 153 487.1 168.1 495 187.8C506.7 217.3 504 287.3 504 319.9C504 352.5 506.7 422.6 495 452z"/></svg>
+</span>
+        </button>
+        
+        
+        	<button class="fab-button" style="margin-bottom:64px;" id="openBtnAI">
+        <span class="material-icons icon" style="color: white;">forum</span>
+        </button>
+        
+        <button class="fab-button" id="openBtnCreate" onclick="showInputBottomSheet()">
             <span class="material-icons icon" style="color: white;">post_add</span>
         </button>
+        
+        
 
+         
+        
+        
+
+        
+                <div class="overlayAI" id="overlayAI">
+        <div class="bottom-sheetAI" id="bottomSheetAI">
+            <div class="aichat_sheet-header">
+                AI Chat
+                <span class="close-btnAI" id="closeBtnAI">&times;</span>
+            </div>
+            <div class="chat-bodyAI" id="chatBodyAI">
+                <!-- <div class="message ai">สวัสดี! มีอะไรให้ช่วยไหมครับ?</div> -->
+            </div>
+            <div class="chat-boxAI">
+                <div class="chat-inputAI">
+                    <textarea id="messageInputAI" rows="1" placeholder="ส่งข้อความ..."></textarea>
+                    <!-- Add Photo Button -->
+                    <button id="addPhotoButtonAI" class="btnAI btnAI-photo">
+                    📷
+                    </button>
+                    <!-- Send Button -->
+                    <button id="sendButtonAI" class="btnAI btnAI-send hidden">
+                    <span class="sheet-icon" style="font-family: 'Material Icons';">location_on</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+        </div>
+        
+        
+        
+        
+        
+        
+        
+        
         <!-- INPUT BOTTOM SHEET -->
         <div class="input-bottom-sheet-overlay" id="inputBottomSheet">
             <div class="bottom-sheet2">
                 <div class="input-bottom-sheet-header">
                     <h3>สร้างโพสต์</h3>
-                            
                     <button class="close-button" onclick="hideInputBottomSheet()"><i class="fas fa-times"></i></button>
                 </div>
-                
                 <div id="image-preview-area">
-            </div>
-                
+                </div>
                 <div id="chipsArea">
                     <span class="post-type-label2 mood" id="dynamicChip"><i class="post-type-icon2 mood" id="chipIcon">favorite_border</i><span id="chipText">mood</span></span>
                 </div>
@@ -1422,11 +1386,9 @@
                         <textarea class="input-area" id="titleInput" placeholder="วันนี้คุณรู้สึกยังไง..."></textarea>
                     </div>
                     <div class="input-area2" id="tagInputContainer" contenteditable="true"></div>
-
                     <button id="submitButton" style="display: none;">ยืนยัน</button>
                     <ul id="tagList"></ul>
                 </div>
-
                 <div class="actions">
                     <div class="left-actions">
                         <div class="icons">
@@ -1440,13 +1402,12 @@
                         </div>
                     </div>
                     <div class="right-actions">
-                        <span class="sheet-icon">archive</span>
+                        <span class="sheet-icon" id="askai-bt">archive</span>
                         <button class="post-btn" onclick="saveFeeling()">POST</button>
                     </div>
                 </div>
             </div>
         </div>
-
         <div id="emojiSelectionPopover">
             <div class="emoji-grid">
                 <button class="emoji-button">😊</button>
@@ -1477,7 +1438,6 @@
                 <button class="emoji-button">💬</button>
             </div>
         </div>
-
         <div class="bottom-sheet-overlay" id="hiddenPostsBottomSheet">
             <div class="bottom-sheet">
                 <div class="bottom-sheet-header">
@@ -1487,7 +1447,6 @@
                 <div class="hidden-posts-container" id="hiddenPostsContainer"></div>
             </div>
         </div>
-
         <!-- SETTING BOTTOM SHEET-->
         <div class="bottom-sheet-overlay" id="filterBottomSheet">
             <div class="bottom-sheet">
@@ -1515,13 +1474,6 @@
                 </div>
             </div>
         </div>
-        
-        
-        
-        
-        
-        
-
         <!-- CARD ACTION BOTTOM SHEET-->
         <div     class="bottom-sheet-overlay" id="deleteBottomSheet">
             <div class="bottom-sheet">
@@ -1529,7 +1481,6 @@
                     <h3>Action on Card</h3>
                     <button class="close-button" onclick="hideDeleteOptions()"><i class="fas fa-times"></i></button>
                 </div>
-                
                 <div class="action-options">
                     <button class="action-button delete-action" onclick="confirmDelete()">Delete Card</button>
                     <button class="action-button pin-action" onclick="togglePinCard()">Pin Card</button>
@@ -1537,43 +1488,28 @@
                 </div>
             </div>
         </div>
-        
-        
-        
-               <div class="bottom-sheet-overlay" id="replyBottomSheet">
-                  <div class="bottom-sheet">
-                    <div class="bottom-sheet-header">
-                        <h3></h3>
-                      <button class="close-button" onclick="hideDeleteOptions2()">
-                        <i class="fas fa-times"></i>
-                      </button>
-                    </div>
-                    <span id="post-text-getter"></span>
-                    <div>
-                        <div class="bottom-sheet-header6">
-                      <textarea class="input-area6" id="titleInput6" placeholder="วันนี้คุณรู้สึกยังไง..."></textarea>
-                      <span class="sheet-icon" onclick="togglePinCard2()" style="font-family: 'Material Icons';font-size:1.5rem; margin-left:16px;margin-right:16px">send</span>
-                      </div>
-                    </div>
-                  </div>
-                
-                
-        
-        
-        
-        
-        
-        
-        
-        
-
+        <div class="bottom-sheet-overlay" id="replyBottomSheet">
+        <div class="bottom-sheet">
+            <div class="bottom-sheet-header">
+                <h3></h3>
+                <button class="close-button" onclick="hideDeleteOptions2()">
+                <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <span id="post-text-getter"></span>
+            <div>
+                <div class="bottom-sheet-header6">
+                    <textarea class="input-area6" id="titleInput6" placeholder="วันนี้คุณรู้สึกยังไง..."></textarea>
+                    <span class="sheet-icon" onclick="togglePinCard2()" style="font-family: 'Material Icons';font-size:1.5rem; margin-left:16px;margin-right:16px">send</span>
+                </div>
+            </div>
+        </div>
         <div class="image-modal-overlay" id="imageModal">
             <div class="image-modal-content">
                 <button class="image-modal-close-button" onclick="closeImageModal()"><i class="fas fa-times"></i></button>
                 <div class="full-image-container" id="fullImageContainer"></div>
             </div>
         </div>
-
         <div class="image-modal-overlay" id="cameraModal">
             <div class="image-modal-content" style="max-width: 95vw; max-height: 95vh; padding: 0;">
                 <button class="image-modal-close-button close-camera-button" onclick="closeCameraModal()"><i class="fas fa-times"></i></button>
@@ -1589,54 +1525,348 @@
         
         
         
-        <script>
-            document.addEventListener('DOMContentLoaded', () => {
-    const titleInput6 = document.getElementById('titleInput6');
-    const submitButton = document.getElementById('submitButton');
+        
+        
+        
+        
+        
     
-    // Function สำหรับปรับความสูงของ textarea
-    function autoResize() {
-        this.style.height = 'auto';
-        this.style.height = (this.scrollHeight) + 'px';
-    }
 
-    // Function สำหรับตรวจสอบการพิมพ์
-    function checkInput() {
-        if (titleInput6.value.trim() !== '') {
-            submitButton.style.display = 'block'; // แสดงปุ่มเมื่อมีข้อความ
-        } else {
-            submitButton.style.display = 'none'; // ซ่อนปุ่มเมื่อไม่มีข้อความ
-        }
-    }
 
-    // เพิ่ม event listener เมื่อมีการพิมพ์ใน textarea
-    titleInput6.addEventListener('input', () => {
-        checkInput();
-        autoResize.call(titleInput6); // เรียกใช้ฟังก์ชันปรับขนาด
-    });
+
+
+    
+        
+        
+      <!--  <script src="script.js"></script>-->
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+        
+        
+    
+
+
+
+
+
+
+        <script>
+/*const supabase = window.supabase.createClient(
+  "https://fkntlawaawawiusmjsez.supabase.co",
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZrbnRsYXdhYXdhd2l1c21qc2V6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDk5ODcxMjAsImV4cCI6MjA2NTU2MzEyMH0.G-_fLzcpvPla3dUYNCV7qh0j-JHo1Ahr5fS7fQkHdpw"
+);        */
+const OPENROUTER_API_KEY = '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';
+
+// DOM Elements
+const messageInputAI = document.getElementById('messageInputAI');
+const sendButtonAI = document.getElementById('sendButtonAI');
+const addPhotoButtonAI = document.getElementById('addPhotoButtonAI');
+const chatBodyAI = document.getElementById('chatBodyAI');
+const bottomSheetAI = document.getElementById('bottomSheetAI');
+const overlayAI = document.getElementById('overlayAI'); 
+const openBtn = document.getElementById('openBtn');
+const closeBtnAI = document.getElementById('closeBtnAI');
+
+// Auto-resize input
+function autoResize() {
+  messageInputAI.style.height = 'auto';
+  messageInputAI.style.height = Math.min(messageInputAI.scrollHeight, 120) + 'px';
+}
+messageInputAI.addEventListener('input', () => {
+  autoResize();
+  const hasText = messageInputAI.value.trim().length > 0;
+  addPhotoButtonAI.classList.toggle('hidden', hasText);
+  sendButtonAI.classList.toggle('hidden', !hasText);
 });
-            </script>
-        
-        
-        
-        
-        
-        
-        
+
+// Bottom sheet
+function openSheet() {
+  bottomSheetAI.classList.add('active');
+  overlayAI.classList.add('active');
+  messageInputAI.focus();
+}
+function closeSheet() {
+  bottomSheetAI.classList.remove('active');
+  overlayAI.classList.remove('active');
+}
+openBtnAI.addEventListener('click', openSheet);
+closeBtnAI.addEventListener('click', closeSheet);
+overlayAI.addEventListener('click', closeSheet);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// Supabase fetch posts
+async function getAllPosts() {
+  const start = performance.now();
+  const { data, error } = await supabase
+    .from('storyboard')
+    .select('title')
+    .order('created_at', { ascending: true })
+    .limit(10);
+  const end = performance.now();
+  console.log(`⏱️ Query storyboard ใช้เวลา ${(end - start).toFixed(2)} ms`);
+  if (error) {
+    console.error(error);
+    return [];
+  }
+  return data.map(post => post.title);
+}
+
+
+
+
+
+
+
+
+async function buildContext(session_id) {
+      	
+      // 1. Dynamic state
+  const { data: profile } = await supabase
+    .from("ai_userprofile")
+    .select("*")
+    .eq("session_id", session_id)
+    .single();
+      
+      
+  // 1. Dynamic state
+  const { data: state } = await supabase
+    .from("ai_session_state")
+    .select("*")
+    .eq("session_id", session_id)
+    .single();
+
+  // 2. Memory (summarized)
+  const { data: memory } = await supabase
+    .from("ai_conversation_memory")
+    .select("*")
+    .eq("session_id", session_id)
+    .order("updated_at", { ascending: false })
+    .limit(1);
+
+  // 3. Recent messages
+  const { data: messages } = await supabase
+    .from("ai_messages")
+    .select("*")
+    .eq("session_id", session_id)
+    .order("created_at", { ascending: true })
+    .limit(10);
+
+  return {
+  	profile,
+      state,
+      memory: memory?.[0],
+      recent: messages || []
+  };
+}
+
+
+
+
+
+
+
+
+
+
+
+// Build messages for AI
+async function buildMessages(userText) {
+  const oldPosts = await getAllPosts();
+  const systemPrompt = {
+    role: "system",
+   content: `คุณเป็นเพื่อนสนิทของผู้ใช้ชื่อโซระเป็นผู้หญิงต้องตอบ "ค่ะ"
+นี่คือโพสต์เก่าของผู้ใช้:
+${oldPosts.map((p,i) => `${i+1}. ${p}`).join('\n')}
+
+ตอบคำถามของผู้ใช้ด้วย empathy และให้กำลังใจ`
+
+
+
+  };
+  return [systemPrompt, { role: "user", content: userText }];
+}
+
+
+
+
+
+
+
+
+
+
+// Append message to chat
+function appendMessage(text, role='bot') {
+  const msg = document.createElement('div');
+  msg.className = `messageAI ${role}`;
+  msg.innerText = text;
+  chatBodyAI.appendChild(msg);
+  chatBodyAI.scrollTop = chatBodyAI.scrollHeight;
+}
+
+// Streaming AI response
+async function streamChat(messages) {
+  appendMessage("กำลังพิมพ์...", 'bot'); // placeholder
+  const lastMsg = chatBodyAI.querySelector('.messageAI.bot:last-child');
+
+  try {
+    const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
+      method: "POST",
+      headers: {
+        "Authorization": `Bearer ${OPENROUTER_API_KEY}`,
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        model: "gpt-4o-mini",
+        messages: messages,
+        temperature: 0.7,
+        stream: true
+      })
+    });
+
+    const reader = response.body.getReader();
+    const decoder = new TextDecoder("utf-8");
+    let resultText = "";
+
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+
+      const chunk = decoder.decode(value, { stream: true });
+      const lines = chunk.split("\n").filter(l => l.trim() !== "");
+
+      for (const line of lines) {
+        if (!line.startsWith("data: ")) continue;
+        const jsonStr = line.replace(/^data: /, "");
+        if (jsonStr === "[DONE]") continue;
+
+        try {
+          const parsed = JSON.parse(jsonStr);
+          const content = parsed.choices[0].delta?.content;
+          if (content) {
+            resultText += content;
+            lastMsg.innerText = resultText; // update DOM แบบ realtime
+          }
+        } catch (e) {
+          console.error("JSON parse error:", e, line);
+        }
+      }
+    }
+
+  } catch (err) {
+    console.error(err);
+    lastMsg.innerText = "เกิดข้อผิดพลาดในการเชื่อมต่อ AI";
+  }
+}
+
+// Send message
+async function sendMessage() {
+	
+	
+  const text = messageInputAI.value.trim();
+  if (!text) return;
+
+  appendMessage(text, 'user');
+  messageInputAI.value = '';
+  autoResize();
+
+  const messages = await buildMessages(text);
+  await streamChat(messages);
+}
+
+// Event listeners
+sendButtonAI.addEventListener('click', sendMessage);
+messageInputAI.addEventListener('keypress', e => {
+  if (e.key === 'Enter' && !e.shiftKey) {
+    e.preventDefault();
+    sendMessage();
+  }
+});
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
         
         <script>
             document.addEventListener('DOMContentLoaded', () => {
-    const bottomSheet = document.querySelector('.bottom-sheet2');
-    const inputElement = bottomSheet.querySelector('input-area'); // หรือ element ที่คุณต้องการให้โฟกัส
-
-    // ใช้ Visual Viewport API เพื่อจัดการกับคีย์บอร์ดบน Android
-    if (window.visualViewport) {
-        window.visualViewport.addEventListener('resize', () => {
+            const titleInput6 = document.getElementById('titleInput6');
+            const submitButton = document.getElementById('submitButton');
+            
+            // Function สำหรับปรับความสูงของ textarea
+            function autoResize() {
+            this.style.height = 'auto';
+            this.style.height = (this.scrollHeight) + 'px';
+            }
+            
+            // Function สำหรับตรวจสอบการพิมพ์
+            function checkInput() {
+            if (titleInput6.value.trim() !== '') {
+            submitButton.style.display = 'block'; // แสดงปุ่มเมื่อมีข้อความ
+            } else {
+            submitButton.style.display = 'none'; // ซ่อนปุ่มเมื่อไม่มีข้อความ
+            }
+            }
+            
+            // เพิ่ม event listener เมื่อมีการพิมพ์ใน textarea
+            titleInput6.addEventListener('input', () => {
+            checkInput();
+            autoResize.call(titleInput6); // เรียกใช้ฟังก์ชันปรับขนาด
+            });
+            });
+        </script>
+        <script>
+            document.addEventListener('DOMContentLoaded', () => {
+            const bottomSheet = document.querySelector('.bottom-sheet2');
+            const inputElement = bottomSheet.querySelector('input-area'); // หรือ element ที่คุณต้องการให้โฟกัส
+            
+            // ใช้ Visual Viewport API เพื่อจัดการกับคีย์บอร์ดบน Android
+            if (window.visualViewport) {
+            window.visualViewport.addEventListener('resize', () => {
             // คำนวณความสูงของคีย์บอร์ด
             const viewportHeight = window.visualViewport.height;
             const fullViewportHeight = window.innerHeight;
             const keyboardHeight = fullViewportHeight - viewportHeight;
-
+            
             // ปรับตำแหน่ง Bottom Sheet โดยเลื่อนขึ้นให้พ้นคีย์บอร์ด
             if (keyboardHeight > 0) {
                 // คีย์บอร์ดแสดง
@@ -1645,106 +1875,112 @@
                 // คีย์บอร์ดซ่อน
                 bottomSheet.style.bottom = '0px';
             }
-        });
-    }
-
-    // เมื่อ Bottom Sheet เปิดและ input โฟกัส
-    const bottomSheetOverlay = document.querySelector('.bottom-sheet-overlay');
-    bottomSheetOverlay.addEventListener('transitionend', (e) => {
-        if (e.target.classList.contains('active')) {
+            });
+            }
+            
+            // เมื่อ Bottom Sheet เปิดและ input โฟกัส
+            const bottomSheetOverlay = document.querySelector('.bottom-sheet-overlay');
+            bottomSheetOverlay.addEventListener('transitionend', (e) => {
+            if (e.target.classList.contains('active')) {
             // โฟกัส input ทันทีเมื่อ Bottom Sheet เปิดเต็มที่
             inputElement.focus();
-        }
-    });
-});
-            </script>
-        
-        
-        
-        
-        
+            }
+            });
+            });
+        </script>
         <script>
+            const imageUpload = document.getElementById('imageInput');
+            const imagePreviewArea = document.getElementById('image-preview-area');
             
+            let selectedFiles = [];
             
-            
-            
-            
-            
-            
-            
-    const imageUpload = document.getElementById('imageInput');
-    const imagePreviewArea = document.getElementById('image-preview-area');
-    
-    let selectedFiles = [];
-
-    // ฟังก์ชันสำหรับแสดงรูปภาพทั้งหมดที่อยู่ใน Array
-    function renderPreviews() {
-        imagePreviewArea.innerHTML = ''; // ลบ preview เก่าทั้งหมด
-        
-        
-        
-        
-        selectedFiles.forEach((file, index) => {
-            const reader = new FileReader();
-            
-            
-            
-            reader.onload = function(e) {
-                const imageCard = document.createElement('div');
-                imageCard.classList.add('image-card');
+            // ฟังก์ชันสำหรับแสดงรูปภาพทั้งหมดที่อยู่ใน Array
+            function renderPreviews() {
+                imagePreviewArea.innerHTML = ''; // ลบ preview เก่าทั้งหมด
                 
-                const img = document.createElement('img');
-                img.src = e.target.result;
-                img.alt = file.name;
                 
-                const deleteBtn = document.createElement('button');
-                deleteBtn.classList.add('delete-btn');
-                deleteBtn.innerHTML = '&times;';
                 
-                // ใช้ Closure เพื่อให้ปุ่มแต่ละอันจำ index ของตัวเองได้อย่างถูกต้อง
-                // โดยการส่งค่า index เข้าไปในฟังก์ชันทันที
-                (function(currentIndex) {
-                    deleteBtn.addEventListener('click', function() {
-                        selectedFiles.splice(currentIndex, 1);
-                        renderPreviews();
-                    });
-                })(index);
-
-                imageCard.appendChild(img);
-                imageCard.appendChild(deleteBtn);
-                imagePreviewArea.appendChild(imageCard);
-            };
+                
+                selectedFiles.forEach((file, index) => {
+                    const reader = new FileReader();
+                    
+                    
+                    
+                    reader.onload = function(e) {
+                        const imageCard = document.createElement('div');
+                        imageCard.classList.add('image-card');
+                        
+                        const img = document.createElement('img');
+                        img.src = e.target.result;
+                        img.alt = file.name;
+                        
+                        const deleteBtn = document.createElement('button');
+                        deleteBtn.classList.add('delete-btn');
+                        deleteBtn.innerHTML = '&times;';
+                        
+                        // ใช้ Closure เพื่อให้ปุ่มแต่ละอันจำ index ของตัวเองได้อย่างถูกต้อง
+                        // โดยการส่งค่า index เข้าไปในฟังก์ชันทันที
+                        (function(currentIndex) {
+                            deleteBtn.addEventListener('click', function() {
+                                selectedFiles.splice(currentIndex, 1);
+                                renderPreviews();
+                            });
+                        })(index);
             
-            reader.readAsDataURL(file);
-        });
-    }
-
-    imageUpload.addEventListener('change', function(event) {
-        const files = Array.from(event.target.files);
-        
-        // เพิ่มไฟล์ใหม่ทั้งหมดเข้าไปใน Array
-        selectedFiles = selectedFiles.concat(files);
-        
-        /*imageUpload.value = '';*/
-
-        renderPreviews();
-        });
-</script>
-        
-        
-        
-        
-        
-
+                        imageCard.appendChild(img);
+                        imageCard.appendChild(deleteBtn);
+                        imagePreviewArea.appendChild(imageCard);
+                    };
+                    
+                    reader.readAsDataURL(file);
+                });
+            }
+            
+            imageUpload.addEventListener('change', function(event) {
+                const files = Array.from(event.target.files);
+                
+                // เพิ่มไฟล์ใหม่ทั้งหมดเข้าไปใน Array
+                selectedFiles = selectedFiles.concat(files);
+                
+                /*imageUpload.value = '';*/
+            
+                renderPreviews();
+                });
+        </script>
         <script>
             document.addEventListener("DOMContentLoaded", () => {
                 const inputWrapper = document.querySelector(".input-wrapper");
                 const inputArea = document.getElementById("titleInput");
-
+                const dynamicChip = document.getElementById("dynamicChip");
+                const chipText = document.getElementById("chipText");
+                const chipIcon = document.getElementById("chipIcon");
+ 
                 const runOnceBtn = document.getElementById("quoteedit-bt");
+                const aiBtn = document.getElementById("askai-bt");
+                
+                aiBtn.addEventListener("click", () => {
+                    // ตรวจสอบว่าปุ่มยังไม่ถูกปิดการใช้งาน
+                    if (!aiBtn.disabled) {
+                        
+                            chipText.textContent = "YouTube";
+                            chipIcon.textContent = "smart_display"; // เปลี่ยนไอคอน
+                            dynamicChip.className = "post-type-label2 youtube";
+        aiBtn.disabled = true;
+                                
+                        
+                    } else {
+                            console.log("899");
+                            chipText.textContent = "mood";
+                    chipIcon.textContent = "favorite_border"; // เปลี่ยนไอคอน
+                    dynamicChip.className = "post-type-label2 mood";
+aiBtn.disabled = false;
 
+                    }
+                });
+                
+           
                 /*function quoteedit() {*/
-
+            
                 runOnceBtn.addEventListener("click", () => {
                     // ตรวจสอบว่าปุ่มยังไม่ถูกปิดการใช้งาน
                     if (!runOnceBtn.disabled) {
@@ -1752,36 +1988,35 @@
                         inputWrapper.style.setProperty("--before-background-color", "#536471");
                         // กำหนดค่า margin-right ที่ต้องการให้เส้นมีช่องว่าง
                         inputWrapper.style.setProperty("--before-margin-right", "15px");
-
+            
                         runOnceBtn.disabled = true;
                     } else {
                        // console.log("999");
                         runOnceBtn.disabled = false;
-
+            
                         inputWrapper.style.setProperty("--before-background-color", "transparent");
                         inputWrapper.style.setProperty("--before-margin-right", "0px");
                     }
                 });
-
+            
                 /*inputArea.addEventListener('input', () => {
-      console.log("titleinput");
-      
-      
-      
-    if (inputArea.value.trim().length > 0) {
-      // เมื่อมีข้อความ
-      inputWrapper.style.setProperty('--before-background-color', '#536471');
-      // กำหนดค่า margin-right ที่ต้องการให้เส้นมีช่องว่าง
-      inputWrapper.style.setProperty('--before-margin-right', '15px'); 
-    } else {
-      // เมื่อไม่มีข้อความ
-      inputWrapper.style.setProperty('--before-background-color', 'transparent');
-      inputWrapper.style.setProperty('--before-margin-right', '0px');
-    }
-  });*/
+            console.log("titleinput");
+            
+            
+            
+            if (inputArea.value.trim().length > 0) {
+            // เมื่อมีข้อความ
+            inputWrapper.style.setProperty('--before-background-color', '#536471');
+            // กำหนดค่า margin-right ที่ต้องการให้เส้นมีช่องว่าง
+            inputWrapper.style.setProperty('--before-margin-right', '15px'); 
+            } else {
+            // เมื่อไม่มีข้อความ
+            inputWrapper.style.setProperty('--before-background-color', 'transparent');
+            inputWrapper.style.setProperty('--before-margin-right', '0px');
+            }
+            });*/
             });
         </script>
-
         <script>
             document.addEventListener("DOMContentLoaded", () => {
                 const tagInputContainer = document.getElementById("tagInputContainer");
@@ -1789,7 +2024,7 @@
                 const resultDialog = document.getElementById("resultDialog");
                 const tagList = document.getElementById("tagList");
                 const closeDialog = document.getElementById("closeDialog");
-
+            
                 function getTagsFromHtml(html) {
                     const tempDiv = document.createElement("div");
                     tempDiv.innerHTML = html;
@@ -1797,11 +2032,11 @@
                     const tags = Array.from(spans).map((span) => span.textContent.trim());
                     return tags.filter((tag) => tag !== "");
                 }
-
+            
                 tagInputContainer.addEventListener("input", (e) => {
                     const text = e.target.innerText;
                     const words = text.split(/\s+/);
-
+            
                     let html = "";
                     words.forEach((word, index) => {
                         const trimmedWord = word.trim();
@@ -1819,9 +2054,9 @@
                             html += `<span class="space-span"> </span>`;
                         }
                     });
-
+            
                     tagInputContainer.innerHTML = html;
-
+            
                     // Keep the cursor at the end
                     const range = document.createRange();
                     const selection = window.getSelection();
@@ -1830,10 +2065,10 @@
                     selection.removeAllRanges();
                     selection.addRange(range);
                 });
-
+            
                 submitButton.addEventListener("click", () => {
                     const tags = getTagsFromHtml(tagInputContainer.innerHTML);
-
+            
                     tagList.innerHTML = "";
                     if (tags.length > 0) {
                         tags.forEach((tagText) => {
@@ -1846,24 +2081,24 @@
                         li.textContent = "ไม่มี Tags & Mentions ที่สร้าง";
                         tagList.appendChild(li);
                     }
-
+            
                     resultDialog.showModal();
                 });
             });
         </script>
-
+        
         <script>
             const textarea = document.getElementById("titleInput");
             const dynamicChip = document.getElementById("dynamicChip");
             const chipText = document.getElementById("chipText");
             const chipIcon = document.getElementById("chipIcon");
-
+            
             textarea.addEventListener("input", () => {
                 const text = textarea.value;
-
+            
                 const hashtags = [...text.matchAll(/#([\p{L}\p{N}_]+)/gu)].map((m) => m[0]);
                 const youtubeLinks = [...text.matchAll(/https?:\/\/(?:www\.)?youtu\S*/g)].map((m) => m[0]);
-
+            
                 if (youtubeLinks.length > 0) {
                     // ถ้าเจอลิงก์ YouTube
                     chipText.textContent = "YouTube";
@@ -1877,9 +2112,8 @@
                 }
             });
         </script>
-
         <script>
-            const ua = navigator.userAgent;
+                            const ua = navigator.userAgent;
             const isAndroid = /Android/i.test(ua);
             const isWebView = /\bwv\b/.test(ua) || /Version\/[\d.]+/.test(ua);
 
@@ -2058,7 +2292,7 @@
                 let groupedTimeline = Array.from(postsMap.values());
 
                 //sort(a,b)
-                groupedTimeline.sort((a, b) => new Date(a.created_at) - new Date(b.created_at));
+                groupedTimeline.sort((b,a) => new Date(a.created_at) - new Date(b.created_at));
 
                 const filteredTimeline = currentFilter === "all" ? groupedTimeline : groupedTimeline.filter((item) => item.type === currentFilter);
 
@@ -2360,7 +2594,7 @@
                 let html = `<div class="post-meta">`;
                 if (!isChild) {
                   /*  html += `<span class="post-type-label ${item.type}"><i class="post-type-icon">favorite_border</i>${item.type}</span>`;*/
-                    html += `<span class="post-type-useraccount"><div class="profile-container toggle-detail2"><img src="https://pub-bcd0954facce440ca60e0171468dafc9.r2.dev/1755085151580_1000017534.jpg" class="profile-pic"></div><div style="display: flex;  flex-direction: column;"><span style="font-weight: bold">takahiro199x</span><span style="text-transform: uppercase;">${item.type}</span></div></span>`;
+                    html += `<span class="post-type-useraccount"><div class="profile-container toggle-detail2"><img src="https://pub-bcd0954facce440ca60e0171468dafc9.r2.dev/1755737531556_1000019090.jpg" class="profile-pic"></div><div style="display: flex;  flex-direction: column;"><span style="font-weight: bold">takahiro199x</span><span class="post-type-label-text ${item.type}" style= "text-transform: uppercase; color:white;">${item.type}</span></div></span>`;
                     
                 }
                 html += `<span class="post-type-time toggle-detail"> ${timeRelative} • ${time}</span></div>`;
@@ -2912,21 +3146,45 @@
 
             let lastScrollTop = 0;
             const navbar = document.getElementById("navbar");
+            const openBtnAI = document.getElementById("openBtnAI");
+            const openBtnCreate = document.getElementById("openBtnCreate");
+            const openBtnSora = document.getElementById("openBtnSora");
+            
             const feedContainer = document.getElementById("feedContainer");
+
+openBtnSora.addEventListener("click", (event) => {
+                	window.location.href = "SoraAI_igchat.html";     
+            
+                });
 
             feedContainer.addEventListener("scroll", function () {
                 const currentScroll = feedContainer.scrollTop;
+                
+                
 
                 if (currentScroll > lastScrollTop) {
                     // เลื่อนลง → ซ่อน header
+                    
+                    openBtnAI.style.visibility = "hidden";
+                    openBtnSora.style.visibility = "hidden";
+                    openBtnCreate.style.visibility = "hidden";                 
                     navbar.style.transform = "translateY(-100%)";
+                    
                 } else {
                     // เลื่อนขึ้น → แสดง header
+                    openBtnAI.style.visibility = "visible";
+                    openBtnCreate.style.visibility = "visible";             
+                    openBtnSora.style.visibility = "visible";
                     navbar.style.transform = "translateY(0)";
                 }
 
                 lastScrollTop = currentScroll <= 0 ? 0 : currentScroll;
             });
-        </script>
+                </script>
+        
+        
+        
+        
+        
     </body>
 </html>
