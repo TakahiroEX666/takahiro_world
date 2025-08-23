@@ -1,357 +1,108 @@
 <!DOCTYPE html>
-<html lang="th">
+<html lang="en">
 <head>
-  <meta charset="utf-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1"/>
-  <title>R2 Files — Minimal File Manager</title>
-  <!-- Google Fonts: Material Symbols + Inter -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
-  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:FILL@0..1" rel="stylesheet" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cloudflare R2 File Manager</title>
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
   <style>
-    :root{
-      --bg:#0b0b0c; --card:#121214; --muted:#989aa2; --text:#fafafa; --accent:#4f8cff; --hover:#1a1b1e; --border:#222327; --ok:#1ec28b; --warn:#ff9f43; --danger:#ef5b5b;
+    body { margin:0; font-family: sans-serif; background:#f9f9f9; color:#333; }
+    header {
+      display:flex; align-items:center; justify-content:space-between;
+      padding:10px 16px; background:#fff; box-shadow:0 1px 4px rgba(0,0,0,.1);
+      position:sticky; top:0; z-index:10;
     }
-    *{box-sizing:border-box}
-    html,body{height:100%}
-    body{margin:0; font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,"Helvetica Neue",Arial,"Noto Sans Thai",sans-serif; color:var(--text); background:linear-gradient(180deg,#0a0a0a 0%, #0d0e11 100%)}
-    .app{max-width:1100px; margin:0 auto; padding:16px 14px 40px}
-    header{position:sticky; top:0; z-index:30; backdrop-filter:saturate(140%) blur(6px); background:linear-gradient(180deg, rgba(13,14,17,.9), rgba(13,14,17,.6)); border-bottom:1px solid var(--border)}
-    header .bar{max-width:1100px; margin:0 auto; display:flex; gap:8px; align-items:center; padding:10px 14px}
-    .breadcrumb{display:flex; gap:4px; align-items:center; flex-wrap:wrap}
-    .crumb{display:inline-flex; align-items:center; gap:6px; padding:6px 10px; border-radius:999px; background:var(--card); border:1px solid var(--border); cursor:pointer}
-    .crumb:hover{background:var(--hover)}
-    .crumb.current{background:transparent; border-color:transparent; color:var(--muted); cursor:default}
-    .sp{color:var(--muted); opacity:.7}
-    .grow{flex:1}
-    .toolbar{display:flex; gap:8px; align-items:center}
-    .btn{display:inline-flex; gap:8px; align-items:center; border:1px solid var(--border); background:var(--card); padding:9px 12px; border-radius:12px; cursor:pointer; user-select:none}
-    .btn:hover{background:var(--hover)}
-    .btn.primary{background:var(--accent); border-color:transparent; color:white}
-    .btn.ghost{background:transparent}
-    .icon{font-family:"Material Symbols Outlined"; font-size:20px; line-height:0; font-variation-settings:'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 20}
-    .search{display:flex; align-items:center; gap:8px; background:var(--card); border:1px solid var(--border); padding:8px 10px; border-radius:12px; width:min(420px, 60vw)}
-    .search input{flex:1; background:transparent; color:var(--text); border:0; outline:none}
-
-    .content{display:grid; grid-template-columns:1fr; gap:14px; margin-top:14px}
-    .panel{background:var(--card); border:1px solid var(--border); border-radius:16px}
-    .panel .head{display:flex; align-items:center; justify-content:space-between; padding:12px 14px; border-bottom:1px solid var(--border)}
-
-    .grid{padding:8px; display:grid; grid-template-columns:repeat(auto-fill, minmax(160px, 1fr)); gap:8px}
-    .tile{position:relative; border:1px solid var(--border); border-radius:14px; padding:14px; background:linear-gradient(180deg, #14151a, #111216)}
-    .tile:hover{background:#171821}
-    .tile input[type="checkbox"]{position:absolute; top:10px; left:10px}
-    .tile .ico{width:44px; height:44px; display:grid; place-items:center; border-radius:12px; background:#171923; border:1px solid var(--border)}
-    .tile .name{margin-top:12px; font-size:14px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap}
-    .tile .meta{font-size:12px; color:var(--muted); margin-top:4px}
-    .tile .actions{display:flex; gap:6px; margin-top:10px}
-
-    .list{display:grid}
-    .row{display:grid; grid-template-columns: 36px 1.1fr .7fr .6fr 120px; align-items:center; gap:8px; border-bottom:1px solid var(--border); padding:12px 14px}
-    .row:hover{background:#13141a}
-    .row .name{display:flex; align-items:center; gap:10px}
-    .row .badge{font-size:12px; color:var(--muted)}
-
-    .footerbar{position:fixed; left:0; right:0; bottom:0; z-index:40; display:none; gap:8px; justify-content:center; padding:10px}
-    .footerbar.show{display:flex}
-
-    dialog{border:1px solid var(--border); border-radius:16px; background:var(--card); color:var(--text); padding:0; width:min(520px, 92vw)}
-    dialog .dh{display:flex; align-items:center; justify-content:space-between; padding:12px 14px; border-bottom:1px solid var(--border)}
-    dialog form{padding:14px}
-    .input{background:#0f1013; border:1px solid var(--border); border-radius:12px; padding:10px 12px; color:var(--text); width:100%}
-    .dropzone{border:1.5px dashed #2a2c33; padding:18px; border-radius:14px; text-align:center; background:#0f1013}
-
-    .preview{position:fixed; inset:0; background:rgba(0,0,0,.72); display:none; align-items:center; justify-content:center; padding:20px; z-index:50}
-    .preview.show{display:flex}
-    .preview .box{background:#0a0a0a; border:1px solid var(--border); border-radius:16px; max-width:min(92vw, 1100px); max-height:90vh; width:100%; padding:10px}
-    .preview .box img, .preview .box video, .preview .box audio{max-width:100%; max-height:80vh; width:auto}
-
-    @media (max-width:720px){
-      .row{grid-template-columns: 32px 1fr .7fr 110px}
-      .row .sizecol{display:none}
+    header h1 { font-size:18px; margin:0; }
+    .actions { display:flex; gap:10px; }
+    .file-list { padding:16px; display:flex; flex-direction:column; gap:8px; }
+    .file-row {
+      display:grid; grid-template-columns:32px 1fr 80px 80px 80px;
+      align-items:center; gap:10px;
+      background:#fff; padding:10px; border-radius:8px;
+      box-shadow:0 1px 3px rgba(0,0,0,.08);
     }
+    .file-row .material-icons { color:#555; }
+    button {
+      background:none; border:none; cursor:pointer; font-size:14px; color:#444;
+    }
+    button:hover { color:#000; }
+    input[type="file"] { display:none; }
   </style>
 </head>
 <body>
-  <header>
-    <div class="bar">
-      <div class="breadcrumb" id="breadcrumb"></div>
-      <div class="grow"></div>
-      <label class="search">
-        <span class="icon">search</span>
-        <input id="q" placeholder="ค้นหาไฟล์ / โฟลเดอร์"/>
-      </label>
-      <button id="toggleView" class="btn ghost" title="Toggle View"><span class="icon">view_list</span></button>
-      <button id="newFolderBtn" class="btn" title="New Folder"><span class="icon">create_new_folder</span><span class="hide-sm">โฟลเดอร์ใหม่</span></button>
-      <button id="uploadBtn" class="btn primary" title="Upload"><span class="icon">upload</span><span class="hide-sm">อัปโหลด</span></button>
-    </div>
-  </header>
 
-  <div class="app">
-    <section class="panel">
-      <div class="head">
-        <div class="muted" id="summary">—</div>
-        <div class="toolbar">
-          <button class="btn ghost" id="refresh"><span class="icon">refresh</span>รีเฟรช</button>
-          <button class="btn ghost" id="selectAll"><span class="icon">select_check_box</span>เลือกทั้งหมด</button>
-          <button class="btn ghost" id="clearSel"><span class="icon">deselect</span>ล้างเลือก</button>
-        </div>
-      </div>
-
-      <div id="holder" class="grid" aria-live="polite"></div>
-      <div id="empty" style="display:none; padding:36px; text-align:center; color:var(--muted)">
-        <div class="icon" style="font-size:44px; margin-bottom:6px">folder_open</div>
-        <div>โฟลเดอร์ว่าง ลองอัปโหลดไฟล์หรือสร้างโฟลเดอร์ใหม่</div>
-      </div>
-      <div class="dropzone" id="dropzone" style="margin:8px">ลากไฟล์มาวางที่นี่เพื่ออัปโหลด</div>
-    </section>
+<header>
+  <h1>📂 My R2 Files</h1>
+  <div class="actions">
+    <label>
+      <span class="material-icons">upload</span>
+      <input type="file" id="uploadInput" multiple>
+    </label>
+    <button onclick="newFolder()"><span class="material-icons">create_new_folder</span></button>
   </div>
+</header>
 
-  <div class="footerbar" id="bulkbar">
-    <button class="btn" id="downloadSel"><span class="icon">download</span>ดาวน์โหลด</button>
-    <button class="btn" id="renameSel"><span class="icon">edit</span>เปลี่ยนชื่อ</button>
-    <button class="btn" id="moveSel"><span class="icon">drive_file_move</span>ย้าย</button>
-    <button class="btn" id="deleteSel" style="background:var(--danger); color:white; border-color:transparent"><span class="icon">delete</span>ลบ</button>
-  </div>
-
-  <dialog id="dlgNewFolder">
-    <div class="dh"><strong>สร้างโฟลเดอร์ใหม่</strong><button class="btn ghost" data-close><span class="icon">close</span></button></div>
-    <form method="dialog">
-      <input class="input" id="newFolderName" placeholder="เช่น photos หรือ docs"/>
-      <div style="display:flex; gap:8px; justify-content:flex-end; margin-top:12px">
-        <button class="btn ghost" value="cancel">ยกเลิก</button>
-        <button class="btn primary" value="ok">สร้าง</button>
-      </div>
-    </form>
-  </dialog>
-
-  <dialog id="dlgRename">
-    <div class="dh"><strong>เปลี่ยนชื่อ</strong><button class="btn ghost" data-close><span class="icon">close</span></button></div>
-    <form method="dialog">
-      <input class="input" id="renameFrom" readonly style="opacity:.7"/>
-      <div style="height:8px"></div>
-      <input class="input" id="renameTo"/>
-      <div style="display:flex; gap:8px; justify-content:flex-end; margin-top:12px">
-        <button class="btn ghost" value="cancel">ยกเลิก</button>
-        <button class="btn primary" value="ok">บันทึก</button>
-      </div>
-    </form>
-  </dialog>
-
-  <div class="preview" id="preview">
-    <div class="box">
-      <div style="display:flex; justify-content:flex-end; padding:6px"><button class="btn ghost" id="closePreview"><span class="icon">close</span></button></div>
-      <div id="previewBody" style="display:grid; place-items:center; padding:10px"></div>
-    </div>
-  </div>
+<div id="file-list" class="file-list"></div>
 
 <script>
-// ======= Config =======
-const API = {
-  list: (prefix="") => fetch(`/api/list?prefix=${encodeURIComponent(prefix)}`).then(r=>r.json()),
-  upload: (key, file) => fetch(`/api/upload?key=${encodeURIComponent(key)}`, {method:'POST', body:file}),
-  mkdir: (prefix) => fetch(`/api/mkdir`, {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({prefix})}),
-  del: (key) => fetch(`/api/object?key=${encodeURIComponent(key)}`, {method:'DELETE'}),
-  rename: (from, to) => fetch(`/api/rename`, {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({from,to})}),
-  downloadUrl: (key) => `/api/object?key=${encodeURIComponent(key)}&download=1`,
-  streamUrl: (key) => `/api/preview?key=${encodeURIComponent(key)}`
-};
+async function refreshList() {
+  const res = await fetch("/api/list");
+  const files = await res.json();
+  
+  const container = document.getElementById("file-list");
+  container.innerHTML = "";
 
-// ======= State =======
-let viewMode = localStorage.getItem('viewMode') || 'grid';
-let cwd = localStorage.getItem('cwd') || '';
-let items = []; // {key, name, size, type, isDir, mod}
-let sel = new Set();
-
-// ======= DOM =======
-const holder = document.getElementById('holder');
-const summary = document.getElementById('summary');
-const bulkbar = document.getElementById('bulkbar');
-const breadcrumb = document.getElementById('breadcrumb');
-const empty = document.getElementById('empty');
-const dropzone = document.getElementById('dropzone');
-
-function iconFor(it){
-  if(it.isDir) return 'folder';
-  const t = (it.type||'').toLowerCase();
-  if(t.startsWith('image/')) return 'image';
-  if(t.startsWith('video/')) return 'movie';
-  if(t.startsWith('audio/')) return 'audio_file';
-  if(t.includes('pdf')) return 'picture_as_pdf';
-  if(t.includes('zip')||t.includes('tar')||t.includes('rar')) return 'folder_zip';
-  if(t.includes('spreadsheet')||/\.(xls|xlsx|csv)$/i.test(it.name)) return 'table';
-  if(t.includes('presentation')||/\.(ppt|pptx)$/i.test(it.name)) return 'slideshow';
-  if(t.includes('word')||/\.(doc|docx)$/i.test(it.name)) return 'description';
-  if(/\.(txt|md|json|js|ts|html|css)$/i.test(it.name)) return 'article';
-  return 'insert_drive_file';
-}
-
-function fmtSize(n){
-  if(n==null) return '—';
-  const u=['B','KB','MB','GB','TB']; let i=0; let x=Number(n);
-  while(x>=1024 && i<u.length-1){x/=1024;i++;}
-  return `${x.toFixed(x<10&&i>0?1:0)} ${u[i]}`;
-}
-
-function buildBreadcrumb(){
-  breadcrumb.innerHTML='';
-  const parts = cwd.split('/').filter(Boolean);
-  const acc=[];
-  const rootBtn = el('button','crumb', [ico('home'),'ราก']);
-  rootBtn.onclick=()=>navigate('');
-  breadcrumb.append(rootBtn);
-  parts.forEach((p,i)=>{
-    breadcrumb.append(el('span','sp','/'));
-    acc.push(p);
-    const full = acc.join('/') + '/';
-    const btn = el('button','crumb'+(i===parts.length-1?' current':''), [ico('folder'), p]);
-    if(i!==parts.length-1) btn.onclick=()=>navigate(full);
-    breadcrumb.append(btn);
+  files.forEach(file => {
+    const row = document.createElement("div");
+    row.className = "file-row";
+    row.innerHTML = `
+      <span class="material-icons">insert_drive_file</span>
+      <span class="file-name">${file.key}</span>
+      <span>${(file.size/1024).toFixed(1)} KB</span>
+      <button onclick="downloadFile('${encodeURIComponent(file.key)}')">
+        <span class="material-icons">download</span>
+      </button>
+      <button onclick="deleteFile('${encodeURIComponent(file.key)}')">
+        <span class="material-icons">delete</span>
+      </button>
+    `;
+    container.appendChild(row);
   });
 }
 
-function render(){
-  buildBreadcrumb();
-  localStorage.setItem('cwd', cwd);
-  const q = (document.getElementById('q').value||'').toLowerCase();
-  const list = items.filter(it=> it.name.toLowerCase().includes(q));
-  summary.textContent = `${list.length} รายการ`;
-  bulkbar.classList.toggle('show', sel.size>0);
-  empty.style.display = list.length? 'none':'block';
-  holder.className = viewMode==='grid' ? 'grid' : 'list';
+async function downloadFile(key) {
+  window.open("/api/get/" + key, "_blank");
+}
 
-  holder.innerHTML='';
-  if(viewMode==='grid'){
-    list.forEach(it=>{
-      const t = el('div','tile');
-      const cb = el('input'); cb.type='checkbox'; cb.checked=sel.has(it.key);
-      cb.onchange=()=>toggleSelect(it.key, cb.checked);
-      t.append(cb);
-      t.append(el('div','ico', ico(iconFor(it))));
-      t.append(el('div','name', it.name));
-      t.append(el('div','meta', (it.isDir?'โฟลเดอร์':'ไฟล์') + (it.size? ' · '+fmtSize(it.size):'')));
-      const actions = el('div','actions');
-      actions.append(actionBtn('open_in_new','เปิด', ()=>openItem(it)));
-      actions.append(actionBtn('download','โหลด', ()=>downloadItem(it)));
-      actions.append(actionBtn('edit','เปลี่ยนชื่อ', ()=>openRename(it)));
-      actions.append(actionBtn('delete','ลบ', ()=>removeItem(it)));
-      t.append(actions);
-      t.ondblclick=()=>openItem(it);
-      holder.append(t);
-    })
-  } else {
-    // header row
-    const hdr = el('div','row', [el('div','', ''), el('div','', 'ชื่อ'), el('div','', 'อัปเดต'), el('div','sizecol', 'ขนาด'), el('div','', 'การกระทำ')]);
-    hdr.style.color='var(--muted)';
-    holder.append(hdr);
-    list.forEach(it=>{
-      const r=el('div','row');
-      const cb = el('input'); cb.type='checkbox'; cb.checked=sel.has(it.key); cb.onchange=()=>toggleSelect(it.key, cb.checked);
-      r.append(cb);
-      const name=el('div','name', [ico(iconFor(it)), it.name, it.isDir? el('span','badge','· โฟลเดอร์'):null]);
-      const mod=el('div','', new Date(it.mod||Date.now()).toLocaleString());
-      const size=el('div','sizecol', it.isDir? '—' : fmtSize(it.size));
-      const act=el('div','', [
-        button('เปิด', ()=>openItem(it), 'open_in_new'),
-        button('โหลด', ()=>downloadItem(it), 'download'),
-        button('ชื่อ', ()=>openRename(it), 'edit'),
-        button('ลบ', ()=>removeItem(it), 'delete')
-      ]);
-      r.append(name, mod, size, act);
-      r.ondblclick=()=>openItem(it);
-      holder.append(r);
-    })
+async function deleteFile(key) {
+  if (!confirm("Delete " + decodeURIComponent(key) + "?")) return;
+  await fetch("/api/delete/" + key, { method: "DELETE" });
+  refreshList();
+}
+
+async function newFolder() {
+  const name = prompt("Folder name:");
+  if (!name) return;
+  await fetch("/api/create-folder", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ name })
+  });
+  refreshList();
+}
+
+document.getElementById("uploadInput").addEventListener("change", async (e) => {
+  const files = e.target.files;
+  for (let f of files) {
+    const form = new FormData();
+    form.append("file", f);
+    await fetch("/api/upload", { method: "POST", body: form });
   }
-}
+  refreshList();
+});
 
-function el(tag, cls, children){
-  const e=document.createElement(tag);
-  if(cls) e.className=cls;
-  if(children==null) return e;
-  if(Array.isArray(children)) children.filter(Boolean).forEach(c=> e.append(typeof c==='string'? document.createTextNode(c): c));
-  else e.textContent=children;
-  return e;
-}
-function ico(name){ const i=el('span','icon'); i.textContent=name; return i; }
-function button(text, on, icon){ const b=el('button','btn ghost',[icon?ico(icon):null, text]); b.onclick=on; return b; }
-function actionBtn(icon, title, on){ const b=el('button','btn ghost', [ico(icon)]); b.title=title; b.onclick=on; return b; }
-
-function toggleSelect(key, on){ on? sel.add(key): sel.delete(key); render(); }
-
-async function navigate(prefix){ cwd=prefix || ''; sel.clear(); await load(); }
-
-async function load(){
-  const {objects=[], prefixes=[]} = await API.list(cwd);
-  // Convert to UI items
-  items = [
-    ...prefixes.map(p=>({ key:p, name:p.replace(cwd,'').replace(/\/$/,''), isDir:true })),
-    ...objects.map(o=>({ key:o.key, name:o.key.replace(cwd,''), size:o.size, type:o.httpMetadata?.contentType, isDir:false, mod:o.uploaded || o.modified }))
-  ];
-  render();
-}
-
-function openItem(it){ if(it.isDir){ navigate(it.key); } else { preview(it); } }
-function downloadItem(it){ if(it.isDir) return; window.open(API.downloadUrl(it.key), '_blank'); }
-async function removeItem(it){
-  if(!confirm(`ลบ ${it.name}?`)) return;
-  await API.del(it.key);
-  await load();
-}
-
-// Bulk actions
-async function deleteSelected(){ if(!sel.size) return; if(!confirm(`ลบ ${sel.size} รายการ?`)) return; await Promise.all([...sel].map(k=>API.del(k))); sel.clear(); await load(); }
-function downloadSelected(){ [...sel].forEach(k=>{ const it = items.find(i=>i.key===k); if(it && !it.isDir) window.open(API.downloadUrl(it.key),'_blank'); }); }
-
-// New folder
-function newFolder(){ const dlg=document.getElementById('dlgNewFolder'); const input=document.getElementById('newFolderName'); input.value=''; dlg.showModal(); dlg.querySelector('[data-close]')?.addEventListener('click',()=>dlg.close('cancel'),{once:true}); dlg.addEventListener('close', async ()=>{ if(dlg.returnValue==='ok'){ const name=input.value.trim().replace(/\/+$/,''); if(name){ await API.mkdir(cwd + name + '/'); await load(); } } }, {once:true}); }
-
-// Rename
-function openRename(it){ const dlg=document.getElementById('dlgRename'); const from=document.getElementById('renameFrom'); const to=document.getElementById('renameTo'); from.value=it.key; to.value=it.key; dlg.showModal(); dlg.querySelector('[data-close]')?.addEventListener('click',()=>dlg.close('cancel'),{once:true}); dlg.addEventListener('close', async ()=>{ if(dlg.returnValue==='ok' && to.value && to.value!==from.value){ await API.rename(from.value, to.value); await load(); } }, {once:true}); }
-
-// Preview
-function preview(it){ const box=document.getElementById('preview'); const body=document.getElementById('previewBody'); body.innerHTML=''; const t=(it.type||'').toLowerCase();
-  if(t.startsWith('image/')){ const img=new Image(); img.src=API.streamUrl(it.key); img.alt=it.name; body.append(img); }
-  else if(t.startsWith('video/')){ const v=document.createElement('video'); v.controls=true; v.src=API.streamUrl(it.key); body.append(v); }
-  else if(t.startsWith('audio/')){ const a=document.createElement('audio'); a.controls=true; a.src=API.streamUrl(it.key); body.append(a); }
-  else { const frame=document.createElement('iframe'); frame.src=API.streamUrl(it.key); frame.style.width='100%'; frame.style.height='80vh'; frame.style.border='0'; body.append(frame); }
-  box.classList.add('show');
-}
-
-// Upload (button + DnD)
-const fileInput = Object.assign(document.createElement('input'), {type:'file', multiple:true});
-fileInput.onchange = async ()=>{ if(!fileInput.files?.length) return; await doUpload(fileInput.files); fileInput.value=''; };
-
-document.getElementById('uploadBtn').onclick=()=> fileInput.click();
-
-async function doUpload(fileList){
-  const arr=[...fileList];
-  for(const f of arr){
-    const key = cwd + f.name;
-    await API.upload(key, f);
-  }
-  await load();
-}
-
-;['dragenter','dragover'].forEach(ev=> dropzone.addEventListener(ev, e=>{ e.preventDefault(); dropzone.style.borderColor='var(--accent)'; }));
-;['dragleave','drop'].forEach(ev=> dropzone.addEventListener(ev, e=>{ e.preventDefault(); dropzone.style.borderColor='#2a2c33'; }));
-dropzone.addEventListener('drop', e=>{ const files = e.dataTransfer?.files; if(files?.length) doUpload(files); });
-
-// Events
- document.getElementById('q').addEventListener('input', render);
- document.getElementById('toggleView').onclick=()=>{ viewMode = viewMode==='grid'?'list':'grid'; localStorage.setItem('viewMode', viewMode); render(); };
- document.getElementById('refresh').onclick=load;
- document.getElementById('newFolderBtn').onclick=newFolder;
- document.getElementById('selectAll').onclick=()=>{ items.forEach(i=>sel.add(i.key)); render(); };
- document.getElementById('clearSel').onclick=()=>{ sel.clear(); render(); };
- document.getElementById('deleteSel').onclick=deleteSelected;
- document.getElementById('downloadSel').onclick=downloadSelected;
- document.getElementById('renameSel').onclick=()=>{ const [k]=sel; const it=items.find(i=>i.key===k); if(it) openRename(it); };
- document.getElementById('moveSel').onclick=()=>{ const to = prompt('ย้ายไป prefix อะไร? (เช่น photos/)'); if(!to) return; Promise.all([...sel].map(async k=>API.rename(k, to + k.split('/').pop()))).then(load); };
- document.getElementById('closePreview').onclick=()=>document.getElementById('preview').classList.remove('show');
-
-// Init
-load();
+refreshList();
 </script>
+
 </body>
 </html>
