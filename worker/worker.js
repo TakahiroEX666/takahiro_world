@@ -11,7 +11,6 @@ export default {
           return new Response("No file uploaded", { status: 400 });
         }
 
-        // ใช้ arrayBuffer() แทน stream()
         const arrayBuffer = await file.arrayBuffer();
         await env.MY_BUCKET.put(file.name, arrayBuffer);
 
@@ -47,7 +46,26 @@ export default {
     if (url.pathname.startsWith("/api/delete/") && request.method === "DELETE") {
       const key = decodeURIComponent(url.pathname.replace("/api/delete/", ""));
       await env.MY_BUCKET.delete(key);
-      return new Response(JSON.stringify({ success: true }));
+      return new Response(JSON.stringify({ success: true }), {
+        headers: { "Content-Type": "application/json" }
+      });
+    }
+
+    // 📁 Create folder (fake folder using object key ending with "/")
+    if (url.pathname === "/api/create-folder" && request.method === "POST") {
+      try {
+        const { name } = await request.json();
+        if (!name) return new Response("Missing folder name", { status: 400 });
+
+        const key = name.endsWith("/") ? name : name + "/";
+        await env.MY_BUCKET.put(key, new Uint8Array(0)); // empty object
+
+        return new Response(JSON.stringify({ success: true, key }), {
+          headers: { "Content-Type": "application/json" }
+        });
+      } catch (err) {
+        return new Response("Create folder error: " + err.message, { status: 500 });
+      }
     }
 
     return new Response("Not found", { status: 404 });
