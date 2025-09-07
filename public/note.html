@@ -11,13 +11,43 @@
             crossorigin="anonymous"
             referrerpolicy="no-referrer"
         />
+        <link rel="stylesheet" href="./css/navbar.css" />                
+        <link rel="stylesheet" href="./node_modules/material-icons/iconfont/material-icons.css" />        
         <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@1.35.6/dist/umd/supabase.min.js"></script>
         <style>
+                                                                         
+            @font-face {
+            font-family: 'Eng';
+            src: url('./css/SFProDisplay-Regular.woff2') format('woff2');
+            unicode-range: U+0000-00FF;
+            }
+            @font-face {
+            font-family: 'Thai';
+            src: url('./css/SFThonburi-Regularr.woff2') format('woff2');
+            unicode-range: U+0E00-0E7F;
+            }
+            @font-face {
+            font-family: 'Emoji';
+            src: url('./css/NotoColorEmoji.ttf') format('truetype');
+            unicode-range: U+1F300-1FAFF, U+2600-26FF;
+            }
+            @font-face {
+            font-family: 'Playwrite HU';
+            src: url('./css/PlaywriteHU.ttf') format('truetype');
+            }          
+                    
+                    
+                    
+                    
+                    
+                    
+                    
             body {
-                font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+                font-family: 'Eng', 'Thai', sans-serif;                            
                 margin: 0;
                 padding: 0;
-                background-color: #f0f2f5;
+                background-color: #FAFAFA;
+                box-sizing: border-box;
                 display: flex;
                 flex-direction: column; /* Changed to column to allow sidebar to float over */
                 min-height: 100vh;
@@ -25,25 +55,7 @@
                 overflow-x: hidden; /* Prevent horizontal scrollbar during sidebar animation */
             }
 
-            .header {
-                display: flex;
-                justify-content: space-between;
-                align-items: center;
-                padding: 16px;
-                background-color: #ffffff;
-                box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-                margin-bottom: 8px;
-                position: sticky;
-                top: 0;
-                z-index: 100;
-            }
 
-            .header h1 {
-                margin: 0;
-                font-size: 24px;
-                color: #333;
-                flex-grow: 1; /* Allow title to take available space */
-            }
 
             /* New: Sidebar Toggle Button */
             .sidebar-toggle-button {
@@ -204,89 +216,13 @@
             }
 
 
-            /* --- Main Content Area --- */
-            .main-content {
+                        .main-content {
                 flex-grow: 1;
                 display: flex;
                 flex-direction: column;
                 position: relative;
             }
-
-            #note-list-container {
-                display: grid;
-                grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-                gap: 16px;
-                padding: 16px;
-                /*flex-grow: 1;*/
-                overflow-y: auto;
-            }
-
-
-            .note-card {
-                background-color: #ffffff;
-                border-radius: 12px;
-                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-                padding: 16px;
-                height:100px;
-                display: flex;
-                flex-direction: column;
-                justify-content: flex-start;
-                cursor: pointer;
-                transition: transform 0.1s ease-in-out, box-shadow 0.1s ease-in-out;
-                position: relative;
-                overflow: hidden;
-                background-size: cover;
-                background-position: center;
-                background-repeat: no-repeat;
-            }
-
-            .note-card:active {
-                transform: scale(0.98);
-                box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-            }
-
-            .note-card-header {
-                display: flex;
-                /*height: 30%;*/
-                align-items: center;
-                justify-content: space-between;
-                margin-bottom: 4px;
-            }
-
-            .note-card-title {
-                font-size: 18px;
-                font-weight: 600;
-                color: #333;
-                flex-grow: 1;
-                margin-right: 8px;
-                word-break: break-word;
-            }
-
-            . .pin-icon {
-                color: #ffc107;
-                margin-right: 8px;
-            }
-
-            .note-card-content {
-                font-size: 14px;
-                color: #555;
-                /*flex-grow: 1;*/
-                overflow: hidden;
-                text-overflow: ellipsis;
-                
-                display: -webkit-box;
-                -webkit-line-clamp: 1;
-                -webkit-box-orient: vertical;
-                line-height: 1.4;
-                max-height: 2.8em;
-            }
-
-            .note-card-date {
-                font-size: 12px;
-                color: #888;
-                text-align: right;
-                margin-top: 4px;
-            }
+            
 
             /* --- Floating Action Button (FAB) --- */
             .fab-container {
@@ -415,9 +351,414 @@
             .bottom-sheet-option-button.delete-option .icon {
                 color: #dc3545;
             }
-        </style>
+            
+            
+
+
+      #searchInput {
+        padding: 6px 10px;
+        border: 1px solid #ddd;
+        border-radius: 6px;
+      }
+
+
+
+      .context-menu {
+        position: absolute;
+        background: #fff;
+        border: 1px solid #ccc;
+        border-radius: 6px;
+        display: none;
+        flex-direction: column;
+        z-index: 200;
+      }
+      .context-menu button {
+        background: none;
+        border: none;
+        padding: 8px 12px;
+        text-align: left;
+        cursor: pointer;
+      }
+
+
+      /* Modal */
+      .modal-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.4);
+        display: none;
+        justify-content: center;
+        align-items: center;
+        z-index: 500;
+      }
+      .modal {
+        background: #fff;
+        padding: 20px;
+        border-radius: 12px;
+        width: 80%;
+        max-width: 300px;
+      }
+
+      /* FAB */
+      .fab-container {
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+      }
+      .add-note-fab {
+        background: #007bff;
+        color: #fff;
+        border: none;
+        border-radius: 50%;
+        width: 56px;
+        height: 56px;
+        font-size: 28px;
+        cursor: pointer;
+      }
+
+
+
+
+      /* Bottom Sheet */
+      .bottom-sheet-overlayX {
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.4);
+        display: none;
+        align-items: flex-end;
+        justify-content: center;
+        z-index: 1000;
+      }
+      .bottom-sheetX {
+        background: #fff;
+        width: 100%;
+        max-width: 500px;
+        border-top-left-radius: 16px;
+        border-top-right-radius: 16px;
+        padding: 20px;
+      }
+      .bottom-sheet-options button {
+        display: block;
+        width: 100%;
+        border: none;
+        background: #f0f2f5;
+        padding: 10px;
+        margin-bottom: 6px;
+        border-radius: 6px;
+        text-align: left;
+      }
+      
+      
+      
+
+
+
+
+
+
+
+
+    </style> 
+    
+    
+    
+    <style> /*CHIP*/
+    
+     .chips-container {
+        margin-top:52px;
+        display: flex;
+        gap: 6px;
+        padding: 10px;
+        overflow-x: auto;
+      }
+
+      .chip {
+        border: none;
+        background: white;
+        font-weight: bold;		
+        border: 1px solid #eff3f4;
+        color: #536471;
+        padding: 6px 12px;
+        border-radius: 20px;
+        cursor: pointer;
+      }
+      .chip.active {
+        background: #0F1418;
+        color: white;
+      }
+      
+      #tagFilterButton {
+           border-radius: 8px;
+           background: #0F1418;
+           margin-left: auto;
+      }
+      
+      
+    </style>
+    
+    <style>
+
+
+
+            #note-list-container {
+                /*display: grid;*/
+                /*grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));*/
+                gap: 16px;
+                padding: 16px;
+                /*flex-grow: 1;*/
+                overflow-y: auto;
+            }
+            
+            
+            /* Styles for Card View */
+            /*#note-list-container .card-view {
+                display: flex;
+                flex-direction: column;
+                gap: 15px;
+            }*/            
+                                                           
+      
+            .note-card {               
+                /*border: 1px solid #ddd;*/
+                border-radius: 12px;
+                /*box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);*/
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+                margin-bottom:12px;                
+                background-color: #ffffff;            
+                padding: 16px;
+                height:100px;
+                display: flex;
+                flex-direction: column;
+                justify-content: flex-start;
+                cursor: pointer;
+                transition: transform 0.1s ease-in-out, box-shadow 0.1s ease-in-out;
+                position: relative;
+                overflow: hidden;
+                background-size: cover;
+                background-position: center;
+                background-repeat: no-repeat;
+                box-sizing: border-box;
+            }
+            .note-card-header {
+                display: flex;                
+                align-items: center;
+                justify-content: space-between;
+                margin-bottom: 8px;
+            }
+            
+           .note-card-title {
+                display: flex; /* กำหนดให้เป็น Flexbox container */
+                align-items: center; /* จัดเรียงเนื้อหาให้อยู่กึ่งกลางในแนวตั้ง */
+                font-size: 1.1rem;
+                font-weight: 600;
+                align-items: center;
+                color: #333;
+                flex-grow: 1;
+                margin-right: 8px;
+                word-break: break-word;
+            }
+            
+            .pin-icon {
+                width:1.5rem;
+                height:1.5rem;
+                color: red;
+                margin-right: 4px;
+            }
+            
+            
+            
+
+
+
+
+
+
+
+
+            /*.note-card:active {
+                transform: scale(0.98);
+                box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            }*/
+
+            
+
+
+
+
+
+            .note-card-content {
+                font-size: 14px;
+                color: #555;
+                /*flex-grow: 1;*/
+                overflow: hidden;
+                text-overflow: ellipsis;
+                
+                display: -webkit-box;
+                -webkit-line-clamp: 1;
+                -webkit-box-orient: vertical;
+                line-height: 1.4;
+                max-height: 2.8em;
+            }
+
+            .note-card-date {
+                font-size: 12px;
+                color: #888;
+                text-align: right;
+                margin-top: 4px;
+            }
+            
+            
+            
+            
+            
+              
+              
+              
+#note-list-container.list-view {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+#note-list-container.list-view .note-card {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    padding: 10px;
+}
+
+
+/* Styles for Grid View */
+#note-list-container.grid-view {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 15px;
+    padding: 10px;
+}
+
+/* Media Query for Grid View on small screens (e.g. mobile) */
+@media (min-width: 400px) {
+    #note-list-container.grid-view {
+        grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    }
+}
+
+/* ซ่อนเนื้อหาใน List View */
+#note-list-container.list-view .note-content {
+    display: none;
+}
+
+/* แสดงเนื้อหาใน Card และ Grid View */
+#note-list-container.card-view .note-content,
+#note-list-container.grid-view .note-content {
+    display: block;
+    font-size: 0.9em;
+    color: #555;
+    margin-top: 10px;
+    white-space: pre-wrap; /* เพื่อให้เว้นบรรทัดตามที่ผู้ใช้พิมพ์ */
+    word-wrap: break-word; /* เพื่อให้ตัดคำยาวๆ ได้ */
+}
+
+/* Styles for note date in List View */
+#note-list-container.list-view .note-card .note-info-list {
+    flex-grow: 1; /* ให้ส่วนนี้ขยายเต็มพื้นที่ */
+    text-align: right;
+    font-size: 0.8em;
+    color: #888;
+}
+  
+  
+  
+    </style>
+    
+    
+    
+    
+    
+  
+  
+  
+  
     </head>
     <body>
+                
+                
+                
+                
+                
+                
+                
+                
+                
+            <div class="main-content">            
+            <div class="navbar" style="background-color: #FAFAFA;box-shadow:none;">
+            <div class="left-icons">
+                <button style="margin-top:4px; color:#0F1419;" class="icon-button"><span id="main-header-title" class="title" style="text-align: center; line-height: 1.5;">DIARY</span></button>
+                <input style="display:none;"type="text" id="searchInput" placeholder="ค้นหาโน้ต..." />                
+            </div>
+            <div class="right-icons">
+                <button class="icon-button" style="margin-right:8px;"><span class="material-icons icon">search</span></button>
+                <button class="icon-button"  id="viewSortButton" style="margin-right:8px;"><span class="material-icons icon">wysiwyg</span></button>                
+                <button class="icon-button" id="sidebarToggleButton"><span class="material-icons icon">more_vert</span></button>
+            </div>
+        </div>
+
+
+
+
+
+
+            
+            <div class="chips-container">
+  <button class="chip active" data-chip="home">หน้าหลัก</button>
+  <button class="chip" data-chip="all">ทั้งหมด</button>
+  <button class="chip" data-chip="pinned">ปักหมุด</button>
+  <button class="chip" data-chip="archived">เก็บถาวร</button>
+  <button class="chip" id="tagFilterButton"><span class="material-icons icon" style="color:white; font-size:1.5rem;">local_offer</span></button>
+</div>
+
+
+            <div id="note-list-container">
+                <p id="loading-indicator" style="text-align: center; color: #777;">กำลังโหลดโน้ต...</p>
+            </div>
+        </div>
+        
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
         <div class="sidebar-overlay" id="sidebarOverlay"></div>
 
         <div class="sidebar" id="sidebar">
@@ -427,7 +768,14 @@
                     <i class="fa-solid fa-folder-plus"></i> เพิ่มหมวดหมู่
                 </button>
             </div>
-            <ul class="sidebar-list">
+            <ul class="sidebar-list" id="sidebarList">
+                        
+<li class="sidebar-list-item">
+        <div class="sidebar-list-item-toggle">
+            <i class="fa-solid icon fa-home"></i>
+            <span>หน้าแรก</span>
+        </div>
+    </li>
                 <li class="sidebar-list-item">
                     <div class="sidebar-list-item-toggle" data-filter="pinned">
                         <i class="fa-solid icon fa-thumbtack"></i>
@@ -460,27 +808,26 @@
                     </div>
                     <ul class="sidebar-sub-list" id="hidden-notes-list"></ul>
                 </li>
+                
+                <li class="sidebar-list-item">
+  <div class="sidebar-list-item-toggle" data-filter="all">
+    <i class="fa-solid icon fa-note-sticky"></i>
+    <span>โน้ตทั้งหมด</span>
+  </div>
+</li>
+<li class="sidebar-list-item">
+  <div class="sidebar-list-item-toggle" data-filter="trash">
+    <i class="fa-solid icon fa-trash"></i>
+    <span>ถังขยะ</span>
+  </div>
+</li>
+
             </ul>
         </div>
 
-        <div class="main-content">
-            <div class="header">
-                <h1 id="main-header-title">My Notes</h1>
-                <button class="sidebar-toggle-button" id="sidebarToggleButton">
-                    <i class="fa-solid fa-bars"></i>
-                </button>
-            </div>
 
-            <div id="note-list-container">
-                <p id="loading-indicator" style="text-align: center; color: #777;">กำลังโหลดโน้ต...</p>
-            </div>
-        </div>
 
-        <div class="fab-container">
-            <button class="add-note-fab" id="addNewNoteButton">
-                <i class="fa-solid fa-plus"></i>
-            </button>
-        </div>
+
 
         <div class="bottom-sheet-overlay" id="noteActionsBottomSheetOverlay">
             <div class="bottom-sheet" id="noteActionsBottomSheet">
@@ -510,9 +857,70 @@
                 </div>
             </div>
         </div>
+        
+        
+        
+
+
+
+
+
+<div id="tagFilterModal" class="modal-overlay">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3>กรองตามแท็ก</h3>
+            <button id="closeTagFilter" class="close-button">&times;</button>
+        </div>
+        <div id="tagFilterContainer" class="tag-chip-container">
+            </div>
+        <div class="modal-footer">
+            <button id="applyTagFilterButton" class="main-button">ใช้ตัวกรอง</button>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+<div class="context-menu" id="viewSortMenu">
+  <button data-view="grid">Grid View</button>
+  <button data-view="list">List View</button>
+  <button data-view="card">Card View</button>
+  <hr/>
+  <button data-sort="newest">ใหม่ไปเก่า</button>
+  <button data-sort="oldest">เก่าไปใหม่</button>
+</div>
+
+
+
+        <div class="fab-container">
+            <button class="add-note-fab" id="addNewNoteButton">
+                <i class="fa-solid fa-plus"></i>
+            </button>
+        </div>
+        
+
+
+
+<div class="bottom-sheet-overlayX" id="noteActionsBottomSheetOverlayX">
+      <div class="bottom-sheetX">
+        <h3>สร้าง</h3>
+        <div class="bottom-sheet-options">
+          <button><i class="fa-solid fa-file-lines"></i> ข้อความ</button>
+          <button><i class="fa-solid fa-list-ul"></i> Bullet List</button>
+          <button><i class="fa-solid fa-copy"></i> คัดลอกบทความ</button>
+          <button><i class="fa-solid fa-microphone"></i> พูดเป็นข้อความ</button>
+          <button><i class="fa-solid fa-folder-plus"></i> สร้างโฟลเดอร์</button>
+        </div>
+      </div>
+    </div>
+      
+        
+        
 
         <script>
-            // Supabase Key Configuration
+// Supabase Key Configuration
 const SUPABASE_URL = 'https://fkntlawaawawiusmjsez.supabase.co';
             const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZrbnRsYXdhYXdhd2l1c21qc2V6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDk5ODcxMjAsImV4cCI6MjA2NTU2MzEyMH0.G-_fLzcpvPla3dUYNCV7qh0j-JHo1Ahr5fS7fQkHdpw';
             const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
@@ -531,10 +939,7 @@ const SUPABASE_URL = 'https://fkntlawaawawiusmjsez.supabase.co';
             const mainHeaderTitle = document.getElementById('main-header-title');
 
             // Sidebar Elements
-            const sidebarToggleButton = document.getElementById('sidebarToggleButton');
-            const sidebar = document.getElementById('sidebar');
-            const sidebarOverlay = document.getElementById('sidebarOverlay');
-            const sidebarToggleButtons = document.querySelectorAll('.sidebar-list-item-toggle');
+           const sidebarToggleButtons = document.querySelectorAll('.sidebar-list-item-toggle');
             const pinnedNotesList = document.getElementById('pinned-notes-list');
             const categoriesList = document.getElementById('categories-list');
             const archivedNotesList = document.getElementById('archived-notes-list');
@@ -545,6 +950,513 @@ const SUPABASE_URL = 'https://fkntlawaawawiusmjsez.supabase.co';
             const toggleHideButton = document.getElementById('toggleHideButton');
             const toggleHideText = document.getElementById('toggleHideText');
 
+
+
+document.addEventListener('DOMContentLoaded', () => {
+    const sidebarToggleButton = document.getElementById('sidebarToggleButton');
+    const sidebar = document.getElementById('sidebar');
+    const sidebarOverlay = document.getElementById('sidebarOverlay');
+    const sidebarList = document.getElementById('sidebarList');
+    });
+
+
+      const chips = document.querySelectorAll(".chip");
+      const chipContainer = document.querySelector(".chips-container");
+      let currentChip = "home";
+      let currentCategoryId = null; // ✅ เพิ่มตัวแปรสำหรับ Category
+let currentSelectedTags = []; // ✅ ประกาศตัวแปรนี้ที่นี่
+
+
+    
+
+// Tag Filter Elements
+const tagFilterContainer = document.getElementById('tagFilterContainer');
+const applyTagFilterButton = document.getElementById('applyTagFilterButton');
+
+// Global State
+// ... โค้ดส่วนอื่นๆ ...
+let currentSelectedTag = []; // ✅ เพิ่มตัวแปรสำหรับเก็บ Tag ที่เลือก
+
+
+
+
+
+
+
+
+    const viewSortButton = document.getElementById('viewSortButton');
+    const viewSortMenu = document.getElementById('viewSortMenu');
+        const gridViewButton = document.querySelector('[data-view="grid"]');
+    const cardViewButton = document.querySelector('[data-view="card"]');
+    const listViewButton = document.querySelector('[data-view="list"]');
+const viewsortButton = document.getElementById('viewSortButton');
+const viewsortMenu = document.getElementById('viewSortMenu');
+
+
+    let currentView = localStorage.getItem('noteView') || 'card'; // Default เป็น card
+    let currentSort = localStorage.getItem('noteSort') || 'newest'; // Default เป็น newest
+
+
+
+
+
+    // ฟังก์ชันสำหรับตั้งค่า View
+    function setView(view) {
+        if (!noteListContainer) return; // ป้องกันข้อผิดพลาด
+        
+        noteListContainer.classList.remove('grid-view', 'list-view', 'card-view');
+        noteListContainer.classList.add(`${view}-view`);
+        localStorage.setItem('noteView', view);
+        // สามารถเพิ่มการเปลี่ยนไอคอนปุ่มหลักได้ที่นี่ หากต้องการ
+    }
+
+    // ตั้งค่าเริ่มต้นของ View เมื่อโหลดหน้า
+    setView(currentView);
+
+    // Event Listener สำหรับปุ่ม View/Sort
+        if (viewsortButton) {
+        viewsortButton.addEventListener('click', () => {
+            if (viewsortMenu) viewsortMenu.classList.toggle('hidden');
+        });
+    }
+
+    // Event Listener สำหรับเมนูทั้งหมดภายใน viewsortMenu
+        if (viewsortMenu) {
+        viewsortMenu.addEventListener('click', (e) => {
+            const button = e.target.closest('button');
+            if (!button) return;
+            if (button.dataset.view) {
+                currentView = button.dataset.view;
+                setView(currentView);
+            } else if (button.dataset.sort) {
+                currentSort = button.dataset.sort;
+                localStorage.setItem('noteSort', currentSort);
+                fetchAndDisplayNotes();
+            }
+            viewsortMenu.classList.add('hidden');
+        });
+    }
+
+    document.addEventListener('click', (event) => {
+        if (viewsortButton && viewsortMenu && !viewsortButton.contains(event.target) && !viewsortMenu.contains(event.target)) {
+            viewsortMenu.classList.add('hidden');
+        }
+    });
+
+
+
+
+
+
+
+
+
+
+  
+function showChips() {
+    chipContainer.style.display = 'flex';
+}
+
+function hideChips() {
+    chipContainer.style.display = 'none';
+}
+
+
+chips.forEach(chip => {
+    chip.addEventListener("click", () => {
+        chips.forEach(c => c.classList.remove("active"));
+        chip.classList.add("active");
+        currentChip = chip.dataset.chip;
+        currentCategoryId = null; // ✅ รีเซ็ตค่า Category ID เมื่อกด Chip
+        mainHeaderTitle.textContent = "My Notes"; // ✅ ตั้งชื่อ Header กลับไปเป็นค่าเดิม
+        if (currentChip === "home") {
+            fetchHomeNotes();
+        } else {
+            fetchAndDisplayNotes();
+        }
+    });
+});
+
+async function fetchHomeNotes() {
+    noteListContainer.innerHTML = "";
+    loadingIndicator.style.display = "block";
+    try {
+        const { data: pinned } = await supabase
+            .from("NOTE")
+            .select("id,background,tcolor, title, content, updated_at")
+            .eq("is_deleted", false)
+            .eq("is_archived", false)
+            .eq("is_hidden", false)
+            .eq("is_pin", true)
+            .order("updated_at", { ascending: false })
+            .limit(3);
+
+        const { data: recent } = await supabase
+            .from("NOTE")
+            .select("id,background,tcolor, title, content, updated_at")
+            .eq("is_deleted", false)
+            .eq("is_archived", false)
+            .eq("is_hidden", false)
+            .order("updated_at", { ascending: false })
+            .limit(3);
+
+        const { data: allNotes } = await supabase
+            .from("NOTE")
+            .select("id, title, content, updated_at")
+            .eq("is_deleted", false)
+            .eq("is_archived", false)
+            .eq("is_hidden", false)
+            .order("updated_at", { ascending: false });
+
+        loadingIndicator.style.display = "none";
+        noteListContainer.innerHTML = ""; // เคลียร์ container ก่อนแสดงผล
+        if (pinned && pinned.length > 0) renderSection("📌 Pinned", pinned);
+        if (recent && recent.length > 0) renderSection("🕑 Recent", recent);
+        if (allNotes && allNotes.length > 0) renderSection("📒 All Notes", allNotes);
+        
+        showChips(); // ✅ เพิ่มการเรียกใช้ showChips() ที่นี่
+        
+    } catch (err) {
+        console.error(err);
+        loadingIndicator.textContent = "โหลดข้อมูลผิดพลาด";
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+function renderSection(title, notes) {
+    const section = document.createElement("div");
+    section.className = "note-section";
+    //section.innerHTML = `<h2>${title}</h2>`;
+    section.innerHTML = ``;
+    
+    
+    
+    
+    
+    
+    if(title!='Notes') {
+             section.innerHTML = `<h2>${title}</h2>`;   
+                }
+    
+    const grid = document.createElement("div");
+    grid.className = "note-grid";
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    notes.forEach(note => {
+                
+      
+      
+      
+      
+      
+    
+      
+        const card = document.createElement("div");
+        card.className = "note-card";
+        card.dataset.noteId = note.id;
+        
+                if (note.background && typeof note.background === 'object') {
+            const backgroundData = note.background;
+            if (backgroundData.type === 'color' && backgroundData.value) {
+                card.style.backgroundColor = backgroundData.value;
+                card.style.backgroundImage = 'none'; // Ensure no image is applied if a color is present
+            } else if (backgroundData.type === 'image' && backgroundData.value) {
+                card.style.backgroundImage = `url('${backgroundData.value}')`;
+                card.style.backgroundSize = 'cover';
+                card.style.backgroundPosition = 'center';
+                card.style.backgroundColor = 'transparent';
+            }
+        }
+        
+            const formattedDate = new Date(note.updated_at).toLocaleString('th-TH', {
+            year: 'numeric',
+            month: 'short',
+            day: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit'
+        });       
+        
+         const timeRelative = getTimeAgo(note.updated_at);
+             
+        
+        card.innerHTML = `
+            <div class="note-card-header">
+                <span class="note-card-title" style="color:${note.tcolor}">
+                    ${note.is_pin ? '<svg  xmlns="http://www.w3.org/2000/svg"  width="24"  height="24"  viewBox="0 0 24 24"  fill="none"  stroke="currentColor"  stroke-width="2"  stroke-linecap="round"  stroke-linejoin="round"  class="pin-icon"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M15 4.5l-4 4l-4 1.5l-1.5 1.5l7 7l1.5 -1.5l1.5 -4l4 -4" /><path d="M9 15l-4.5 4.5" /><path d="M14.5 4l5.5 5.5" /></svg>' : ''}
+                    ${note.title || 'Untitled Note'}
+                </span>
+            </div>
+            <div class="note-card-content" style="color:${note.tcolor}">${extractPreview(note.content)}</div>
+            <div class="note-card-date">
+                            <span>${timeRelative}  •  ${formattedDate}</span>
+</div>
+        `;
+        card.addEventListener("click", () => {
+            window.location.href = `edit3_fixhighlight.html?noteId=${note.id}`;
+        });
+        grid.appendChild(card);
+    });
+    section.appendChild(grid);
+    noteListContainer.appendChild(section);
+}
+
+
+function getTimeAgo(dateString) {
+                const now = new Date();
+                const postDate = new Date(dateString);
+                const diff = (now - postDate) / 1000;
+
+                if (diff < 60) return "เมื่อกี้นี้";
+                if (diff < 3600) {
+                    const mins = Math.floor(diff / 60);
+                    return `${mins} นาที`;
+                }
+                if (diff < 86400) {
+                    const hours = Math.floor(diff / 3600);
+                    return `${hours} ชั่วโมง`;
+                }
+                if (diff < 2592000) {
+                    const days = Math.floor(diff / 86400);
+                    return `${days} วัน`;
+                }
+                if (diff < 31536000) {
+                    const months = Math.floor(diff / 2592000);
+                    return `${months} เดือน`;
+                }
+                const years = Math.floor(diff / 31536000);
+                return `${years} ปี`;
+            }
+
+
+
+function extractPreview(content) {
+    if (!content) return "";
+    if (typeof content === "string") return content.substring(0, 50);
+    if (typeof content === "object" && content.content) {
+        let text = "";
+        content.content.forEach(node => {
+            if (node.type === "paragraph" && node.content) {
+                node.content.forEach(t => {
+                    if (t.type === "text") text += t.text + " ";
+                });
+            }
+        });
+        return text.trim().substring(0, 50);
+    }
+    return "";
+}
+
+      
+// Function to render categories in the sidebar
+function renderSidebarLists(categories) {
+ const sidebarList = document.getElementById('sidebarList');
+    
+    console.log(sidebarList);
+    
+    sidebarList.innerHTML = '';
+
+    // ✅ เพิ่มรายการ "หน้าแรก"
+    const homeItem = document.createElement('li');
+    homeItem.className = 'sidebar-list-item';
+    homeItem.innerHTML = `<div class="sidebar-list-item-toggle"><i class="fa-solid icon fa-home"></i><span>หน้าแรก</span></div>`;
+    homeItem.addEventListener('click', () => {
+        currentChip = "home"; // ตั้งค่าสถานะ Chip ให้เป็น 'home'
+        currentCategoryId = null; // รีเซ็ต Category
+        currentSelectedTags = []; // รีเซ็ต Tag
+        fetchHomeNotes(); // เรียกฟังก์ชันดึงข้อมูลหน้าแรก
+        showChips(); // แสดง Chip Container
+        // ✅ ย้าย closeSidebar() เข้าไปใน setTimeout
+    
+    });
+    sidebarList.appendChild(homeItem);
+
+    // ✅ เพิ่มรายการ "โน้ตทั้งหมด"
+    const allNotesItem = document.createElement('li');
+    allNotesItem.className = 'sidebar-list-item';
+    allNotesItem.dataset.categoryId = 'all';
+    allNotesItem.innerHTML = `<div class="sidebar-list-item-toggle"><i class="fa-solid icon fa-note-sticky"></i><span>โน้ตทั้งหมด</span></div>`;
+    allNotesItem.addEventListener('click', () => {
+        currentCategoryId = null;
+        currentSelectedTags = [];
+        currentChip = "all";
+        mainHeaderTitle.textContent = "โน้ตทั้งหมด";
+        fetchAndDisplayNotes();
+        showChips();
+        closeSidebar();
+    });
+    sidebarList.appendChild(allNotesItem);
+    
+    
+    if (!categories) return;
+
+    // ลูปเพื่อสร้างรายการ Category จากข้อมูลที่ได้
+    categories.forEach(category => {
+        const listItem = document.createElement('li');
+        listItem.className = 'sidebar-sub-list-item'; // เปลี่ยนเป็น sub-list-item
+        listItem.dataset.categoryId = category.id;
+        listItem.innerHTML = `<i class="fas ${category.icon}" style="color:${category.color}"></i><span>${category.name}</span>`;
+        listItem.addEventListener('click', () => {
+            currentCategoryId = category.id; // ✅ ตั้งค่า Category ID เมื่อคลิก
+            currentChip = null; // ✅ รีเซ็ตค่า Chip เมื่อเลือก Category
+            mainHeaderTitle.textContent = `หมวดหมู่: ${category.name}`;
+            fetchAndDisplayNotes();
+            hideChips(); 
+            closeSidebar();
+        });
+        categoriesList.appendChild(listItem); // ✅ นำไปเพิ่มใน ul#categories-list
+    });
+
+}
+
+
+
+
+      const searchInput = document.getElementById('searchInput');
+      const tagFilterButton = document.getElementById('tagFilterButton');
+      const tagFilterModal = document.getElementById('tagFilterModal');
+      const closeTagFilter = document.getElementById('closeTagFilter');
+      const bottomSheetOverlayX = document.getElementById('noteActionsBottomSheetOverlayX');
+                 
+                 
+                 
+                 
+    /* const addNewNoteButton = document.getElementById('addNewNoteButton');*/
+      // Toggle context menu
+      viewSortButton.addEventListener('click', (e) => {
+        viewSortMenu.style.display = viewSortMenu.style.display === 'flex' ? 'none' : 'flex';
+        viewSortMenu.style.top = e.clientY + 'px';
+        viewSortMenu.style.left = e.clientX + 'px';
+      });
+
+      // Tag filter modal
+
+      
+      
+      
+      
+      tagFilterButton.addEventListener('click', async () => {
+    await fetchAndDisplayTagsInModal();
+    tagFilterModal.style.display = 'flex';
+});
+
+async function fetchAndDisplayTagsInModal() {
+    const { data: notesWithTags, error } = await supabase
+        .from('NOTE')
+        .select('tags')
+        .not('tags', 'is', null) // เลือกเฉพาะโน้ตที่มี Tag
+        .order('id');
+
+    if (error) {
+        console.error('Error fetching tags:', error.message);
+        return;
+    }
+
+    // สร้าง Set เพื่อหาแท็กที่ไม่ซ้ำกัน
+    const uniqueTags = new Set();
+    if (notesWithTags) {
+        notesWithTags.forEach(note => {
+            if (note.tags && Array.isArray(note.tags)) { 
+                note.tags.forEach(tag => uniqueTags.add(tag));
+            }
+        });
+    }
+
+    tagFilterContainer.innerHTML = '';
+    uniqueTags.forEach(tag => {
+        const tagChip = document.createElement('div');
+        tagChip.className = 'chip tag-chip';
+        // ตรวจสอบสถานะ active จาก currentSelectedTags
+        if (currentSelectedTags.includes(tag)) {
+            tagChip.classList.add('active');
+        }
+        tagChip.textContent = tag;
+        tagChip.dataset.tag = tag;
+
+        // เมื่อคลิกที่ชิป ให้เพิ่ม/ลบแท็กจาก currentSelectedTags
+        tagChip.addEventListener('click', () => {
+            tagChip.classList.toggle('active');
+            const index = currentSelectedTags.indexOf(tag);
+            if (index > -1) {
+                currentSelectedTags.splice(index, 1);
+            } else {
+                currentSelectedTags.push(tag);
+            }
+            console.log("Selected Tags:", currentSelectedTags);
+        });
+        tagFilterContainer.appendChild(tagChip);
+    });
+}
+
+applyTagFilterButton.addEventListener('click', () => {
+    mainHeaderTitle.textContent = "Filtered by Tags";
+    tagFilterModal.style.display = 'none';
+    currentChip = null; // รีเซ็ต Chip เมื่อใช้ Filter
+    currentCategoryId = null; // รีเซ็ต Category เมื่อใช้ Filter
+    hideChips(); 
+    // เรียกใช้ฟังก์ชันหลักเพื่อทำการ Query โดยใช้ค่าจาก currentSelectedTags
+    fetchAndDisplayNotes();
+});      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      closeTagFilter.addEventListener('click', () => tagFilterModal.style.display = 'none');
+
+      
+
+      // FAB opens bottom sheet
+      addNewNoteButton.addEventListener('click', () => {
+                  console.log(bottomSheetOverlayX);
+        bottomSheetOverlayX.style.display = 'flex';
+        
+        
+        
+      });
+      bottomSheetOverlayX.addEventListener('click', (e) => {
+        if (e.target === bottomSheetOverlayX) bottomSheetOverlayX.style.display = 'none';
+      });
+
+
+
+
+
+
             // New: Category Button in Bottom Sheet
             const changeCategoryButton = document.getElementById('changeCategoryButton');
 
@@ -554,137 +1466,72 @@ const SUPABASE_URL = 'https://fkntlawaawawiusmjsez.supabase.co';
             let currentIsArchived = false;
             let currentIsHidden = false;
             let currentFilter = 'all'; // Default filter
-            let currentCategoryId = null; // For category filtering
+            
 
-            // --- Function to fetch and display notes ---
-            async function fetchAndDisplayNotes() {
-                loadingIndicator.style.display = 'block';
-                noteListContainer.innerHTML = '';
+async function fetchAndDisplayNotes() {
+    if (loadingIndicator) loadingIndicator.style.display = 'block';
+    if (noteListContainer) noteListContainer.innerHTML = '';
+    
+    let query = supabase
+        .from('NOTE')
+        .select('id, title, content, background, is_pin, is_archived, is_hidden, is_deleted, category_id, updated_at, tcolor, NOTE_CATEGORY(name), tags')
+        .order('is_pin', { ascending: false })
+        .order('updated_at', { ascending: false });
+        
+            // Step 2: Apply sorting
+    if (currentSort === 'oldest') {
+        query = query.order('updated_at', { ascending: true });
+    } else {
+        query = query.order('updated_at', { ascending: false });
+    }
+    
+        
 
-                let query = supabase
-                    .from('NOTE')
-                    .select('id, title, content, background, is_pin, is_archived, is_hidden, category_id, updated_at,tcolor, NOTE_CATEGORY(name)') // Fetch category name
-                    .eq('is_deleted', false) // Filter out deleted notes
-                    .order('is_pin', { ascending: false }) // Pinned notes first
-                    .order('updated_at', { ascending: false }); // Then by most recent update
+    // ✅ รวมทุกเงื่อนไขการกรองไว้ในบล็อก if/else-if เดียวกัน
+    if (currentChip === "trash") {
+        query = query.eq('is_deleted', true);
+    } else if (currentSelectedTags.length > 0) {
+        query = query.eq('is_deleted', false);
+        query = query.contains('tags', currentSelectedTags);
+    } else if (currentCategoryId) {
+        query = query.eq('is_deleted', false);
+        query = query.eq('category_id', currentCategoryId);
+    } else if (currentChip === "all") {
+        query = query.eq('is_deleted', false).eq("is_archived", false).eq("is_hidden", false);
+    } else if (currentChip === "pinned") {
+        query = query.eq('is_deleted', false).eq("is_pin", true);
+    } else if (currentChip === "archived") {
+        query = query.eq('is_deleted', false).eq("is_archived", true);
+    } else if (currentChip === "hidden") {
+        query = query.eq('is_deleted', false).eq("is_hidden", true);
+    } else {
+        // กรณี default ถ้าไม่มีเงื่อนไขใดๆ ตรงกับเมนู
+        query = query.eq('is_deleted', false);
+    }
 
-                // Apply filters based on currentFilter
-                if (currentFilter === 'pinned') {
-                    query = query.eq('is_pin', true);
-                } else if (currentFilter === 'archived') {
-                    query = query.eq('is_archived', true);
-                } else if (currentFilter === 'hidden') {
-                    query = query.eq('is_hidden', true);
-                } else if (currentFilter === 'category' && currentCategoryId) {
-                    query = query.eq('category_id', currentCategoryId);
-                } else {
-                    // Default view: not archived, not hidden, not pinned (unless explicitly filtered by pinned sidebar)
-                    query = query.eq('is_archived', false).eq('is_hidden', false);
-                }
+    const { data: notes, error } = await query;
 
-                const { data: notes, error } = await query;
+    if (loadingIndicator) loadingIndicator.style.display = 'none';
 
-                if (error) {
-                    console.error('Error fetching notes:', error.message);
-                    loadingIndicator.textContent = 'เกิดข้อผิดพลาดในการโหลดโน้ต';
-                    return;
-                }
+    if (error) {
+        console.error('Error fetching notes:', error.message);
+        if (loadingIndicator) loadingIndicator.textContent = 'เกิดข้อผิดพลาดในการโหลดโน้ต';
+        return;
+    }
 
-                if (notes.length === 0) {
-                    loadingIndicator.textContent = 'ยังไม่มีโน้ตในหมวดหมู่นี้';
-                    if (currentFilter === 'all') {
-                         loadingIndicator.textContent = 'ยังไม่มีโน้ต';
-                    }
-                    return;
-                }
+    if (notes.length === 0) {
+        if (loadingIndicator) loadingIndicator.textContent = 'ยังไม่มีโน้ตในหมวดหมู่นี้';
+        if (currentChip === 'all' || currentChip === 'home' || currentChip === 'trash') {
+            if (loadingIndicator) loadingIndicator.textContent = 'ยังไม่มีโน้ต';
+        }
+        return;
+    }
+    
+    console.log(notes);
 
-                loadingIndicator.style.display = 'none';
+    renderSection("Notes", notes);
+}
 
-                notes.forEach(note => {
-                    const noteCard = document.createElement('div');
-                    noteCard.className = 'note-card';
-                    noteCard.dataset.noteId = note.id;
-                    noteCard.draggable = true; // Make note cards draggable
-                    noteCard.dataset.categoryId = note.category_id; // Store category ID for drag and drop
-
-                    // Apply background style
-                    if (note.background) {
-                        try {
-                            const backgroundData = note.background;
-
-                            if (backgroundData.type === 'color' && backgroundData.value) {
-                                noteCard.style.backgroundColor = backgroundData.value;
-                                noteCard.style.backgroundImage = 'none';
-                            } else if (backgroundData.type === 'image' && backgroundData.value) {
-                                noteCard.style.backgroundImage = `url('${backgroundData.value}')`;
-                                noteCard.style.backgroundSize = 'cover';
-                                noteCard.style.backgroundPosition = 'center';
-                                noteCard.style.backgroundRepeat = 'no-repeat';
-                                noteCard.style.backgroundColor = 'transparent';
-                            }
-                        } catch (e) {
-                            console.error('Failed to parse background JSON for note:', note.id, e);
-                            noteCard.style.backgroundColor = '#ffffff';
-                            noteCard.style.backgroundImage = 'none';
-                        }
-                    } else {
-                        noteCard.style.backgroundColor = '#ffffff';
-                        noteCard.style.backgroundImage = 'none';
-                    }
-                    
-                    
-                    
-                    
-                    
-                    
-                    const colorx=note.tcolor;
-                   
-                    
-                    
-                    
-
-                    const formattedDate = new Date(note.updated_at).toLocaleDateString('th-TH', {
-                        year: 'numeric',
-                        month: 'short',
-                        day: 'numeric',
-                        hour: '2-digit',
-                        minute: '2-digit'
-                    });
-
-                    // Extract plain text from Tiptap content
-                    let previewContent = '';
-                    if (note.content && typeof note.content === 'object' && note.content.content) {
-                        note.content.content.forEach(node => {
-                            if (node.type === 'paragraph' && node.content) {
-                                node.content.forEach(textNode => {
-                                    if (textNode.type === 'text' && textNode.text) {
-                                        previewContent += textNode.text + ' ';
-                                    }
-                                });
-                            }
-                        });
-                        previewContent = previewContent.trim();
-                    } else if (typeof note.content === 'string') {
-                        const tempDiv = document.createElement('div');
-                        tempDiv.innerHTML = note.content;
-                        previewContent = tempDiv.textContent || tempDiv.innerText || '';
-                    }
-                    
-                    noteCard.innerHTML = `
-                        <div class="note-card-header">
-                            <h3 class="note-card-title" style="color:${colorx}">
-                                ${note.is_pin ? '<i class="fa-solid fa-thumbtack pin-icon"></i>' : ''}
-                                ${note.title || 'Untitled Note'}
-                            </h3>
-                        </div>
-                        <div class="note-card-content" style="color:${colorx}">${previewContent}</div>
-                        <div class="note-card-date">อัปเดต: ${formattedDate}</div>
-                    `;
-                    noteListContainer.appendChild(noteCard);
-
-                    setupInteraction(noteCard, note.id, note.title || 'Untitled Note', note.is_pin, note.is_archived, note.is_hidden);
-                });
-            }
 
             // --- Function to fetch and display sidebar lists (Pinned, Categories, Archived, Hidden) ---
             async function fetchAndDisplaySidebarLists() {
@@ -738,11 +1585,18 @@ const SUPABASE_URL = 'https://fkntlawaawawiusmjsez.supabase.co';
                             listItem.innerHTML = `${iconHtml}<span>${category.name}</span>`;
 
                             listItem.addEventListener('click', () => {
-                                currentFilter = 'category';
-                                currentCategoryId = category.id;
+                                /*currentFilter = 'category';
+                                currentCategoryId = category.id;*/
+                                
+                                currentCategoryId = category.id; // Set the current category ID
+                                currentChip = null; // Reset the chip state
+                                
+                                
+                                
                                 mainHeaderTitle.textContent = `Category: ${category.name}`;
                                 fetchAndDisplayNotes();
                                 closeAllSidebarSubLists();
+                                hideChips();
                                 closeSidebar(); // Close sidebar after filter
                             });
                             // Add dragover and drop listeners for category
@@ -1019,6 +1873,7 @@ const SUPABASE_URL = 'https://fkntlawaawawiusmjsez.supabase.co';
                     fetchAndDisplaySidebarLists();
                 }
             });
+            
 
             // Delete Note
             deleteNoteButton.addEventListener('click', async () => {           	                      
@@ -1127,57 +1982,126 @@ const SUPABASE_URL = 'https://fkntlawaawawiusmjsez.supabase.co';
             });
 
             function closeSidebar() {
-                sidebar.classList.remove('open');
-                sidebarOverlay.classList.remove('show');
-                // ซ่อน display หลังจาก transition จบ (0.3 วินาทีตามที่ตั้งค่าใน CSS)
-                setTimeout(() => {
-                    sidebar.style.display = 'none';
-                }, 300); // ต้องตรงกับค่า transition duration ใน CSS (.sidebar)
-            }
+    // ✅ เพิ่มการตรวจสอบ null เพื่อป้องกันข้อผิดพลาด
+if (sidebar) { // ✅ เพิ่มการตรวจสอบ
+        sidebar.classList.remove('open');
+    }
+    if (sidebarOverlay) { // ✅ เพิ่มการตรวจสอบ
+        sidebarOverlay.classList.remove('show');
+    }
+
+    // ซ่อน display หลังจาก transition จบ
+    setTimeout(() => {
+        if (sidebar) {
+            sidebar.style.display = 'none';
+        }
+    }, 300);
+}
 
 
-            sidebarToggleButtons.forEach(button => {
-                button.addEventListener('click', (e) => {
-                    const parentItem = button.closest('.sidebar-list-item');
-                    const subList = parentItem.querySelector('.sidebar-sub-list');
-                    const filterType = button.dataset.filter;
 
-                    // Close other open sub-lists
-                    document.querySelectorAll('.sidebar-sub-list.show').forEach(list => {
-                        if (list !== subList) {
-                            list.classList.remove('show');
-                            list.previousElementSibling.classList.remove('expanded');
-                        }
-                    });
 
-                    // Toggle current sub-list
-                    subList.classList.toggle('show');
-                    button.classList.toggle('expanded');
 
-                    // Set filter and fetch notes
-                    currentFilter = filterType;
-                    currentCategoryId = null; // Reset category ID when changing main filters
 
-                    if (filterType === 'pinned') {
-                        mainHeaderTitle.textContent = 'Pinned Notes';
-                        fetchAndDisplayNotes();
-                    } else if (filterType === 'categories') {
-                        mainHeaderTitle.textContent = 'Categories';
-                        // When categories are expanded, the main note list remains 'all' or previously selected category
-                        // Notes will only filter when a specific category is clicked.
-                        // For now, let's show all active notes.
-                        currentFilter = 'all'; 
-                        fetchAndDisplayNotes(); 
-                    } else if (filterType === 'archived') {
-                        mainHeaderTitle.textContent = 'Archived Notes';
-                        fetchAndDisplayNotes();
-                    } else if (filterType === 'hidden') {
-                        mainHeaderTitle.textContent = 'Hidden Notes';
-                        fetchAndDisplayNotes();
+
+
+
+
+
+
+
+
+
+
+
+// Sidebar Interaction
+/*const sidebarToggleButtons = document.querySelectorAll('.sidebar-list-item-toggle');*/
+if (sidebarToggleButtons) {
+    sidebarToggleButtons.forEach(button => {
+        button.addEventListener('click', (e) => {
+            const parentItem = button.closest('.sidebar-list-item');
+            const subList = parentItem.querySelector('.sidebar-sub-list');
+            const filterType = button.dataset.filter;
+
+            // ตรวจสอบว่ามีเมนูย่อยหรือไม่
+            if (subList) {
+                // ถ้ามี sub-list, ให้ toggle แสดง/ซ่อน sub-list และ expanded class
+                subList.classList.toggle('show');
+                button.classList.toggle('expanded');
+                
+                // ลบ expanded class ออกจากปุ่มอื่นๆ
+                document.querySelectorAll('.sidebar-list-item-toggle.expanded').forEach(otherButton => {
+                    if (otherButton !== button) {
+                        otherButton.classList.remove('expanded');
                     }
-                    // Do NOT close sidebar here, only when a specific sub-item is clicked or overlay is clicked
                 });
-            });
+                
+                // ซ่อน sub-list อื่นๆ ที่เปิดอยู่
+                document.querySelectorAll('.sidebar-sub-list.show').forEach(otherSubList => {
+                    if (otherSubList !== subList) {
+                        otherSubList.classList.remove('show');
+                    }
+                });
+                
+            } else {
+                // ถ้าไม่มี sub-list (เช่น 'หน้าแรก' และ 'โน้ตทั้งหมด') ให้เรียกใช้งานฟังก์ชันหลักทันที
+                if (filterType === 'all') {
+                    currentCategoryId = null;
+                    currentSelectedTags = [];
+                    currentChip = 'all';
+                    mainHeaderTitle.textContent = 'โน้ตทั้งหมด';
+                    fetchAndDisplayNotes();
+                    showChips();
+                    closeSidebar();
+                } else if (filterType === 'pinned') {
+                    currentCategoryId = null;
+                    currentSelectedTags = [];
+                    currentChip = 'pinned';
+                    mainHeaderTitle.textContent = 'Pinned Notes';
+                    fetchAndDisplayNotes();
+                    showChips();
+                    closeSidebar();
+                } else if (filterType === 'archived') {
+                    currentCategoryId = null;
+                    currentSelectedTags = [];
+                    currentChip = 'archived';
+                    mainHeaderTitle.textContent = 'Archived Notes';
+                    fetchAndDisplayNotes();
+                    showChips();
+                    closeSidebar();
+                } else if (filterType === 'hidden') {
+                    currentCategoryId = null;
+                    currentSelectedTags = [];
+                    currentChip = 'hidden';
+                    mainHeaderTitle.textContent = 'Hidden Notes';
+                    fetchAndDisplayNotes();
+                    showChips();
+                    closeSidebar();
+                } else if (filterType === 'trash') {
+                    currentChip = "trash";
+            currentCategoryId = null;
+            currentSelectedTags = [];
+            mainHeaderTitle.textContent = "ถังขยะ";
+            fetchAndDisplayNotes(); // เรียกใช้ฟังก์ชันเพื่อแสดงโน้ตที่ถูกลบ
+            hideChips(); // ซ่อนส่วน Chip
+            closeSidebar();
+                } else {
+                    // สำหรับ 'หน้าแรก' ที่ไม่มี data-filter
+                    currentChip = 'home';
+                    currentCategoryId = null;
+                    currentSelectedTags = [];
+                    fetchHomeNotes();
+                    showChips();
+                    closeSidebar();
+                }
+            }
+        });
+    });
+}
+
+
+
+
 
             function closeAllSidebarSubLists() {
                 document.querySelectorAll('.sidebar-sub-list.show').forEach(list => {
@@ -1219,14 +2143,14 @@ const SUPABASE_URL = 'https://fkntlawaawawiusmjsez.supabase.co';
 
             // --- Initial Load ---
             document.addEventListener('DOMContentLoaded', () => {
-                fetchAndDisplayNotes(); // Load initial notes (all active notes)
+                fetchHomeNotes(); // ✅ เปลี่ยนไปเรียกใช้ fetchHomeNotes() เมื่อโหลดหน้า
                 fetchAndDisplaySidebarLists(); // Load sidebar content
             });
 
             // --- Add New Note Button (FAB) ---
-            addNewNoteButton.addEventListener('click', () => {
+            /*addNewNoteButton.addEventListener('click', () => {
                 window.location.href = 'edit.html';
-            });
+            });*/
         </script>
     </body>
 </html>
