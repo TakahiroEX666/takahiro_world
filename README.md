@@ -8,3 +8,8 @@ this project about myself activity because current application can't complete my
 ### Added
 - เพิ่ม SoraAI
 - เปลี่ยนการจัดลำดับฟีดใหม่ขึ้นบน
+
+- ## [1.2.0] - 2025-09-07
+### Optimization
+- [edit] update tiptap toolbar, highlight
+- [note] update noteview 
