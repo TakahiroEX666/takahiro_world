@@ -1,0 +1,3853 @@
+<!DOCTYPE html>
+<html lang="th">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title id="title"></title>
+        <link href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css" rel="stylesheet" />
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@1.35.6/dist/umd/supabase.min.js"></script>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
+        <link href="https://fonts.googleapis.com/css2?family=Kanit&family=Pattaya&family=Prompt&family=Sriracha&family=Roboto&display=swap" rel="stylesheet">
+        <link href="https://fonts.googleapis.com/css2?family=Fira+Code&display=swap" rel="stylesheet">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg==" crossorigin="anonymous"referrerpolicy="no-referrer"/>
+        <link rel="stylesheet" href="./css/Tiptap.css" />
+
+
+
+
+
+        <style>                      
+            @font-face {
+            font-family: 'Eng';
+            src: url('./css/SFProDisplay-Regular.woff2') format('woff2');
+            unicode-range: U+0000-00FF;
+            }
+            @font-face {
+            font-family: 'Thai';
+            src: url('./css/SFThonburi-Regularr.woff2') format('woff2');
+            unicode-range: U+0E00-0E7F;
+            }
+            @font-face {
+            font-family: 'Emoji';
+            src: url('./css/NotoColorEmoji.ttf') format('truetype');
+            unicode-range: U+1F300-1FAFF, U+2600-26FF;
+            }
+            @font-face {
+            font-family: 'Playwrite HU';
+            src: url('./css/PlaywriteHU.ttf') format('truetype');
+            }
+            
+            
+            
+            
+            html {
+            font-size: 17px; /* webview 0.85 × 16px = 13.6px */
+            }                                                          
+            
+            body {
+                margin: 0;
+                padding: 0;              
+                width: 100%;
+                min-height: 100vh;
+                font-family: 'Eng', 'Thai', 'Emoji', sans-serif;                
+                overflow: visible;
+            }
+
+
+            /*-------  NAVBAR  -------*/
+            .nav {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                padding: .5rem .25rem;
+                background-color: rgba(255, 255, 255, 0);
+                flex-shrink: 0;
+                position: relative;
+                margin-bottom: 2px;
+            }
+
+			.nav-btn {
+			      -webkit-tap-highlight-color: transparent;
+			      appearance: none;
+			      border: none;
+			      background: transparent;
+			      padding: .5rem;          
+			      border-radius: 9999px;
+			      display: inline-flex;
+			      align-items: center;
+			      justify-content: center;
+			      cursor: pointer;
+			      outline: none;
+			      position: relative;
+			    }
+			
+		        .nav-btn svg { 
+					pointer-events: none; 
+					width: 24px; 
+					height: 24px; 
+					stroke: currentColor; 
+				}
+											    
+    		    .nav-btn:active { background:rgba(0, 0, 0, 0.1); }
+			    .nav-btn:focus-visible { box-shadow: 0 0 0 2px var(--ring), 0 0 0 4px var(--bg); }
+						
+			    .nav-title {
+				     font-size: 1.1rem;
+				     font-weight: bold;		     
+				      text-align: center; /* Centers the title */
+				      user-select: none;
+				      white-space: nowrap;
+				      overflow: hidden;
+				      text-overflow: ellipsis;				      
+				      position: absolute;
+			  	    left: 50%;
+			  	    transform: translateX(-50%);				    
+				      z-index: 1;
+		          }            
+				                      
+				.nav-right-actions {
+				  display: flex; /* ทำให้ปุ่มในกลุ่มเรียงกันในแนวนอน */
+				  gap: .25rem; /* กำหนดช่องว่างระหว่างปุ่ม */
+				  z-index: 2;
+				  align-items: center; /* จัดให้ปุ่มอยู่ตรงกลางในแนวตั้ง */
+				}
+				
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            /* Main Editor Wrapper - Ensures it fills the screen and arranges children vertically */
+            #editor-wrapper {
+                height: 100vh; /* Make wrapper take full viewport height */
+                display: flex;
+                flex-direction: column;
+                background-color: rgba(255, 255, 255, 0);
+                background-position: center center; /* จัดตำแหน่งกึ่งกลาง */
+                background-repeat: no-repeat; /* ไม่ให้รูปซ้ำ */
+                background-size: cover; /* ครอบคลุมพื้นที่ทั้งหมด */
+                transition: background-color 0.2s, background-image 0.2s; /* เพิ่ม transition ให้ดู smooth */
+            }
+            
+            .nav, .title, .toolbar {
+    flex-shrink: 0; /* ป้องกันไม่ให้ส่วนเหล่านี้หดตัวเมื่อพื้นที่ไม่พอ */
+}
+                                                                    
+            #editor {
+                flex-grow: 1; /* Allow editor to take all *remaining* available space */
+                overflow-y: auto; /*   auto  Enable vertical scrolling if content overflows */
+                min-height: 150px; /* คุณสามารถปรับค่านี้ได้ตามความเหมาะสม เช่น 100px, 200px */
+                box-sizing: border-box; /* สำคัญ: เพื่อให้ padding และ border ไม่ทำให้ขนาดเกิน */
+                padding: 0; /* ล้าง padding ของ #editor ออก เพื่อให้ ProseMirror ควบคุมเอง */
+            }
+            
+            .title {
+                width:100%;
+                background-color: rgba(255, 255, 255, 0);
+                /*margin-top:12px;*/
+                
+                padding: 0px 16px 4px;                
+                font-weight: bold;
+                font-size: 1.375rem;
+                border: none;
+                outline: none;
+               
+                
+            }     
+            .title::placeholder {color: #C7C7CD;}
+            
+
+
+
+
+
+
+
+
+
+
+
+            .toolbar {
+              display: flex;
+              flex-direction: row;
+              flex-wrap: nowrap;        
+              overflow-x: auto;         
+              overflow-y: hidden; /* เพิ่มโค้ดนี้ */
+              /*height: 44px;*/
+              gap: 6px;
+              z-index: 10;
+              position: relative;
+              padding: 6px;              
+              border-bottom: 1px solid #ddd;
+              white-space: nowrap;
+            }
+            
+            .toolbar::-webkit-scrollbar {
+              display: none;
+            }
+            
+            #toolbar-main {
+              display: flex;
+              flex-direction: row;
+              flex-wrap: nowrap;
+              gap: 6px;
+                    
+              flex: 1;
+            }
+            
+            
+            .toolbar button {
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              width: 32px;
+              height: 32px;
+              border: none;
+              background-color: rgba(255, 255, 255, 0);              
+              cursor: pointer;
+            }                                                     
+
+            .toolbar button:hover {
+                background-color: rgba(255, 255, 255, 0.6);                
+            }
+
+            .toolbar button.is-active {
+                background-color: #a3d0ff;
+                font-weight: bold;
+            }
+
+
+             /*--- Toolbar 2page---*/
+             /*
+             #toolbar-highlight {
+              display: flex;
+              flex-direction: row;
+              flex-wrap: nowrap;
+              gap: 6px;
+              flex: 1;
+            }
+              .highlight-option {
+              font-weight: bold;
+              border-radius: 999px;             
+              gap:8px;
+            }
+            .toolbar label.color-button {                   
+             border-radius: 999px;    
+             }*/
+
+            
+            
+            
+            
+            
+
+
+            
+            
+            
+
+
+
+
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+
+            .color-button {
+                position: relative;
+                background-color: #f0f0f0;
+                border: none;
+                border-radius: 999px;
+                width: 36px;
+                height: 36px;
+                font-size: 16px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                cursor: pointer;
+                overflow: hidden;
+                flex-shrink: 0;
+                transition: background-color 0.2s;
+            }
+
+            .color-button:hover {
+                background-color: #ddd;
+            }
+
+
+            
+            
+            
+            
+            
+            
+            
+            
+            
+
+            /* Table styles */
+
+            .bottom-sheet-overlay {
+                position: fixed;
+                inset: 0; /* shorthand for top:0; right:0; bottom:0; left:0 */
+                background: rgba(0, 0, 0, 0.4);
+                display: flex;
+                align-items: flex-end;
+                justify-content: center;
+                z-index: 9999; /* สูงกว่า Toolbar */
+            }
+
+            .bottom-sheet {
+                background: #fff;
+                width: 100%;
+                max-height: 80vh;
+                border-top-left-radius: 16px;
+                border-top-right-radius: 16px;
+                padding: 16px;
+                box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.2);
+                overflow-y: auto;
+            }
+
+            .bottom-sheet-header {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                margin-bottom: 12px;
+            }
+
+            .bottom-sheet-close-btn {
+                background: none;
+                border: none;
+                font-size: 24px;
+                cursor: pointer;
+            }
+
+            .option-grid {
+                display: grid;
+                grid-template-columns: repeat(auto-fill, minmax(40px, 1fr));
+                gap: 8px;
+            }
+
+            .color-option {
+                width: 40px;
+                height: 40px;
+                border-radius: 8px;
+                border: 2px solid #ccc;
+                cursor: pointer;
+            }
+
+            .image-option {
+                margin-top: 8px;
+                width: 40px;
+                height: 40px;
+                border-radius: 8px;
+                border: 2px solid #ccc;
+                cursor: pointer;
+                overflow: hidden; /* ซ่อนส่วนเกินของรูป */
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                background-color: #f0f0f0; /* สีพื้นหลังเผื่อรูปไม่โหลด */
+            }
+
+            .image-option img {
+                max-width: 100%;
+                max-height: 100%;
+                object-fit: cover; /* ทำให้รูปภาพครอบคลุมพื้นที่ */
+            }
+
+            .upload-option,
+            .download-icon {
+                background-color: #e0e0e0; /* สีพื้นหลังสำหรับไอคอนอัปโหลด/ดาวน์โหลด */
+            }
+
+            .upload-option:hover,
+            .image-option:hover {
+                border-color: #4285f4; /* เปลี่ยนสีขอบเมื่อ hover */
+            }
+
+            .transparent-input {            
+                background-color: rgba(255, 255, 255, 0); /* พื้นหลังสีขาวโปร่งใส 60% */
+                border: 1px solid #ccc; /* อาจจะเพิ่ม border เพื่อให้ยังเห็นขอบเขตของ input */
+                padding: 8px;
+                transition: opacity 0.3s ease-in-out; /* เพิ่ม transition เพื่อให้เกิด animation ตอนเปลี่ยนความโปร่งใส */
+            }
+            
+            
+
+            .transparent-input:focus {
+                background-color: rgba(255, 255, 255, 0); /* สีขาวโปร่งใส 50% */
+                outline: none; /* ลบเส้นขอบสีฟ้าๆ ที่เบราว์เซอร์สร้างขึ้นเมื่อโฟกัส */
+            }
+
+            /* === New Styles for Settings Bottom Sheet === */
+            #settingsBottomSheetOverlay {
+                z-index: 100; /* ให้สูงกว่า bottomSheetOverlay อื่นๆ */
+            }
+
+            #settingsBottomSheet {
+                max-width: 600px; /* สามารถปรับความกว้างสูงสุดได้ตามต้องการ */
+                padding: 24px;
+            }
+
+            .chip-section h3,
+            .title-section h3 {
+                margin-top: 0;
+                margin-bottom: 12px;
+                font-size: 1.1em;
+                color: #555;
+            }
+
+            .chip-grid {
+                display: flex;
+                flex-direction: column; /* จัดเรียงเป็นคอลัมน์เหมือนรายการ */
+                gap: 8px; /* ระยะห่างระหว่างแต่ละชิป */
+            }
+
+            .chip {
+                display: flex;
+                align-items: center;
+                width: 70px;
+                padding: 10px 15px;
+                background-color: #2a2a2a; /* สีพื้นหลังชิป */
+
+                font-weight: bold;
+                border-radius: 80px; /* มุมโค้งมน */
+                font-size: 0.8em;
+                color: white;
+
+                transition: background-color 0.2s;
+                border: 1px solid #eee; /* เพิ่มขอบบางๆ */
+            }
+
+            .chip i {
+                /* สำหรับไอคอน Font Awesome ภายในชิป */
+                margin-right: 8px; /* ระยะห่างระหว่างไอคอนกับข้อความ */
+                color: white;
+                font-size: 1.2em;
+                width: 20px; /* กำหนดความกว้างเพื่อให้ไอคอนจัดเรียงตรงกัน */
+                text-align: center;
+            }
+
+            .title-section {
+                margin-top: 5px;
+                padding-top: 5px;
+
+                border-top: 1px solid #eee; /* เส้นแบ่งส่วน */
+            }
+            #settingsNoteTitle {
+                width: 100%;
+
+                font-size: 1.25em;
+                box-sizing: border-box; /* สำคัญเพื่อให้ padding ไม่ทำให้ input กว้างเกิน */
+            }
+
+            /* END New Styles */
+
+            .setting-button {
+                background-color: rgba(255, 255, 255, 0);
+                color: #2a2a2a;
+                display: flex;
+                align-items: center;
+
+                padding: 10px 15px;
+
+                font-weight: bold;
+                border-radius: 80px; /* มุมโค้งมน */
+                font-size: 1.15em;
+
+                border: 0px solid #eee; /* เพิ่มขอบบางๆ */
+            }
+
+            .setting-button:active {
+                background-color: #d1e9ff;
+            }
+
+            .setting-button i {
+                /* สำหรับไอคอน Font Awesome ภายในชิป */
+                margin-right: 12px; /* ระยะห่างระหว่างไอคอนกับข้อความ */
+                color: #2a2a2a;
+
+                width: 20px; /* กำหนดความกว้างเพื่อให้ไอคอนจัดเรียงตรงกัน */
+                text-align: center;
+            }
+
+            /* เดิม: .option-grid */
+            .option-grid {
+                display: flex; /* เปลี่ยนจาก grid เป็น flex เพื่อควบคุมการจัดเรียงง่ายขึ้น */
+                justify-content: space-around; /* กระจายช่องว่างระหว่างปุ่ม */
+                align-items: center; /* จัดให้อยู่กึ่งกลางในแนวตั้ง */
+                gap: 16px; /* เพิ่มระยะห่างระหว่างปุ่ม */
+                padding: 10px 0; /* เพิ่ม padding ด้านบนและล่าง */
+            }
+
+            /* เดิม: .align-option */
+            .align-option {
+                background-color: #f0f0f0; /* สีพื้นหลังเริ่มต้น */
+                border: 1px solid #ccc;
+                border-radius: 12px; /* ทำให้มุมมนขึ้นเล็กน้อย */
+                padding: 12px 15px; /* เพิ่ม padding เพื่อให้ปุ่มมีพื้นที่มากขึ้น */
+                flex: 1; /* ทำให้ปุ่มขยายเพื่อแบ่งพื้นที่เท่าๆ กัน */
+                max-width: 120px; /* กำหนดความกว้างสูงสุดเพื่อไม่ให้ปุ่มกว้างเกินไป */
+                display: flex;
+                flex-direction: column; /* จัดให้ไอคอนกับข้อความอยู่คนละบรรทัด */
+                align-items: center; /* จัดไอคอนและข้อความให้อยู่กึ่งกลางแนวนอน */
+                justify-content: center;
+                cursor: pointer;
+                font-size: 14px;
+                font-weight: bold; /* ทำให้ข้อความตัวหนาขึ้น */
+                color: #555; /* สีข้อความ */
+                transition: background-color 0.2s, border-color 0.2s, color 0.2s;
+                text-align: center; /* จัดข้อความกึ่งกลาง */
+            }
+
+            .align-option i {
+                font-size: 28px; /* ขนาดไอคอนใหญ่ขึ้น */
+                margin-bottom: 8px; /* เพิ่มระยะห่างระหว่างไอคอนกับข้อความ */
+                color: #333; /* สีไอคอนเริ่มต้น */
+            }
+
+            .align-option:hover {
+                background-color: #e0e0e0;
+                border-color: #4285f4;
+                color: #333; /* ให้สีข้อความคงที่หรือเข้มขึ้นเล็กน้อยเมื่อ hover */
+            }
+
+            .align-option.is-active {
+                background-color: #4285f4; /* สีเมื่อปุ่มถูกเลือก */
+                border-color: #4285f4;
+                color: white; /* ข้อความและไอคอนเป็นสีขาวเมื่อ active */
+            }
+
+            .align-option.is-active i {
+                color: white; /* ไอคอนเป็นสีขาวเมื่อ active */
+            }
+
+            /* สำหรับปุ่มเลือกสีไฮไลท์ - ใช้ .color-option เดิมของคุณได้เลย */
+            /* ตรวจสอบว่า .color-option มี CSS คล้ายๆ แบบนี้อยู่แล้วหรือไม่ */
+            .color-option2 {
+                width: 40px;
+                height: 40px;
+                border-radius: 8px;
+                border: 2px solid #ccc;
+                cursor: pointer;
+                overflow: hidden;
+                display: flex; /* เพื่อจัดไอคอนให้ตรงกลาง */
+                align-items: center;
+                justify-content: center;
+            }
+
+            .color-option2.is-active {
+                border-color: #4285f4; /* สีขอบเมื่อเลือก */
+                box-shadow: 0 0 0 2px rgba(66, 133, 244, 0.4); /* เพิ่มเงาอ่อนๆ */
+            }
+
+            /* สำหรับปุ่ม Custom Color ใน Bottom Sheet */
+            .custom-color-button {
+                background-color: #f0f0f0; /* สีพื้นหลัง */
+                border: 2px solid #ccc; /* ขอบ */
+                color: #333; /* สีไอคอน */
+                font-size: 20px; /* ขนาดไอคอน */
+            }
+            /* ตรวจสอบให้แน่ใจว่า highlight mark ทำงานแบบ inline */
+            .ProseMirror mark[data-highlight-color] {
+                display: inline;
+                /* อาจจะต้องเพิ่ม !important หากมี rule อื่นมาทับ */
+                /* background-color: var(--color, yellow) !important; */
+                /* หรือระบุสีตรงๆ เช่น */
+                /* background-color: attr(data-highlight-color) !important; */
+            }
+            .custom-color-button:hover {
+                border-color: #4285f4;
+            }
+
+            /* สำหรับปุ่มเลือกสีใน Settings (ถ้ายังไม่มี) */
+            .settings-section {
+                margin-top: 20px;
+                padding-top: 15px;
+                border-top: 1px solid #eee;
+            }
+            .settings-section h3 {
+                margin-top: 0;
+                margin-bottom: 12px;
+                font-size: 1.1em;
+                color: #555;
+            }
+            
+       
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            
+
+
+/* Modal basic */
+.modal {
+  position: fixed; inset: 0;
+  display: flex; justify-content: center; align-items: center;
+  background: rgba(0,0,0,0.5);
+}
+.modal.hidden { display: none; }
+.modal-content {
+  background: #fff; padding: 1rem; border-radius: 10px;
+  min-width: 200px;
+}
+
+
+
+
+
+.modal {position:fixed;inset:0;display:flex;justify-content:center;align-items:center;background:rgba(0,0,0,0.5);}
+.modal.hidden{display:none;}
+.modal-content{background:#fff;padding:1rem;border-radius:10px;min-width:200px;}
+
+
+            
+        .highlight-sheet-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.4);
+  z-index: 99999;
+  display: flex;
+  align-items: flex-end; /* ดัน content ไปอยู่ล่างสุด */
+}
+
+.highlight-sheet {
+  width: 100%;
+  background: #fff;
+  border-top-left-radius: 16px;
+  border-top-right-radius: 16px;
+  padding: 16px;
+  box-shadow: 0 -2px 8px rgba(0,0,0,0.2);
+  max-height: 70vh;
+  overflow-y: auto;
+
+  transform: translateY(100%);
+  
+}
+
+.highlight-sheet-overlay.show .highlight-sheet {
+  transform: translateY(0); /* เลื่อนขึ้นมาจากขอบล่าง */
+}
+
+.highlight-sheet-header {
+  margin-top: 8px;
+  margin-bottom: 4px;
+}
+
+.highlight-color-row {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.highlight-color-btn {
+  width: 40px;
+  height: 40px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  font-weight: bold;
+  font-size: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.highlight-color-btn[data-type="text"] {
+  background: #fff; /* ปุ่มสีตัวอักษรใช้พื้นหลังขาว */
+}
+
+.highlight-color-btn[data-type="highlight"] {
+  /* สีพื้นหลังมากจาก inline style */
+}
+
+
+.highlight-close-btn {
+  width: 100%;
+  margin-top: 12px;
+  padding: 10px;
+  border: none;
+  background: #eee;
+  border-radius: 8px;
+  font-weight: bold;
+}
+    
+            
+
+
+.resize-handle {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 10px;
+  height: 100%;
+  background-color: rgba(0, 0, 255, 0.4);
+  cursor: col-resize;
+  z-index: 10;
+}
+        .ProseMirror  p.is-editor-empty:first-of-type::before {
+    content: attr(data-placeholder);
+    float: left;
+    color: #C7C7CD; /* เปลี่ยนเป็นรหัสสีที่คุณต้องการ */
+    pointer-events: none;
+    height: 0;
+}  
+
+
+      mark {   
+    border-radius: 0.4rem;
+    box-decoration-break: clone;
+    padding: 0.1rem 0.3rem;
+  }
+            
+            
+            
+
+
+                  .icon-svg {
+            width: 24px;
+            height: 24px;
+            stroke: #374151;
+            fill: none;
+            stroke-width: 2;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+        }  
+      
+
+
+   
+            /* dropdown */
+.dropdown {
+  position: relative;
+  flex-shrink: 0;     
+}
+
+.dropdown-menu {
+  position: fixed;            
+  bottom: 5vh;
+
+  display: none;  /* ซ่อนก่อน */
+  flex-direction: row;
+  background: white;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  z-index: 999999999999999999;
+  min-width: 140px;
+  transform: translateX(-40%);
+  overflow: visible;
+}
+
+/* ปุ่มในเมนู */
+.dropdown-menu button {
+  padding: 8px 12px;
+  border: none;
+  text-align: left;
+  cursor: pointer;
+  width:42px;
+  height:42px;
+}
+
+
+
+
+.dropdown-menu button:hover {
+  background: #f0f0f0;
+}
+
+/* แสดงเมนู */
+.dropdown.open .dropdown-menu {
+  display: flex;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+.float-textalign {
+  position: relative;
+  flex-shrink: 0;     
+}
+
+.float-textalign-menu {
+  position: fixed;            
+  bottom: 5vh;
+            
+  display: none;  /* ซ่อนก่อน */
+  flex-direction: row;
+  background: white;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  z-index: 999999999999999999;
+  
+  overflow: visible;
+  transform: translateX(-35%);
+}
+
+/* ปุ่มในเมนู */
+.float-textalign-menu button {
+  padding: 8px 12px;
+  border: none;
+  text-align: left;
+  cursor: pointer;
+  font-size: 14px;
+  width:42px;
+  height:42px;
+}
+
+.float-textalign-menu button:hover {
+  background: #f0f0f0;
+}
+
+/* แสดงเมนู */
+.float-textalign.open .float-textalign-menu {
+  display: flex;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+            .ProseMirror {
+                padding: 16px;
+                outline: none;
+                color: #454545;
+                min-height: 100%;
+                height: auto;
+                z-index:0;
+                line-height: 1.5; /*ปรับบรรทัด Editor*/
+                box-sizing: border-box;
+                -webkit-overflow-scrolling: touch;
+                position: relative;
+                                
+                & > p:first-child {
+                    margin-top: 0;
+                }
+                & > p {
+                    margin-top: 0;
+                    margin-bottom: 0em; /*0.5*/
+                }              
+                & > h1,
+                & > h2,
+                & > h3,
+                & > h4,
+                & > h5,
+                & > h6 {
+                    margin-top: 0.5em;
+                    margin-bottom: 0.5em;
+                }
+            }
+            
+            
+            
+
+            .ProseMirror .large-paragraph {
+                margin-top: 1em; /* ระยะห่างย่อหน้าปกติ */
+                margin-bottom: 1em; /* ระยะห่างย่อหน้าปกติ */
+                line-height: 1.5;
+                /* คุณสามารถเพิ่มสไตล์อื่น ๆ เพื่อให้เห็นความแตกต่างได้ที่นี่ */
+            }
+
+            /* Placeholder Text - Positioned absolutely to not affect layout flow */
+            .ProseMirror p.is-editor-empty:first-child::before {
+                content: attr(data-placeholder);
+                color: #C7C7CD;
+                pointer-events: none;
+                position: absolute;
+                top: 16px;
+                left: 16px;
+            }
+
+            .ProseMirror img {
+                max-width: 100%;
+                height: auto;
+                display: block;
+                margin: 8px 0;
+            }
+
+            /*
+    .ProseMirror blockquote {
+      
+      margin: 8px 0;
+      padding-left: 12px;
+      color: #555;
+      font-style: italic;
+      background: #f9f9f9;
+    }
+*/
+
+
+.ProseMirror blockquote {
+  position: relative;
+  margin: 8px 0;
+  padding: 0px 12px 0px 16px; /* เผื่อที่ให้เส้น */
+  border-radius: 6px;
+  /*background: #f9f9f9; /* หรือสีโปร่งใส */
+  /*color: #555;*/
+  line-height: 1.5;
+}
+
+.ProseMirror blockquote::before {
+  content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 5px;
+            height: 100%;
+            background-color: #536471;
+            border-radius: 5px;
+}
+
+
+
+
+
+.ProseMirror blockquote p {
+  margin: 0; /* ลบ margin ของ <p> ข้างใน */
+}
+
+            
+            
+            
+            
+            
+            /*     .ProseMirror blockquote {
+                border-left: 4px solid #3e7eff;
+                background: #eef4ff;
+                padding: 12px 16px;
+                margin: 16px 0;
+                border-radius: 66px;
+                font-style: italic;
+                box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+                color: #333;
+            }*/
+
+            /* Basic editor styles */
+            .ProseMirror > :first-child {
+                margin-top: 0;
+            }
+            
+            
+            
+            
+
+            /* Details */
+            .ProseMirror .details {
+                display: flex;
+              /*  gap: 0.25rem;*/
+                margin: 0rem 0;
+                /*border: 1px solid grey;*/
+                /*border-radius: 0.5rem;*/
+                padding: 0rem;
+            }
+
+
+
+
+            .ProseMirror .details summary {
+                font-weight: 700;
+            }
+
+
+            .ProseMirror .details > button:hover {
+                background-color: var(--gray-3);
+            }
+
+
+
+            .ProseMirror .details > div {
+                display: flex;
+                flex-direction: column;
+                gap: 0.5rem;
+                width: 100%;
+            }
+
+            .ProseMirror .details > div > [data-type="detailsContent"] > :last-child {
+                margin:0;
+            }
+
+            .ProseMirror .details .details {
+                margin:0;
+            }
+            
+            
+            /* กำหนดค่า margin-top และ margin-bottom ให้กับ <p> ที่อยู่ภายใน detailsContent */
+.ProseMirror [data-type="detailsContent"] p {
+    margin-top: 0;
+    margin-bottom: 0rem; /* ตัวอย่างเช่น กำหนดค่า margin-bottom ให้มีขนาด 0.5rem */
+}
+
+/* หากต้องการกำหนด margin ให้กับเฉพาะ <p> ตัวแรก หรือตัวสุดท้าย */
+.ProseMirror [data-type="detailsContent"] p:first-child {
+    margin-top: 0rem;
+}
+
+.ProseMirror [data-type="detailsContent"] p:last-child {
+    margin-bottom: 0rem;
+}
+            
+            
+            
+
+
+/* แก้ไข Selector ให้มีความเฉพาะเจาะจงมากขึ้น */
+.ProseMirror .details[data-type="details"] > button {
+    background: transparent !important;
+    align-items: center;
+    border-radius: 4px;
+    display: flex;
+    font-size: 0.625rem;
+    height: 1.25rem;
+    justify-content: center;
+    line-height: 1;
+    margin-top: 0.1rem;
+    padding: 0;
+    width: 1.25rem;
+    border: none; /* เพิ่ม border: none; เข้าไปด้วยเพื่อลบขอบปุ่ม */
+}
+
+/* เพิ่มส่วนนี้ เพื่อกำหนดสไตล์ให้กับปุ่มตอนถูกกด หรือตอนเมาส์วาง */
+.ProseMirror .details[data-type="details"] > button:hover,
+.ProseMirror .details[data-type="details"] > button:focus {
+    background-color: var(--gray-3); /* หรือสีที่คุณต้องการ */
+}
+
+/* แก้ไขส่วนของลูกศร */
+.ProseMirror .details[data-type="details"] > button::before {
+    content: "\25B6";
+}
+
+.ProseMirror .details.is-open > button::before {
+    transform: rotate(90deg);
+}
+
+
+
+
+
+
+
+            .ProseMirror hr {
+                border: none;
+                border-top: 1px solid #ccc;
+                margin: 16px 0;
+            }
+
+            .mention {
+                color: #1e88e5;
+                background-color: #e3f2fd;
+                padding: 2px 6px;
+                border-radius: 4px;
+            }
+
+            .mention-list {
+                font-size: 14px;
+                max-height: 200px;
+                overflow-y: auto;
+                z-index: 999999999999999;
+            }
+
+            .mention-option:hover {
+                background-color: #f0f0f0;
+            }
+            
+            
+            
+            
+            
+          .ProseMirror [data-type="taskList"] {
+  padding-left: 0;
+  margin-left: 0;
+}  
+
+.ProseMirror [data-type="taskList"] li {
+  display: flex;
+  align-items: flex-start; /* 👈 ให้ checkbox ชิดบน-ซ้าย */
+  gap: 12px;
+  margin: 4px 0;
+}
+
+.ProseMirror [data-type="taskList"] li > label {
+  margin: 0;
+  padding: 0;
+  flex-shrink: 0;
+  cursor: pointer;
+  position: relative;
+  display: flex;            /* 👈 ทำให้ label ขยายได้ */
+  align-items: center;
+}
+
+.ProseMirror [data-type="taskList"] input[type="checkbox"] {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 20px;
+  height: 20px;
+  min-width: 20px;          /* 👈 กันไม่ให้ย่อ */
+  margin: 0;
+  border: 2px solid #C5C5C4;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  transform: translateY(1px);
+}
+
+
+/* เมื่อ checked */
+.ProseMirror [data-type="taskList"] input[type="checkbox"]:checked {
+  background-color: #0a84ff;
+  border-color: #0a84ff;
+}
+
+/* ติ๊กถูก */
+.ProseMirror [data-type="taskList"] input[type="checkbox"]:checked::after {
+  content: "";
+  width: 6px;
+  height: 10px;
+  border: solid #fff;
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
+}
+
+
+/* เนื้อหาของ task */
+.ProseMirror [data-type="taskList"] li > div {
+  flex: 1;
+}
+
+.ProseMirror [data-type="taskList"] p {
+  margin: 0;
+  line-height: 1.4;
+}
+
+	            .ProseMirror p.is-editor-empty:first-child::before {
+  content: attr(data-placeholder);
+  color: #C7C7CD;
+  pointer-events: none;
+  position: absolute;
+}
+
+
+
+
+
+
+            table {
+                border-collapse: collapse;
+                width: 100%;
+            }
+
+            td,
+            th {
+                border: 1px solid #ccc;
+                padding: 8px;
+            }
+
+
+
+
+
+
+
+
+
+
+
+
+
+            /* Container ของ code block */
+.ProseMirror pre {
+  background: #1e1e1e; /* VSCode dark background */
+  color: #d4d4d4;      /* default text color */
+  font-family: 'Fira Code', 'Consolas', 'Monaco', monospace;
+  font-size: 14px;
+  line-height: 1.5;
+  border-radius: 8px;
+  padding: 12px 16px;
+  overflow-x: auto;
+  margin: 8px 0;
+  position: relative;
+  box-shadow: inset 0 0 0 1px #2a2a2a;
+}
+
+/* inline code */
+.ProseMirror code {
+  background: #2d2d2d;
+  color: #dcdcaa;
+  padding: 2px 4px;
+  border-radius: 4px;
+  font-family: inherit;
+  font-size: 0.95em;
+}
+
+/* syntax highlight (ตัวอย่างใช้ highlight.js) */
+.hljs-keyword, .hljs-selector-tag {
+  color: #c586c0; /* purple */
+}
+.hljs-string, .hljs-attr, .hljs-template-tag {
+  color: #ce9178; /* orange-pink */
+}
+.hljs-number, .hljs-literal, .hljs-symbol {
+  color: #b5cea8; /* greenish */
+}
+.hljs-title, .hljs-name, .hljs-type {
+  color: #569cd6; /* blue */
+}
+.hljs-attr, .hljs-variable {
+  color: #9cdcfe; /* light blue */
+}
+.hljs-comment {
+  color: #6a9955; /* green comments */
+  font-style: italic;
+}
+.hljs-meta {
+  color: #dcdcaa; /* yellowish */
+}
+
+
+
+
+.ProseMirror .details summary * {
+  pointer-events: none;
+}
+
+
+
+
+
+/* ซ่อนสัญลักษณ์เริ่มต้นของ Bullet List ทั้งหมด */
+/*.ProseMirror ul,
+.ProseMirror ul li {
+    list-style-type: none;
+    padding-left: 0;
+}*/
+
+/* ใช้ Flexbox เพื่อจัดเรียงไอคอนกับเนื้อหาให้อยู่ในบรรทัดเดียวกัน */
+/*.ProseMirror ul li {
+    display: flex; 
+    align-items: flex-start; 
+    margin-bottom: 0.5rem; 
+}*/
+
+/*.ProseMirror ul li::before {
+    content: "\f111";
+    font-family: "Font Awesome 5 Free";
+    font-weight: 900;
+    margin-right: 0.5rem;
+    color: #4a90e2;*/
+    /* ไม่ต้องกำหนด display: inline-block; หรือ float;
+    Flexbox จะจัดการให้โดยอัตโนมัติ *//*
+}
+*/
+/* จัดการกับรายการย่อย (nested lists) */
+/*.ProseMirror ul ul {
+    margin-left: 1.5rem; 
+    margin-top: 0.5rem;
+}*/
+
+
+/* ซ่อนรายการย่อยเมื่อรายการหลักถูกยุบ */
+.ProseMirror li[data-collapsed="true"] > ul {
+    display: none;
+}
+
+/* เปลี่ยนไอคอนเมื่อมีการยุบ */
+.ProseMirror li[data-collapsed="true"]::before {
+    content: ""; /* ไอคอนลูกศรชี้ขวา สำหรับย่อ */
+}
+
+
+
+
+
+li[data-collapsed="true"] > ul,
+li[data-collapsed="true"] > ol {
+    display: none;
+}
+
+/* เพิ่ม visual indicator สำหรับ collapsible items */
+li:has(ul), li:has(ol) {
+    position: relative;
+}
+
+li:has(ul)::before, li:has(ol)::before {
+    content: '';
+    position: absolute;
+    left: -20px;
+    cursor: pointer;
+    user-select: none;
+    color: #666;
+    font-size: 12px;
+}
+
+li[data-collapsed="true"]:has(ul)::before,
+li[data-collapsed="true"]:has(ol)::before {
+    content: '';
+}
+
+/* เพิ่ม hover effect */
+li:has(ul)::before:hover, li:has(ol)::before:hover {
+    color: #333;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            
+            
+        </style>
+    </head>
+    <body>
+    	
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+        <div id="editor-wrapper">
+        	
+        
+        
+        
+        
+            <div class="nav">
+            	
+            
+            
+            	<button class="nav-btn" aria-label="ย้อนกลับ" id="btnBack">
+
+
+
+
+
+        <!-- Chevron Left -->
+        <svg viewBox="0 0 24 24" fill="none">
+          <path d="M15.75 19.5 8.25 12l7.5-7.5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </button>
+      
+      
+      <div class="nav-title" id="pageTitle" title="ชื่อหน้าปัจจุบัน"></div>
+
+      <div class="nav-right-actions">
+      <button class="nav-btn" aria-label="ค้นหา" id="btnSearch" style="display:none;">
+          <svg viewBox="0 0 24 24" fill="none">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.367 2.684 3 3 0 00-5.367-2.684z"></path>          </svg>
+      </button>
+      <button class="nav-btn" aria-label="เมนูเพิ่มเติม" id="settingsButton">
+          <svg viewBox="0 0 24 24" fill="none">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z"></path>          </svg>
+      </button>
+    </div>
+      
+      
+      
+      
+      
+      
+            </div>
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            <div id="editor"><input class="title" id="note-title" type="text" placeholder="หัวเรื่อง" class="transparent-input" /></div>
+
+
+
+
+
+
+<div id="highlightBottomSheetOverlay" class="bottom-sheet-overlay" style="display: none;">
+                    <div id="highlightBottomSheet" class="bottom-sheet">
+                        <div class="bottom-sheet-header">
+                            <h3>สีไฮไลท์</h3>
+                            <button id="closeHighlightBottomSheetBtn" class="bottom-sheet-close-btn">&times;</button>
+                        </div>
+                        <div class="option-grid color-grid" id="highlightColorGrid">
+                            <button class="color-option2" data-color="#FFF59D" title="เหลืองอ่อน" style="background-color: #fff59d;"></button>
+                            <button class="color-option2" data-color="#A5D6A7" title="เขียวอ่อน" style="background-color: #a5d6a7;"></button>
+                            <button class="color-option2" data-color="#FFAB91" title="ส้มอ่อน" style="background-color: #ffab91;"></button>
+                            <button class="color-option2" data-color="#9FA8DA" title="ม่วงอ่อน" style="background-color: #9fa8da;"></button>
+                            <button class="color-option2" data-color="#FFCDD2" title="แดงอ่อน" style="background-color: #ffcdd2;"></button>
+                            <button class="color-option2" data-color="#B0BEC5" title="เทา" style="background-color: #b0bec5;"></button>
+                            <button class="color-option2" data-color="unset" title="ลบไฮไลท์" style="background-color: transparent; border: 1px dashed #ccc; display: flex; align-items: center; justify-content: center;">
+                                <i class="fas fa-ban" style="color: #666;"></i>
+                            </button>
+
+                            <label for="customHighlightColorInput" class="color-option custom-color-button" title="สีเอง">
+                                <input type="color" id="customHighlightColorInput" style="display: none;" />
+                                <i class="fas fa-palette"></i>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+
+
+
+
+<div id="fontBottomSheetOverlay" class="bottom-sheet-overlay" style="display:none;">
+  <div id="fontBottomSheet" class="bottom-sheet">
+    <div class="bottom-sheet-header">
+      <h3>เลือกฟอนต์</h3>
+      <button id="closeFontBottomSheetBtn" class="bottom-sheet-close-btn">&times;</button>
+    </div>
+    <div class="option-grid">
+      <button class="font-option" data-font="Kanit" style="font-family:'Kanit', sans-serif;">Kanit</button>
+      <button class="font-option" data-font="Pattaya" style="font-family:'Pattaya', sans-serif;">Pattaya</button>
+      <button class="font-option" data-font="Prompt" style="font-family:'Prompt', sans-serif;">Prompt</button>
+      <button class="font-option" data-font="Sriracha" style="font-family:'Sriracha', cursive;">Sriracha</button>
+      <button class="font-option" data-font="Roboto" style="font-family:'Roboto', sans-serif;">Roboto</button>
+    </div>
+  </div>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            <div class="toolbar">    
+           	       <div id="toolbar-main">    
+
+                    <button id="xxx" class="toolbar-button">
+                                <svg class="icon-svg" viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9,22 9,12 15,12 15,22"></polyline></svg>
+                    </button>   
+
+
+
+
+
+
+           
+                    
+
+
+
+
+                                                           
+                    <button id="highlightButton" class="toolbar-button" title="ไฮไลท์ข้อความ">
+<svg style="stroke: #374151;fill: none;stroke-width: 1;stroke-linecap: round;stroke-linejoin: round;" viewBox="0 0 16 16" ><path stroke-width="0.1" stroke-linecap="round" stroke-linejoin="round" fill="#000000" d="M3.5 1a.5.5 0 0 0-.5.5V9a2 2 0 0 0 2 2h1v2a2 2 0 1 0 4 0v-2h1a2 2 0 0 0 2-2V1.5a.5.5 0 0 0-.5-.5h-9ZM4 7V2h4v1.5a.5.5 0 0 0 1 0V2h1v2.5a.5.5 0 0 0 1 0V2h1v5H4Zm0 1h8v1a1 1 0 0 1-1 1H9.5a.5.5 0 0 0-.5.5V13a1 1 0 1 1-2 0v-2.5a.5.5 0 0 0-.5-.5H5a1 1 0 0 1-1-1V8Z"/></svg>             
+
+
+       </button>                                                                                         
+
+
+                <button id="insertTimeButton" class="toolbar-button" title="แทรกเวลาปัจจุบัน">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                </svg>
+                </button>
+                
+<div class="dropdown">
+    <button id="headingDropdownBtn" class="toolbar-button">
+      <i class="fa-solid fa-heading"></i> ▼
+    </button>
+
+    <!-- เมนูดรอปดาวน์ -->
+    <div class="dropdown-menu" id="headingDropdown">
+      <button data-level="1"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#000000"><path fill="#000000" d="M13 20h-2v-7H4v7H2V4h2v7h7V4h2v16Zm8-12v12h-2v-9.796l-2 .536V8.67L19.5 8H21Z"/></svg></button>
+      <button data-level="2"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#000000"><path fill="#000000" d="M4 4v7h7V4h2v16h-2v-7H4v7H2V4h2Zm14.5 4a3.75 3.75 0 0 1 2.978 6.03l-.148.18L18.034 18H22v2h-7v-1.556l4.82-5.546a1.75 1.75 0 1 0-3.065-1.292l-.005.144h-2A3.75 3.75 0 0 1 18.5 8Z"/></svg></button>
+      <button data-level="3"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#000000"><path fill="#000000" d="m22 8l-.002 2l-2.505 2.883a3.752 3.752 0 0 1-.993 7.367a3.751 3.751 0 0 1-3.682-3.033l1.964-.382a1.75 1.75 0 1 0 .924-1.895l-1.307-1.547L19.35 10H15V8h7ZM4 4v7h7V4h2v16h-2v-7H4v7H2V4h2Z"/></svg></button>
+      <button data-level="4"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#000000"><path fill="#000000" d="M13 20h-2v-7H4v7H2V4h2v7h7V4h2v16Zm9-12v8h1.5v2H22v2h-2v-2h-5.5v-1.34l5-8.66H22Zm-2 3.133L17.19 16H20v-4.867Z"/></svg></button>
+      <button data-level="5"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#000000"><path fill="#000000" d="M22 8v2h-4.323l-.464 2.636A4.006 4.006 0 0 1 22.25 16.5a4 4 0 0 1-7.846 1.103l1.923-.551a2 2 0 1 0 .363-1.804l-1.81-.904L16 8h6ZM4 4v7h7V4h2v16h-2v-7H4v7H2V4h2Z"/></svg></button>
+      <button data-level="6"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#000000"><path fill="#000000" d="m21.097 8l-2.598 4.5a4 4 0 1 1-3.453 1.981L18.788 8h2.309ZM4 4v7h7V4h2v16h-2v-7H4v7H2V4h2Zm14.5 10.5a2 2 0 1 0 0 4a2 2 0 0 0 0-4Z"/></svg></button>
+    </div>
+  </div>
+  
+  
+  <div class="float-textalign">
+    <button id="headingfloattextalignBtn" class="toolbar-button">
+      <svg class="icon-svg"  fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h8m-8 6h16"></path>
+                                </svg>
+    </button>
+
+    <!-- เมนูดรอปดาวน์ -->
+    <div class="float-textalign-menu" id="headingfloattextalign">
+      
+                                <button data-align="left"><i class="fas fa-align-left"></i></button>
+                                <button data-align="center"><i class="fas fa-align-center"></i></button>
+                                <button data-align="right"><i class="fas fa-align-right"></i></button>
+                                <button data-align="justify"><i class="fas fa-align-justify"></i></button>
+                                
+    </div>
+  </div>
+
+
+
+
+
+
+
+
+
+                <button id="imageButton">
+                    <svg class="icon-svg" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                </svg>
+                </button>
+                
+                
+                
+                <button class="menu-button" id="youtubeButton" title="แทรกวิดีโอ YouTube">
+    <svg class="icon-svg" viewBox="0 0 24 24"><path d="M22.54 6.42a2.78 2.78 0 0 0-1.94-2C18.88 4 12 4 12 4s-6.88 0-8.6.46a2.78 2.78 0 0 0-1.94 2A29 29 0 0 0 1 11.75a29 29 0 0 0 .46 5.33A2.78 2.78 0 0 0 3.4 19c1.72.46 8.6.46 8.6.46s6.88 0 8.6-.46a2.78 2.78 0 0 0 1.94-2 29 29 0 0 0 .46-5.25 29 29 0 0 0-.46-5.33z"></path><polygon points="9.75,15.02 15.5,11.75 9.75,8.48"></polygon></svg>
+</button>
+                
+                
+                <button id="linkButton" title="Insert Link">
+  <svg class="icon-svg" viewBox="0 0 24 24"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg>
+</button>
+
+
+
+
+
+
+
+
+                <button class="toolbar-button" id="boldButton" title="Bold">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 4h8a4 4 0 014 4 4 4 0 01-4 4H6z"></path>
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 12h9a4 4 0 014 4 4 4 0 01-4 4H6z"></path>
+                </svg>
+                </button>
+                
+                
+                
+                
+                <button id="underlineButton" title="Underline">
+  <svg class="icon-svg" viewBox="0 0 24 24"><path d="M6 3v7a6 6 0 0 0 6 6 6 6 0 0 0 6-6V3"></path><line x1="4" y1="21" x2="20" y2="21"></line></svg>
+</button>
+                <button id="fontButton" class="toolbar-button" title="Font">
+  <svg class="icon-svg" viewBox="0 0 24 24"><polyline points="4,7 4,4 20,4 20,7"></polyline><line x1="9" y1="20" x2="15" y2="20"></line><line x1="12" y1="4" x2="12" y2="20"></line></svg>
+</button>
+
+
+
+
+
+                <button id="italicButton">
+                    <svg class="icon-svg" viewBox="0 0 24 24"><line x1="19" y1="4" x2="10" y2="4"></line><line x1="14" y1="20" x2="5" y2="20"></line><line x1="15" y1="4" x2="9" y2="20"></line></svg>
+                </button>
+
+
+
+                <button id="strikeButton">
+                    <svg class="icon-svg" viewBox="0 0 24 24"><path d="M16 4H9a3 3 0 0 0-2.83 4"></path><path d="M14 12a4 4 0 0 1 0 8H6"></path><line x1="4" y1="12" x2="20" y2="12"></line></svg>
+                </button>
+                
+                
+                
+                <button id="codeTextButton">
+<svg class="icon-svg" viewBox="0 0 24 24"><polyline points="16,18 22,12 16,6"></polyline><polyline points="8,6 2,12 8,18"></polyline></svg>
+</button>
+
+
+
+                
+                
+                <button id="bulletListButton">
+                    <svg class="icon-svg" viewBox="0 0 24 24"><line x1="8" y1="6" x2="21" y2="6"></line><line x1="8" y1="12" x2="21" y2="12"></line><line x1="8" y1="18" x2="21" y2="18"></line><line x1="3" y1="6" x2="3.01" y2="6"></line><line x1="3" y1="12" x2="3.01" y2="12"></line><line x1="3" y1="18" x2="3.01" y2="18"></line></svg>
+                </button>
+                
+                
+                
+                <button id="orderedListButton">
+                    <svg class="icon-svg" viewBox="0 0 24 24"><line x1="10" y1="6" x2="21" y2="6"></line><line x1="10" y1="12" x2="21" y2="12"></line><line x1="10" y1="18" x2="21" y2="18"></line><path d="M4 6h1v4"></path><path d="M4 10h2"></path><path d="M6 18H4c0-1 2-2 2-3s-1-1.5-2-1"></path></svg>
+                </button>
+                
+                <button id="codeBlockButton"><svg class="icon-svg" viewBox="0 0 24 24"><polyline points="16,18 22,12 16,6"></polyline><polyline points="8,6 2,12 8,18"></polyline></svg></button>
+                
+                <button id="blockquoteButton">
+                    <svg
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  xmlns="http://www.w3.org/2000/svg"
+>
+  <path d="M9.13456 9H12.1346L10 14.6075H7L9.13456 9Z" fill="currentColor" />
+  <path d="M14.1346 9H17.1346L15 14.6075H12L14.1346 9Z" fill="currentColor" />
+</svg>
+                </button>
+                
+                
+                
+                <button id="hrButton">
+                    <svg class="icon-svg" viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                </button>
+                                <button id="taskListButton">
+                    <svg class="icon-svg" viewBox="0 0 24 24"><path d="M9 11l3 3L22 4"></path><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path></svg>
+                </button>           
+                <button id="insertTableButton">
+                    <svg class="icon-svg" viewBox="0 0 24 24"><path d="M9 3H5a2 2 0 0 0-2 2v4m6-6h10a2 2 0 0 1 2 2v4M9 3v6m0 0v6m0-6h10m0 0v6a2 2 0 0 1-2 2H9m10-8H3m6 8H5a2 2 0 0 1-2-2v-6"></path></svg>
+                </button>
+                <button id="detailsButton">
+                    <svg class="icon-svg" viewBox="0 0 24 24"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"></path></svg>
+                </button>
+                                  <button id="tableEditBtn">🗂 </button>
+                                  
+                                  <button id="indent-button"><svg class="icon-svg" viewBox="0 0 24 24"><polyline points="3,8 7,12 3,16"></polyline><line x1="21" y1="12" x2="11" y2="12"></line><line x1="21" y1="6" x2="11" y2="6"></line><line x1="21" y1="18" x2="11" y2="18"></line></svg></button>
+                                  <button id="outdent-button"><svg class="icon-svg" viewBox="0 0 24 24"><polyline points="7,8 3,12 7,16"></polyline><line x1="21" y1="12" x2="11" y2="12"></line><line x1="21" y1="6" x2="11" y2="6"></line><line x1="21" y1="18" x2="11" y2="18"></line></svg></button>
+                                  
+                <label style="display:none;" class="color-button">
+                    <i class="fa-solid fa-palette"></i>
+                    <input type="color" id="colorPicker" style="opacity: 0; position: absolute; left: 0; top: 0; width: 100%; height: 100%; cursor: pointer;" />
+                </label>
+                <button style="display:none;"id="clearColorButton" title="ล้างสี" class="color-button">🧹</button>
+                <button  id="undoButton"><svg class="icon-svg" viewBox="0 0 24 24"><polyline points="1,4 1,10 7,10"></polyline><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"></path></svg></button>
+                <button id="redoButton"><svg class="icon-svg" viewBox="0 0 24 24"><polyline points="23,4 23,10 17,10"></polyline><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path></svg></button>
+                <button style="display:none;" id="paragraphButton">
+                    <i class="fa-solid fa-paragraph"></i>
+                </button>
+            </div>      
+
+
+ 
+            <div id="toolbar-highlight" style="display:none;">
+                    <button id="backToolbarBtn"><i class="fa-solid fa-arrow-left"></i></button>
+    
+        <button class="highlight-option" 
+          data-text="#ED325A" 
+          data-bg="#FFE0E5" 
+          style="background:#FFE0E5; color:#ED325A;">A</button>
+
+  <!-- สีมิ้นต์ -->
+  <button class="highlight-option" 
+          data-text="#00C8BD" 
+          data-bg="#D9F6F4" 
+          style="background:#D9F6F4; color:#00C8BD;">A</button>
+  <button class="highlight-option" data-text="#454545" data-bg="#F9EECE"
+          style="background:#F9EECE; color:#454545;">A</button>
+<button class="highlight-option" data-text="#A755D1" data-bg="#F3E4FB"
+          style="background:#F3E4FB; color:#A755D1;">ม</button>
+          
+          
+          <button class="highlight-option" data-text="#F3A325" data-bg="#FFEED6"
+          style="background:#FFEED6; color:#F3A325;">A</button>
+
+
+          <button class="highlight-option" data-text="#0779EE" data-bg="#D7EAFB"
+          style="background:#D7EAFB; color:#0779EE;">A</button>
+
+          <button class="highlight-option" data-text="#E63F97" data-bg="#F1A3CD"
+          style="background:#F1A3CD; color:#E63F97;">A</button>
+
+          <button class="highlight-option" data-text="#C7978E" data-bg="#F2D1BE"
+          style="background:#F2D1BE; color:#C7978E;">A</button>
+
+
+
+
+
+
+
+         
+    <button class="highlight-option" data-color="yellow" style="background:yellow;"></button>
+    <button class="highlight-option" data-color="pink" style="background:pink;"></button>
+    <button class="highlight-option" data-color="lightgreen" style="background:lightgreen;"></button>
+    <button class="highlight-option" data-color="skyblue" style="background:skyblue;"></button>
+        <button class="highlight-option" data-color="none" data-clear="true" title="ล้างสี">
+        <i class="fa-solid fa-eraser"></i>
+    </button>
+    
+      </div>
+            </div>
+            
+            
+            
+            
+            
+            <button id="toggleLargeParagraphButton" style="display: none;">
+                    <i class="fa-solid fa-paragraph"></i>
+                </button>
+
+            <div class="bottom-sheet-overlay" id="bottomSheetOverlay" style="display: none;">
+                <div class="bottom-sheet" id="bottomSheet">
+                    <div class="bottom-sheet-header">
+                        <h2>Background</h2>
+                        <button class="bottom-sheet-close-btn" id="closeBottomSheetButton">&times;</button>
+                    </div>
+                    <div class="option-section color-options">
+                        <div class="option-grid" id="colorGrid">
+                            <div class="color-option" data-color="#FFFFFF" style="background-color: #ffffff;"></div>
+                            <div class="color-option" data-color="#FF5722" style="background-color: #ff5722;"></div>
+                            <div class="color-option" data-color="#FF0000" style="background-color: #ff0000;"></div>
+                            <div class="color-option" data-color="#FFA500" style="background-color: #ffa500;"></div>
+                            <div class="color-option" data-color="#FFFF00" style="background-color: #ffff00;"></div>
+                            <div class="color-option" data-color="#00FF00" style="background-color: #00ff00;"></div>
+                            <div class="color-option" data-color="#00C853" style="background-color: #00c853;"></div>
+                            <div class="color-option" data-color="#4285F4" style="background-color: #4285f4;"></div>
+                            <div class="color-option" data-color="#9C27B0" style="background-color: #9c27b0;"></div>
+                            <div class="color-option" data-color="#00BCD4" style="background-color: #00bcd4;"></div>
+                            <div class="color-option" data-color="#795548" style="background-color: #795548;"></div>
+                            <div class="color-option" data-color="#607D8B" style="background-color: #607d8b;"></div>
+                            <div class="color-option" data-color="#9E9E9E" style="background-color: #9e9e9e;"></div>
+                            <div class="color-option" data-color="#000000" style="background-color: #000000;"></div>
+                        </div>
+                    </div>
+
+                    <div class="option-section image-options">
+                        <div class="option-grid" id="imageGrid">
+                            <input type="file" id="fileInput" accept="image/*" />
+                            <div class="image-option" id="uploadImageOption">
+                                <i class="fa-solid fa-upload"></i>
+                            </div>
+                            <div class="image-option" data-image-url="images/your_uploaded_image1.jpg">
+                                <img src="images/your_uploaded_image1.jpg" alt="Uploaded Image 1" />
+                            </div>
+                            <div class="image-option" data-image-url="images/your_uploaded_image2.jpg">
+                                <img src="images/your_uploaded_image2.jpg" alt="Uploaded Image 2" />
+                            </div>
+                            <div class="image-option" data-image-url="images/your_uploaded_image3.jpg">
+                                <img src="images/your_uploaded_image3.jpg" alt="Uploaded Image 3" />
+                            </div>
+                            <div class="image-option" data-image-url="https://via.placeholder.com/150/FF0000/FFFFFF?text=Img1">
+                                <img src="https://via.placeholder.com/150/FF0000/FFFFFF?text=Img1" alt="Image 1" />
+                            </div>
+                            <div class="image-option" data-image-url="https://via.placeholder.com/150/00FF00/FFFFFF?text=Img2">
+                                <img src="https://via.placeholder.com/150/00FF00/FFFFFF?text=Img2" alt="Image 2" />
+                            </div>
+                            <div class="image-option" data-image-url="https://via.placeholder.com/150/0000FF/FFFFFF?text=Img3">
+                                <img src="https://via.placeholder.com/150/0000FF/FFFFFF?text=Img3" alt="Image 3" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bottom-sheet-overlay" id="settingsBottomSheetOverlay" style="display: none;">
+                <div class="bottom-sheet" id="settingsBottomSheet">
+                    <div class="chip"><i class="fa-solid fa-pen-to-square"></i>NOTE</div>
+                    <div class="bottom-sheet-header">
+                        <h1 id="settingsNoteTitle" placeholder="Note Title"></h1>
+                        <button class="bottom-sheet-close-btn" id="closeSettingsBottomSheetButton">&times;</button>
+                    </div>
+                    <div class="option-section title-section"></div>
+                    <div class="option-section chip-section">
+                        <div class="chip-grid">
+                            <button class="setting-button"><i class="fa-solid fa-thumbtack"></i> Pin</button>
+                            <div class="option-section title-section"></div>
+                            <button class="setting-button" id="backgroundButton"><i class="fa-solid fa-palette"></i> Background</button>
+                            <button class="setting-button" id="mainTextColorButton"><i class="fa-solid fa-font"></i> Text Color</button>
+
+                            <button class="setting-button"><i class="fa-solid fa-tags"></i> Category</button>
+                            <button class="setting-button"><i class="fa-solid fa-face-smile"></i> Icon</button>
+                            <button class="setting-button"><i class="fa-solid fa-trash-can"></i> Delete</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="mainTextColorBottomSheetOverlay" class="bottom-sheet-overlay" style="display: none;">
+                <div id="mainTextColorBottomSheet" class="bottom-sheet">
+                    <div class="bottom-sheet-header">
+                        <h3>สีข้อความเริ่มต้น</h3>
+                        <button id="closeMainTextColorBottomSheetBtn" class="bottom-sheet-close-btn">&times;</button>
+                    </div>
+                    <div class="option-grid color-grid" id="mainTextGrid">
+                        <button class="color-option3" data-color="#333333" title="ดำ" style="background-color: #333333;"></button>
+                        <button class="color-option3" data-color="#1A1A1A" title="ดำเข้ม" style="background-color: #1a1a1a;"></button>
+                        <button class="color-option3" data-color="#666666" title="เทาเข้ม" style="background-color: #666666;"></button>
+                        <button class="color-option3" data-color="#B0BEC5" title="เทาอ่อน" style="background-color: #b0bec5;"></button>
+                        <button class="color-option3" data-color="#FFFFFF" title="ขาว" style="background-color: #ffffff; border: 1px solid #eee;"></button>
+                        <label for="customMainTextColorInput" class="color-option custom-color-button" title="กำหนดเอง">
+                            <input type="color" id="customMainTextColorInput" style="display: none;" />
+                            <i class="fas fa-palette"></i>
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <input type="file" id="imageUploader" accept="image/*" style="display: none;" />
+            <div id="cropModal" style="display: none; position: fixed; inset: 0; background: rgba(0, 0, 0, 0.6); z-index: 9999; align-items: center; justify-content: center;">
+                <div style="background: white; padding: 10px; max-width: 90%; max-height: 90%;">
+                    <img id="cropperImage" style="max-width: 100%; max-height: 60vh;" />
+                    <div style="text-align: right; margin-top: 10px;">
+                        <button id="cropCancelButton">ยกเลิก</button>
+                        <button id="cropInsertButton">แทรกรูป</button>
+                    </div>
+                </div>
+            </div>
+            
+            
+            <!-- Highlight + Text Color Bottom Sheet -->
+<div id="highlightSheetOverlay" class="highlight-sheet-overlay" style="display:none;">
+  <div id="highlightSheet" class="highlight-sheet">
+    <div class="highlight-sheet-header">
+      <h3>เลือกสีข้อความ</h3>
+    </div>
+    <div class="highlight-color-row">
+      <button class="highlight-color-btn" data-type="text" data-value="#000000" style="color:#000000;">A</button>
+      <button class="highlight-color-btn" data-type="text" data-value="#ff0000" style="color:#ff0000;">A</button>
+      <button class="highlight-color-btn" data-type="text" data-value="#1e90ff" style="color:#1e90ff;">A</button>
+    </div>
+
+    <div class="highlight-sheet-header">
+      <h3>เลือกสี Highlight</h3>
+    </div>
+    <div class="highlight-color-row">
+      <button class="highlight-color-btn" data-type="highlight" data-bgval="#ffff00" data-fgval="red" style="background:#ffff00; color:#000;">A</button>
+      <button class="highlight-color-btn" data-type="highlight" data-bgval="#ffa500" data-fgval="red" style="background:#ffa500; color:#000;">A</button>
+      <button class="highlight-color-btn" data-type="highlight" data-bgval="#90ee90" data-fgval="red" style="background:#90ee90; color:#000;">A</button>
+
+
+      <button class="highlight-color-btn" data-type="highlight" data-tooltip="" data-bgval="#D9F6F4" data-fgval="#00C8BD" style="background:#D9F6F4; color:#00C8BD;">A</button>
+      <button class="highlight-color-btn" data-type="highlight" data-tooltip="" data-bgval="#F9EECE" data-fgval="#454545" style="background:#F9EECE; color:#454545;">A</button>
+      <button class="highlight-color-btn" data-type="highlight" data-tooltip="" data-bgval="#F3E4FB" data-fgval="A755D1" style="background:#F3E4FB; color:#A755D1;">A</button>
+      <button class="highlight-color-btn" data-type="highlight" data-tooltip="" data-bgval="#FFEED6" data-fgval="#F3A325" style="background:#FFEED6; color:#F3A325;">A</button>      
+      <button class="highlight-color-btn" data-type="highlight" data-tooltip="" data-bgval="#D7EAFB" data-fgval="#0779EE" style="background:#D7EAFB; color:#0779EE;">A</button>  
+      <button class="highlight-color-btn" data-type="highlight" data-tooltip="" data-bgval="#F1A3CD" data-fgval="#E63F97" style="background:#F1A3CD; color:#E63F97;">A</button>
+      <button class="highlight-color-btn" data-type="highlight" data-tooltip="" data-bgval="#F2D1BE" data-fgval="#C7978E" style="background:#F2D1BE; color:#C7978E;">A</button>
+      
+
+
+
+
+
+
+
+
+
+
+    </div>
+
+    <button id="closeHighlightSheet" class="highlight-close-btn">ปิด</button>
+  </div>
+</div>
+            
+            <div id="tableModal" class="modal hidden">
+  <div class="modal-content">
+    <h3>Table Editor</h3>
+    <button data-action="addColumn">➕ Add Column</button>
+    <button data-action="deleteColumn">➖ Delete Column</button>
+    <button data-action="addRow">➕ Add Row</button>
+    <button data-action="deleteRow">➖ Delete Row</button>
+    <button data-action="deleteTable">🗑 Delete Table</button>
+    <button data-action="fixSize">📏 Fix Size</button>
+     <button data-action="customResize">📏 Custom Size Column</button>
+        
+    <br><br>
+    <button id="closeModal">Close</button>
+  </div>
+</div>
+
+            <div id="backgroundCropModal" style="display: none;">
+                <div>
+                    <img id="backgroundCropperImage" />
+                    <div class="buttons">
+                        <button id="backgroundCropCancelButton">Cancel</button>
+                        <button id="backgroundCropApplyButton">Apply Background</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <script type="module">
+                    
+            import { Editor } from "https://esm.sh/@tiptap/core";
+            import {TextAlign} from "https://esm.sh/@tiptap/extension-text-align"; // เพิ่มบรรทัดนี้
+            import {Highlight} from "https://esm.sh/@tiptap/extension-highlight"; // เพิ่มบรรทัดนี้
+            import {StarterKit} from "https://esm.sh/@tiptap/starter-kit";
+            import { Table } from "https://esm.sh/@tiptap/extension-table";
+            import {TableRow} from "https://esm.sh/@tiptap/extension-table-row";
+            import {TableCell} from "https://esm.sh/@tiptap/extension-table-cell";
+            import {TableHeader} from "https://esm.sh/@tiptap/extension-table-header";
+            import {Image} from "https://esm.sh/@tiptap/extension-image";
+            import {Details} from "https://esm.sh/@tiptap/extension-details";
+            import {DetailsContent} from "https://esm.sh/@tiptap/extension-details-content";
+            import {DetailsSummary} from "https://esm.sh/@tiptap/extension-details-summary";
+            import {HorizontalRule} from "https://esm.sh/@tiptap/extension-horizontal-rule";
+            import {Mention} from "https://esm.sh/@tiptap/extension-mention";
+            import {TaskList} from "https://esm.sh/@tiptap/extension-task-list";
+            import {TaskItem} from "https://esm.sh/@tiptap/extension-task-item";
+            import {Color} from "https://esm.sh/@tiptap/extension-color";
+            import { TextStyle } from "https://esm.sh/@tiptap/extension-text-style";
+            import {HardBreak} from "https://esm.sh/@tiptap/extension-hard-break";
+            import { keymap } from "https://esm.sh/prosemirror-keymap"; // เพิ่มบรรทัดนี้
+            import { Extension } from "https://esm.sh/@tiptap/core"; // ถ้ายังไม่มี
+            import {Paragraph} from "https://esm.sh/@tiptap/extension-paragraph";
+            import {Youtube} from "https://esm.sh/@tiptap/extension-youtube";
+import { Link } from "https://esm.sh/@tiptap/extension-link";
+import {Underline} from "https://esm.sh/@tiptap/extension-underline";
+import {Placeholder} from "https://esm.sh/@tiptap/extension-placeholder";
+
+import FontFamily from "https://esm.sh/@tiptap/extension-font-family";
+
+
+
+import CodeBlockLowlight from "https://esm.sh/@tiptap/extension-code-block-lowlight"
+import { createLowlight } from "https://esm.sh/lowlight"
+import js from "https://esm.sh/highlight.js/lib/languages/javascript"
+import css from "https://esm.sh/highlight.js/lib/languages/css"
+import html from "https://esm.sh/highlight.js/lib/languages/xml"
+
+
+
+
+
+
+
+import { Plugin, PluginKey } from 'https://esm.sh/@tiptap/pm/state';
+
+
+
+
+
+
+
+
+
+
+
+
+const CustomTableCell = TableCell.extend({
+  addAttributes() {
+    return {
+      ...this.parent?.(),
+      // เพิ่ม attribute 'background'
+      background: {
+        default: null,
+        // แปลงค่าจาก HTML element
+        parseHTML: (element) => element.getAttribute('data-background'),
+        // แปลง attribute เป็น HTML style ที่ Browser เข้าใจ
+        renderHTML: (attributes) => {
+          if (!attributes.background) {
+            return {};
+          }
+          return {
+            'data-background': attributes.background,
+            style: `background-color: ${attributes.background}`,
+          };
+        },
+      },
+    };
+  },
+});
+
+export default CustomTableCell;
+
+
+
+
+
+
+
+
+
+
+
+
+const IndentExtension = Extension.create({
+        name: 'indent',
+        addCommands() {
+            return {
+                indent: () => ({ commands }) => {
+                    return commands.sinkListItem('listItem');
+                },
+                outdent: () => ({ commands }) => {
+                    return commands.liftListItem('listItem');
+                },
+            };
+        },
+    });
+
+
+
+
+
+const CollapsibleListItem = Extension.create({
+    name: 'collapsibleListItem',
+    
+    addGlobalAttributes() {
+        return [
+            {
+                types: ['listItem'],
+                attributes: {
+                    'data-collapsed': {
+                        default: false,
+                        parseHTML: element => {
+                            const collapsed = element.getAttribute('data-collapsed');
+                            return collapsed === 'true';
+                        },
+                        renderHTML: attributes => {
+                            if (attributes['data-collapsed']) {
+                                return { 'data-collapsed': 'true' };
+                            }
+                            return {};
+                        }
+                    }
+                }
+            }
+        ];
+    },
+
+    addProseMirrorPlugins() {
+        return [
+            new Plugin({
+                key: new PluginKey('collapsibleListItem'),
+                props: {
+                    handleClick: (view, pos, event) => {
+                        // ตรวจสอบว่าคลิกที่ list marker หรือไม่
+                        const target = event.target;
+                        const listItem = target.closest('li');
+                        
+                        if (!listItem) return false;
+
+                        // ตรวจสอบว่ามี nested list หรือไม่
+                        const hasNestedList = listItem.querySelector('ul, ol');
+                        if (!hasNestedList) return false;
+
+                        // คำนวณตำแหน่งที่ถูกต้องใน ProseMirror document
+                        let clickPos;
+                        try {
+                            clickPos = view.posAtDOM(listItem, 0);
+                        } catch (error) {
+                            return false;
+                        }
+
+                        // หา listItem node ใน document
+                        const resolvedPos = view.state.doc.resolve(clickPos);
+                        let listItemNode = null;
+                        let listItemPos = null;
+
+                        // ค้นหา listItem node ที่ใกล้ที่สุด
+                        for (let depth = resolvedPos.depth; depth >= 0; depth--) {
+                            const node = resolvedPos.node(depth);
+                            if (node.type.name === 'listItem') {
+                                listItemNode = node;
+                                listItemPos = resolvedPos.start(depth) - 1;
+                                break;
+                            }
+                        }
+
+                        if (!listItemNode || listItemPos === null) return false;
+
+                        // Toggle collapsed state
+                        const currentCollapsed = listItemNode.attrs['data-collapsed'];
+                        const newCollapsed = !currentCollapsed;
+
+                        // สร้าง transaction เพื่ือแก้ไข attribute
+                        const tr = view.state.tr.setNodeMarkup(
+                            listItemPos,
+                            null,
+                            {
+                                ...listItemNode.attrs,
+                                'data-collapsed': newCollapsed
+                            }
+                        );
+
+                        view.dispatch(tr);
+                        return true;
+                    }
+                }
+            })
+        ];
+    },
+
+    addCommands() {
+        return {
+            toggleListCollapse: () => ({ tr, state, dispatch }) => {
+                const { selection } = state;
+                const { $from } = selection;
+
+                // หา listItem node ที่ cursor อยู่
+                let listItemNode = null;
+                let listItemPos = null;
+
+                for (let depth = $from.depth; depth >= 0; depth--) {
+                    const node = $from.node(depth);
+                    if (node.type.name === 'listItem') {
+                        listItemNode = node;
+                        listItemPos = $from.start(depth) - 1;
+                        break;
+                    }
+                }
+
+                if (!listItemNode) return false;
+
+                // Toggle collapsed state
+                const currentCollapsed = listItemNode.attrs['data-collapsed'];
+                const newCollapsed = !currentCollapsed;
+
+                if (dispatch) {
+                    tr.setNodeMarkup(
+                        listItemPos,
+                        null,
+                        {
+                            ...listItemNode.attrs,
+                            'data-collapsed': newCollapsed
+                        }
+                    );
+                }
+
+                return true;
+            }
+        };
+    }
+});
+
+
+
+
+
+
+
+const InsertDetailsCommand = Extension.create({
+    name: 'insertDetailsCommand',
+    addCommands() {
+        return {
+            insertDetails: () => ({ state, commands }) => {
+                // ถ้า Editor ว่างเปล่า ให้แทรก <p> ก่อน
+                if (state.doc.content.size === 0) {
+                    commands.insertContent('<p></p>');
+                }
+                // จากนั้นค่อยแทรก <details>
+                return commands.insertContent('<details open><summary>หัวข้อ</summary><p>เนื้อหา</p></details>');
+            },
+        };
+    },
+});
+
+
+
+
+
+
+
+
+const SlashHighlightExtension = Extension.create({
+  name: "slashHighlight",
+
+  addProseMirrorPlugins() {
+    return [
+      new Plugin({
+        props: {
+          handleTextInput: (view, from, to, text) => {
+            // ถ้า user พิมพ์ "/" และตัวก่อนหน้าก็เป็น "/"
+            if (text === "/" && view.state.doc.textBetween(from - 1, from) === "/") {
+              // ลบออก
+              
+              
+              const sheet = document.getElementById("highlightSheetOverlay");
+              
+              
+              if (sheet) {
+                sheet.style.display = "flex";
+                sheet.classList.add("show");
+              }
+              
+              
+              
+              view.dispatch(
+                view.state.tr.deleteRange(from - 1, from + 1)
+                
+                
+                
+              );
+        console.log("44");
+              // เปิด Bottom Sheet
+              
+
+              return true; // บอกว่า handled แล้ว
+            }
+            return false;
+          }
+        }
+      })
+    ];
+  }
+});
+
+
+
+
+
+
+
+
+const AutoYoutubeExtension = Extension.create({
+  name: "autoYoutube",
+
+  addProseMirrorPlugins() {
+    console.log("📌 AutoYoutubeExtension loaded")
+
+    return [
+      new Plugin({
+        props: {
+          handlePaste: (view, event) => {
+            console.log("📌 Paste detected")
+            let text = event.clipboardData?.getData("text/plain")
+            if (text && isYoutubeUrl(text)) {
+              insertYoutube(view, text)
+              return true
+            }
+            return false
+          },
+
+          handleDOMEvents: {
+            input(view, event) {
+              const { from } = view.state.selection
+              const textBefore = view.state.doc.textBetween(Math.max(0, from - 30), from)
+
+              if (isYoutubeUrl(textBefore)) {
+                console.log("📌 Input youtube detected:", textBefore)
+                insertYoutube(view, textBefore)
+                return true
+              }
+              return false
+            },
+          },
+        },
+      }),
+    ]
+  },
+})
+
+
+// ฟังก์ชันแยก insert video
+function insertYoutube(view, url) {
+  const { schema } = view.state
+  const embed = normalizeYoutubeUrl(url)
+
+  view.dispatch(
+    view.state.tr.replaceSelectionWith(
+      schema.nodes.youtube.create({
+        src: embed,
+        width: 360,
+                 height: 220,
+      })
+    )
+  )
+}
+
+
+function isYoutubeUrl(url) {
+  return /^(https?:\/\/)?(www\.)?(youtube\.com|youtu\.be)\//.test(url)
+}
+
+function normalizeYoutubeUrl(url) {
+  const short = url.match(/youtu\.be\/([a-zA-Z0-9_-]{11})/)
+  if (short) return `https://www.youtube.com/embed/${short[1]}`
+  const watch = url.match(/[?&]v=([a-zA-Z0-9_-]{11})/)
+  if (watch) return `https://www.youtube.com/embed/${watch[1]}`
+  const embed = url.match(/embed\/([a-zA-Z0-9_-]{11})/)
+  if (embed) return `https://www.youtube.com/embed/${embed[1]}`
+  return url
+}
+
+
+
+
+
+
+
+
+
+const lowlight = createLowlight()
+
+lowlight.register("javascript", js)
+lowlight.register("css", css)
+lowlight.register("html", html)
+
+                       
+        
+            const SUPABASE_URL = "https://fkntlawaawawiusmjsez.supabase.co";
+            const SUPABASE_ANON_KEY =
+                "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZrbnRsYXdhYXdhd2l1c21qc2V6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDk5ODcxMjAsImV4cCI6MjA2NTU2MzEyMH0.G-_fLzcpvPla3dUYNCV7qh0j-JHo1Ahr5fS7fQkHdpw";
+            const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+            document.addEventListener("DOMContentLoaded", () => {
+                const editorWrapper = document.getElementById("editor-wrapper");
+                const fileInput = document.getElementById("fileInput"); // สำหรับการอัปโหลดรูปภาพพื้นหลัง
+                const uploadImageOption = document.getElementById("uploadImageOption"); // ปุ่มอัปโหลดรูปภาพพื้นหลัง
+
+                const toolbarButtons = {
+                    // ... (ปุ่มอื่นๆ ของคุณ)
+                    insertTimeButton: document.getElementById("insertTimeButton"),
+                    textAlignButton: document.getElementById("textAlignButton"), // เพิ่มปุ่มนี้
+                };
+
+              /*  const textAlignBottomSheetOverlay = document.getElementById("textAlignBottomSheetOverlay");
+                const closeTextAlignBottomSheetBtn = document.getElementById("closeTextAlignBottomSheetBtn");
+                const textAlignOptionsGrid = document.getElementById("textAlignOptionsGrid");
+                const alignOptionButtons = textAlignOptionsGrid.querySelectorAll(".align-option"); // เลือกปุ่มจัดตำแหน่งทั้งหมด
+*/
+                // เมื่อคลิกปุ่ม "จัดตำแหน่งข้อความ" ใน Toolbar
+            /*    toolbarButtons.textAlignButton.addEventListener("click", () => {
+                    textAlignBottomSheetOverlay.style.display = "flex"; // แสดง bottom sheet
+                    updateTextAlignOptions(editor); // อัปเดตสถานะปุ่ม (Active) เมื่อเปิดเมนู
+                });*/
+
+                // เมื่อคลิกปุ่มปิดใน Bottom Sheet
+                /*closeTextAlignBottomSheetBtn.addEventListener("click", () => {
+                    textAlignBottomSheetOverlay.style.display = "none"; // ซ่อน bottom sheet
+                });*/
+
+                // เมื่อคลิกนอก Bottom Sheet เพื่อปิด
+             /*   textAlignBottomSheetOverlay.addEventListener("click", (event) => {
+                    if (event.target === textAlignBottomSheetOverlay) {
+                        textAlignBottomSheetOverlay.style.display = "none";
+                    }
+                });*/
+
+                // เพิ่ม Event Listener ให้กับปุ่มจัดตำแหน่งแต่ละปุ่มใน Bottom Sheet
+              /*  alignOptionButtons.forEach((button) => {
+                    button.addEventListener("click", () => {
+                        const align = button.dataset.align;
+                        editor.chain().focus().setTextAlign(align).run();
+                        textAlignBottomSheetOverlay.style.display = "none"; // ซ่อน bottom sheet หลังจากเลือก
+                    });
+                });*/
+
+                // ฟังก์ชันสำหรับอัปเดตสถานะ Active ของปุ่มใน Bottom Sheet
+             /*   function updateTextAlignOptions(editorInstance) {
+                    alignOptionButtons.forEach((btn) => {
+                        const align = btn.dataset.align;
+                        if (editorInstance.isActive({ textAlign: align })) {
+                            btn.classList.add("is-active");
+                        } else {
+                            btn.classList.remove("is-active");
+                        }
+                    });
+                }*/
+
+                // เรียกใช้ updateTextAlignOptions ใน updateToolbar (เดิม)
+                // หา function updateToolbar(editor) { ... } ของคุณ
+                // และเพิ่มบรรทัดนี้ในตอนท้ายของ updateToolbar:
+
+                // ปิดเมนูเมื่อคลิกนอกเมนูหรือปุ่ม
+                /*   document.addEventListener("click", (event) => {
+                    const isClickInsideToolbarButton = toolbarButtons.textAlignButton.contains(event.target);
+                    const isClickInsideMenu = textAlignMenu.contains(event.target);
+
+                    if (!isClickInsideToolbarButton && !isClickInsideMenu) {
+                        textAlignMenu.style.display = "none";
+                    }
+                });*/
+
+                const urlParams = new URLSearchParams(window.location.search);
+                let noteId = urlParams.get("noteId"); // จะเป็น null ถ้าไม่มี noteId ใน URL
+                console.log("Note ID from URL:", noteId);
+                let currentNoteData = null; // เก็บข้อมูลโน้ตปัจจุบันที่โหลดมา
+                let hasUnsavedChanges = false; // Flag เพื่อตรวจสอบการเปลี่ยนแปลง
+                let isSaving = false;
+                // --- สิ้นสุดการเพิ่ม ---
+                loadNote(noteId);
+
+                let autosaveTimeout; // สำหรับเก็บ Timer ของ Autosave
+
+                // ฟังก์ชัน Debounce
+                function debounce(func, delay) {
+                    return function (...args) {
+                        clearTimeout(autosaveTimeout); // ล้าง Timer เก่าถ้ามีการพิมพ์ใหม่
+                        console.log("777");
+                        autosaveTimeout = setTimeout(() => {
+                            func.apply(this, args); // เรียกใช้ฟังก์ชัน saveNote หลังจาก delay
+                        }, delay);
+                    };
+                }
+
+                // สร้างฟังก์ชัน saveNote ที่ถูก Debounce ไว้ (ในที่นี้ตั้งค่าให้บันทึกหลังจากหยุดพิมพ์ 2 วินาที)
+                const debouncedSaveNote = debounce(saveNote, 2000); // 2000 มิลลิวินาที = 2 วินาที
+
+                // Settings Bottom Sheet Elements *** NEW ***
+                const settingsButton = document.getElementById("settingsButton");
+                const settingsBottomSheetOverlay = document.getElementById("settingsBottomSheetOverlay");
+                const closeSettingsBottomSheetButton = document.getElementById("closeSettingsBottomSheetButton");
+                //const settingsNoteTitleInput = document.getElementById("settingsNoteTitle");
+                const settingsNoteTitleElement = document.getElementById("settingsNoteTitle");
+
+                // เปิด bottom sheet
+                document.getElementById("backgroundButton").addEventListener("click", () => {
+                    document.getElementById("bottomSheetOverlay").style.display = "flex";
+                });
+
+                // ปิด bottom sheet
+                document.getElementById("closeBottomSheetButton").addEventListener("click", () => {
+                    document.getElementById("bottomSheetOverlay").style.display = "none";
+                });
+
+                // เมื่อเลือกสีพื้นหลัง
+                document.querySelectorAll(".color-option").forEach((option) => {
+                    option.addEventListener("click", () => {
+                        const color = option.dataset.color;
+                        document.getElementById("editor-wrapper").style.backgroundColor = color;
+                        document.getElementById("bottomSheetOverlay").style.display = "none";
+                        debouncedSaveNote();
+                    });
+                });
+
+                // Open Settings Bottom Sheet *** UPDATED ***
+                settingsButton.addEventListener("click", () => {
+                    // Set textContent for the H2 element
+                    settingsNoteTitleElement.textContent = document.getElementById("note-title").value; // Populate title
+                    settingsBottomSheetOverlay.style.display = "flex";
+                    //   setTimeout(() => settingsBottomSheetOverlay.classList.add('show'), 10); // สำหรับ transition
+                });
+
+                // Close Settings Bottom Sheet *** NEW ***
+                closeSettingsBottomSheetButton.addEventListener("click", () => {
+                    settingsBottomSheetOverlay.classList.remove("show");
+                    settingsBottomSheetOverlay.style.display = "none";
+                    //    setTimeout(() => settingsBottomSheetOverlay.style.display = "none", 300); // รอ transition จบ
+                });
+
+                // Close Settings Bottom Sheet when clicking outside (on the overlay) *** NEW ***
+                settingsBottomSheetOverlay.addEventListener("click", (event) => {
+                    if (event.target === settingsBottomSheetOverlay) {
+                        closeSettingsBottomSheetButton.click(); // เรียกใช้ click บนปุ่มปิดเพื่อใช้ logic เดียวกัน
+                    }
+                });
+
+                // === NEW: การจัดการรูปภาพพื้นหลัง ===
+
+                const backgroundFileInput = document.getElementById("backgroundFileInput");
+                const backgroundCropModal = document.getElementById("backgroundCropModal");
+                const backgroundCropperImage = document.getElementById("backgroundCropperImage");
+                const backgroundCropCancelButton = document.getElementById("backgroundCropCancelButton");
+                const backgroundCropApplyButton = document.getElementById("backgroundCropApplyButton");
+                let backgroundCropper;
+
+                // เมื่อคลิกที่ตัวเลือกรูปภาพพื้นหลังที่กำหนดไว้ล่วงหน้า
+                document.querySelectorAll(".image-option").forEach((option) => {
+                    option.addEventListener("click", () => {
+                        const imageUrl = option.dataset.imageUrl;
+                        if (imageUrl === "none") {
+                            // ถ้าเป็นตัวเลือก "ไม่มีรูปภาพ" ให้ลบพื้นหลังออก
+                            editorWrapper.style.backgroundImage = "none";
+                            // สามารถตั้งค่าสีพื้นหลังเริ่มต้นได้ที่นี่ หากต้องการให้กลับไปเป็นสีขาวเมื่อไม่มีรูปภาพ
+                            editorWrapper.style.backgroundColor = "#fff";
+                        } else {
+                            // ตั้งค่ารูปภาพพื้นหลัง
+                            editorWrapper.style.backgroundImage = `url('${imageUrl}')`;
+                            // ล้าง background-color เมื่อมีภาพ
+                            editorWrapper.style.backgroundColor = "transparent";
+                        }
+                        bottomSheetOverlay.style.display = "none";
+                        debouncedSaveNote();
+                    });
+                });
+
+                // เมื่อคลิกที่ปุ่มอัปโหลดรูปภาพพื้นหลัง (ไอคอน)
+                uploadImageOption.addEventListener("click", () => {
+                    fileInput.click(); // คลิก input type="file" ที่ซ่อนอยู่
+                });
+
+                // เมื่อมีการเลือกไฟล์รูปภาพจาก input
+                fileInput.addEventListener("change", (event) => {
+                    const file = event.target.files[0];
+                    if (file) {
+                        const reader = new FileReader();
+                        reader.onload = (e) => {
+                            editorWrapper.style.backgroundImage = `url('${e.target.result}')`;
+                            editorWrapper.style.backgroundColor = "transparent"; // ล้าง background-color เมื่อมีภาพ
+                            bottomSheetOverlay.style.display = "none";
+                            fileInput.value = ""; // เคลียร์ค่า input เพื่อให้สามารถเลือกไฟล์เดิมได้อีก
+                            debouncedSaveNote();
+                        };
+                        reader.readAsDataURL(file); // อ่านไฟล์เป็น Data URL
+                    }
+                });
+
+                // === สิ้นสุดการจัดการรูปภาพพื้นหลัง ===
+
+                const LargeParagraph = Paragraph.extend({
+                    name: "largeParagraph",
+                    addOptions() {
+                        return {
+                            HTMLAttributes: {
+                                class: "large-paragraph",
+                            },
+                        };
+                    },
+                    addCommands() {
+                        return {
+                            setLargeParagraph: () => ({ commands, editor }) => {
+                                // *** แก้ไขตรงนี้: เพิ่ม 'editor' ***
+                                // ลบบรรทัด console.log() ที่ใช้ Debug ออกไป
+                                // console.log("commands object in setLargeParagraph:", commands);
+                                // console.log("Does commands have isActive?", typeof commands.isActive);
+
+                                // *** แก้ไขตรงนี้: ใช้ editor.isActive แทน commands.isActive ***
+                                if (editor.isActive(this.name)) {
+                                    // 'this.name' คือ 'largeParagraph'
+                                    return commands.setParagraph();
+                                }
+                                return commands.setNode(this.name);
+                            },
+                        };
+                    },
+                });
+
+                const thaiMonths = ["มกราคม", "กุมภาพันธ์", "มีนาคม", "เมษายน", "พฤษภาคม", "มิถุนายน", "กรกฎาคม", "สิงหาคม", "กันยายน", "ตุลาคม", "พฤศจิกายน", "ธันวาคม"];
+
+                const insertTimeButton = document.getElementById("insertTimeButton");
+                if (insertTimeButton) {
+                    insertTimeButton.addEventListener("click", () => {
+                        const now = new Date();
+                        const day = now.getDate();
+                        const month = thaiMonths[now.getMonth()]; // ใช้ชื่อเดือนไทย
+                        const year = now.getFullYear() + 543; // ปีพุทธศักราช
+                        const hours = String(now.getHours()).padStart(2, "0");
+                        const minutes = String(now.getMinutes()).padStart(2, "0");
+
+                        const formattedTime = `${day} ${month} ${year} ${hours}:${minutes}`;
+
+                        // แทรกข้อความลงใน Tiptap Editor
+                        editor.chain().insertContent(formattedTime).run();
+                    });
+                }
+
+                // --- New Highlight Color Bottom Sheet Logic ---
+           /*     const highlightButton = document.getElementById("highlightButton");
+                const highlightBottomSheetOverlay = document.getElementById("highlightBottomSheetOverlay");
+                const closeHighlightBottomSheetBtn = document.getElementById("closeHighlightBottomSheetBtn");
+                const highlightColorGrid = document.getElementById("highlightColorGrid");
+                const highlightColorOptions = highlightColorGrid.querySelectorAll(".color-option2");
+                const customHighlightColorInput = document.getElementById("customHighlightColorInput");
+*/
+                // เมื่อคลิกปุ่ม "ไฮไลท์" ใน Toolbar
+      /*        highlightButton.addEventListener("click", () => {
+                    highlightBottomSheetOverlay.style.display = "flex"; // แสดง bottom sheet
+                    updateHighlightOptions(editor); // อัปเดตสถานะปุ่ม (Active)
+                });*/
+
+                // เมื่อคลิกปุ่มปิดใน Bottom Sheet
+              /*  closeHighlightBottomSheetBtn.addEventListener("click", () => {
+                    highlightBottomSheetOverlay.style.display = "none"; // ซ่อน bottom sheet
+                });*/
+
+                // เมื่อคลิกนอก Bottom Sheet เพื่อปิด
+         /*       highlightBottomSheetOverlay.addEventListener("click", (event) => {
+                    if (event.target === highlightBottomSheetOverlay) {
+                        highlightBottomSheetOverlay.style.display = "none";
+                    }
+                });*/
+
+                // เพิ่ม Event Listener ให้กับปุ่มเลือกสีไฮไลท์แต่ละปุ่ม
+         /*       highlightColorOptions.forEach((button) => {
+                    button.addEventListener("click", () => {
+                        const color = button.dataset.color;
+                        if (color === "unset") {
+                            editor.chain().focus().unsetHighlight().run();
+                        } else {
+                            editor.chain().focus().setHighlight({ color: color }).run();
+                        }
+                        highlightBottomSheetOverlay.style.display = "none"; // ซ่อน bottom sheet หลังจากเลือก
+                    });
+                });*/
+
+                // Event Listener สำหรับ input custom color
+        /*        customHighlightColorInput.addEventListener("input", (event) => {
+                    const color = event.target.value;
+                    editor.chain().focus().setHighlight({ color: color }).run();
+                });*/
+
+                // เมื่อเปลี่ยน custom color แล้วต้องการปิด bottom sheet ด้วย:
+               /* customHighlightColorInput.addEventListener("change", () => {
+                    highlightBottomSheetOverlay.style.display = "none";
+                });*/
+
+                // --- NEW: Main Text Color Button in Settings & Dedicated Bottom Sheet Logic ---
+                const mainTextColorButton = document.getElementById("mainTextColorButton"); // ปุ่มใหม่ใน settingsBottomSheet
+                const mainTextColorBottomSheetOverlay = document.getElementById("mainTextColorBottomSheetOverlay"); // Overlay ของ Bottom Sheet ใหม่
+                const closeMainTextColorBottomSheetBtn = document.getElementById("closeMainTextColorBottomSheetBtn"); // ปุ่มปิดใน Bottom Sheet ใหม่
+
+                // อ้างอิง Element ภายใน Bottom Sheet ใหม่ (ย้ายมาจาก settingsBottomSheet เดิม)
+                const mainTextGrid = document.getElementById("mainTextGrid");
+                const mainTextOptions = mainTextGrid.querySelectorAll(".color-option3");
+                const customMainTextColorInput = document.getElementById("customMainTextColorInput");
+
+                // --- Event Listener สำหรับเปิด Main Text Color Bottom Sheet ---
+                mainTextColorButton.addEventListener("click", () => {
+                    settingsBottomSheetOverlay.style.display = "none"; // ปิด settingsBottomSheet ก่อน
+                    mainTextColorBottomSheetOverlay.style.display = "flex"; // เปิด Bottom Sheet ของสีข้อความ
+                    //updateMainTextOptionsUI(); // อัปเดต UI ของสีเมื่อเปิด Bottom Sheet
+                });
+
+                // --- Event Listener สำหรับปิด Main Text Color Bottom Sheet ---
+                closeMainTextColorBottomSheetBtn.addEventListener("click", () => {
+                    mainTextColorBottomSheetOverlay.style.display = "none";
+                });
+
+                // เมื่อคลิกนอก Bottom Sheet เพื่อปิด
+                mainTextColorBottomSheetOverlay.addEventListener("click", (event) => {
+                    if (event.target === mainTextColorBottomSheetOverlay) {
+                        mainTextColorBottomSheetOverlay.style.display = "none";
+                    }
+                });
+
+                // --- Event Listeners สำหรับปุ่มเลือกสีข้อความหลัก (ภายใน Bottom Sheet ใหม่) ---
+                mainTextOptions.forEach((button) => {
+                    button.addEventListener("click", () => {
+                        const color = button.dataset.color;
+
+                        setMainTextColor(color);
+                        localStorage.setItem("mainTextColor", color); // เก็บค่าใน localStorage
+                        mainTextColorBottomSheetOverlay.style.display = "none"; // ปิด Bottom Sheet เมื่อเลือกสี
+                    });
+                });
+
+                customMainTextColorInput.addEventListener("input", (event) => {
+                    const color = event.target.value;
+                    setMainTextColor(color);
+                    localStorage.setItem("mainTextColor", color);
+                });
+
+                customMainTextColorInput.addEventListener("change", () => {
+                    // เมื่อเลือกสีเสร็จ (ปล่อยเมาส์/ออกจาก input)
+                    mainTextColorBottomSheetOverlay.style.display = "none"; // ปิด Bottom Sheet
+                });
+
+                // --- Functions สำหรับตั้งค่าสีและอัปเดตสถานะปุ่ม (ย้ายมาใช้สำหรับ Bottom Sheet ใหม่) ---
+                function setMainTextColor(color) {
+                    //เปลี่ยนสีจาก Color Extension
+                    //editor.chain().focus().setColor(color).run();
+
+                    //editor.chain().insertContentAt(0, '<span style="color: #ff0000>"').run();
+                    // editor.chain().insertContent('</span>').run();
+                    //editor.commands.insertContentAt(0,'<span style="color:#ff0000">');
+                    //  editor.commands.insertContent('</span>');
+                    //editor.commands.selectAll();
+                    //editor.commands.setColor(color);
+                    
+                    const noteTitleInput = document.getElementById("note-title"); // ได้ค่า input ของ title
+                    const navbarTitle = document.querySelector(".nav-title"); // สำหรับแสดงชื่อโน้ตใน Navbar
+                    
+                    noteTitleInput.style.color=color;
+                    navbarTitle.style.color=color;
+     
+
+                    const doc = editor.state.doc;
+                    const { tr } = editor.state;
+
+                    doc.descendants((node, pos) => {
+                        if (node.isText) {
+                            const hasColorMark = node.marks.some((mark) => mark.type.name === "textStyle" && !!mark.attrs.color);
+
+                            if (!hasColorMark) {
+                                tr.addMark(pos, pos + node.nodeSize, editor.schema.marks.textStyle.create({ color: color }));
+                            }
+                        }
+                    });
+
+                    editor.view.dispatch(tr);
+
+                    //htmlElement.style.setProperty('--main-text-color', color);
+                }
+
+                // ฟังก์ชันสำหรับอัปเดตสถานะ Active ของปุ่มใน Bottom Sheet ใหม่
+                /*function updateMainTextOptionsUI() {
+    const currentMainTextColor = getComputedStyle(htmlElement).getPropertyValue('--main-text-color').trim();
+    mainTextOptions.forEach(btn => {
+        btn.classList.toggle('is-active', btn.dataset.color === currentMainTextColor);
+    });
+    customMainTextColorInput.value = currentMainTextColor; // ตั้งค่าสีใน custom input
+}*/
+
+                // --- โหลดค่าที่ตั้งไว้เมื่อเริ่มต้น (ยังคงอยู่เหมือนเดิม) ---
+                /*const savedMainTextColor = localStorage.getItem('mainTextColor');
+if (savedMainTextColor) {
+    setMainTextColor(savedMainTextColor);
+    // ไม่ต้องเรียก updateMainTextOptionsUI() ตรงนี้ เพราะจะเรียกเมื่อ Bottom Sheet เปิด
+} else {
+    // ตั้งค่าเริ่มต้นถ้าไม่มีใน localStorage (ดึงจาก CSS default)
+    const defaultColor = getComputedStyle(htmlElement).getPropertyValue('--main-text-color').trim();
+    setMainTextColor(defaultColor);
+}      */
+
+
+
+
+// === NEW: Event Listener สำหรับปุ่ม YouTube ===
+    youtubeButton.addEventListener('click', () => {
+        const url = prompt('วาง URL วิดีโอ YouTube ที่นี่:'); // Prompt ให้ผู้ใช้กรอก URL
+
+        if (url) {
+            // ตรวจสอบว่า URL เป็นของ YouTube และแทรกวิดีโอ
+            editor.commands.setYoutubeVideo({
+                src: url,
+                // คุณสามารถเพิ่ม options อื่นๆ ได้ เช่น width, height
+                 width: 360,
+                 height: 220,
+            });
+        }
+    });
+    // ================================================
+    
+
+
+
+                const editor = new Editor({
+                    element: document.querySelector("#editor"),
+                    extensions: [
+                        //StarterKit,
+
+                        StarterKit.configure({
+                        	
+                        	codeBlock: false,
+                            hardBreak: false,
+                            paragraph: false, // ปิด paragraph default behavior
+                        }),
+                        Image,
+                        Underline,
+                        CodeBlockLowlight.configure({
+      lowlight,
+    }),
+                        Placeholder.configure({
+      placeholder: "",  // 👈 ข้อความ placeพิมพ์ข้อความที่นี่...holder
+      emptyEditorClass: "is-editor-empty",   // class ที่จะแนบเวลา editor ว่าง
+      showOnlyWhenEditable: true,            // แสดงเฉพาะตอนแก้ไข
+      includeChildren: true,                 // ให้ placeholder แสดงใน child nodes ด้วย
+    }),
+                        
+                                Table.configure({
+                        resizable: true, // ปิด default resizable
+                        
+        }),
+                        TableRow,
+                        CustomTableCell,
+                        TableCell,
+FontFamily.configure({
+      types: ["textStyle"],
+    }),
+            
+                        TableHeader,
+                        AutoYoutubeExtension,
+                        HorizontalRule,
+                        Color,
+                        SlashHighlightExtension,
+                        TextStyle,
+                        Paragraph,
+                        Link.configure({
+  openOnClick: true,   // คลิกเปิดลิงก์ได้
+  autolink: false,     // ไม่ auto detect url
+  linkOnPaste: false,  // ไม่ auto link ตอน paste
+}),
+
+                        LargeParagraph,
+                        HardBreak,
+                        // === NEW: เพิ่ม Youtube Extension ตรงนี้ ===
+        Youtube.configure({
+            nocookie: true, // ใช้โหมดความเป็นส่วนตัวสูง (youtube-nocookie.com)
+            controls: false, // ซ่อน controls ของวิดีโอ (แล้วแต่ชอบ)
+            autoplay: true, // ไม่เล่นอัตโนมัติ
+            interfaceLanguage: 'th',
+            enableIFrameApi: true,
+            modestBranding: true, // แสดงแบรนด์ YouTube น้อยลง
+
+            // สำหรับทำให้ปรับขนาดได้ (Requires Resize extension if you have one)
+            // resizable: true, // ต้องมี extension สำหรับ resize ด้วย
+        }),
+        // =======
+
+                        TextAlign.configure({ types: ["heading", "paragraph"] }), // ตรวจสอบว่ามีบรรทัดนี้อยู่
+                        // ...
+                        Highlight.configure({
+                            multicolor: true, // อนุญาตให้มีหลายสี
+                        }),
+                        TaskList,
+                        CollapsibleListItem,
+                        TaskItem.configure({
+                            nested: true, // ถ้าต้องการให้มีเช็กลิสต์ซ้อนกันได้
+                        }),
+
+                        Mention.configure({
+                            HTMLAttributes: {
+                                class: "mention",
+                            },
+                            suggestion: {
+                                char: "@",
+                                startOfLine: false,
+                                items: ({ query }) => {
+                                    const all = ["Wiroj", "Admin", "Guest", "ChatGPT", "Tiptap"];
+                                    return all.filter((name) => name.toLowerCase().startsWith(query.toLowerCase())).slice(0, 5);
+                                },
+                                render: () => {
+  let component;
+
+  return {
+    onStart: (props) => {
+      component = document.createElement("div");
+      component.className = "mention-list";
+      component.style.position = "absolute";
+      component.style.background = "#fff";
+      component.style.border = "1px solid #ccc";
+      component.style.padding = "4px";
+      component.style.borderRadius = "6px";
+      component.style.boxShadow = "0 2px 6px rgba(0,0,0,0.1)";
+      component.style.zIndex = "9999";
+
+      // 🔹 ตรวจสอบ clientRect
+      const rect = props.clientRect ? props.clientRect() : null;
+      if (rect) {
+        component.style.left = rect.left + "px";
+        component.style.top = rect.bottom + "px";
+      }
+
+      props.items.forEach((item) => {
+        const option = document.createElement("div");
+        option.className = "mention-option";
+        option.style.padding = "4px 8px";
+        option.style.cursor = "pointer";
+        option.textContent = item;
+
+        option.onclick = () => {
+          props.command({ id: item });
+        };
+
+        component.appendChild(option);
+      });
+
+      document.body.appendChild(component);
+    },
+
+    onUpdate: (props) => {
+      // ล้าง option เก่า
+      while (component.firstChild) component.removeChild(component.firstChild);
+
+      props.items.forEach((item) => {
+        const option = document.createElement("div");
+        option.className = "mention-option";
+        option.style.padding = "4px 8px";
+        option.style.cursor = "pointer";
+        option.textContent = item;
+
+        option.onclick = () => {
+          props.command({ id: item });
+        };
+
+        component.appendChild(option);
+      });
+
+      // 🔹 update ตำแหน่งใหม่
+      const rect = props.clientRect ? props.clientRect() : null;
+      if (rect) {
+        component.style.left = rect.left + "px";
+        component.style.top = rect.bottom + "px";
+      }
+    },
+
+    onExit: () => {
+  if (!component) return;
+  const toRemove = component;
+  component = null;
+  setTimeout(() => {
+    if (toRemove && toRemove.parentNode) {
+      toRemove.remove();
+    }
+  }, 0);
+
+      
+    },
+  };
+}
+,
+                            },
+                        }),
+                        
+                        Details.configure({
+      persist: true, // เปิด/ปิดคงสถานะการพับ
+      HTMLAttributes: {
+        class: "details",
+      },
+    }),
+    InsertDetailsCommand,
+    DetailsSummary,
+    IndentExtension,
+    DetailsContent.configure({
+      // 👇 สำคัญมาก ต้องมี content ภายในถึงจะพิมพ์ได้
+      content: "paragraph block*", 
+    }),
+
+                        
+                    ],
+                    content: `
+      
+      
+    `,
+                    autofocus: true,
+
+                    onUpdate({ editor }) {
+                        updateToolbar(editor); // อันนี้มีอยู่แล้ว
+                        debouncedSaveNote(); // <--- เพิ่มโค้ดนี้เข้าไป
+                    },
+
+                    onSelectionUpdate: ({ editor }) => updateToolbar(editor),
+                });
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+     
+                // --- เพิ่มส่วนนี้: ฟังก์ชัน loadNote ---
+                const noteTitleInput = document.getElementById("note-title"); // ได้ค่า input ของ title
+                noteTitleInput.addEventListener("input", () => {
+                    // เมื่อมีการพิมพ์ในช่องชื่อโน้ต
+                    debouncedSaveNote(); // <<< เพิ่มบรรทัดนี้
+                    navbarTitle.textContent = noteTitleInput.value.trim() || "New Note"; // อัปเดตชื่อใน Navbar ทันที
+                    var newTitle = document.getElementById("title").value;
+                    document.title = noteTitleInput.value.trim() || "New Note";
+                });
+
+                const navbarTitle = document.querySelector(".nav-title"); // สำหรับแสดงชื่อโน้ตใน Navbar
+
+                async function loadNote(id) {
+                    if (!id) {
+                        // ถ้าไม่มี ID คือสร้างโน้ตใหม่
+                        noteTitleInput.value = "";
+                        editor.commands.setContent('<p data-placeholder="พิมพ์ข้อความที่นี่..."></p>');
+                        navbarTitle.textContent = "New Note"; // เปลี่ยนชื่อใน Navbar
+                        currentNoteData = null; // รีเซ็ตข้อมูลโน้ต
+                        console.log("Creating new note.");
+                        
+                        
+                        
+                        return;
+                    }
+
+                    // ถ้ามี ID ให้โหลดโน้ตเดิม
+                    console.log("Loading note with ID:", id);
+                    const { data, error } = await supabase
+                        .from("NOTE")
+                        .select("*") // ดึงข้อมูลทั้งหมดของโน้ต
+                        .eq("id", id)
+                        .single(); // คาดหวังผลลัพธ์เดียว
+
+                    if (error) {
+                        console.error("Error loading note:", error.message);
+                        alert("เกิดข้อผิดพลาดในการโหลดโน้ต");
+                        return;
+                    }
+
+                    if (data) {
+                        currentNoteData = data;
+                        noteTitleInput.value = data.title || "";
+                        // ตั้งค่าเนื้อหา Tiptap
+                        if (data.content && typeof data.content === "object") {
+                            editor.commands.setContent(data.content);
+                        } else if (typeof data.content === "string") {
+                            // กรณี content ถูกเก็บเป็น HTML string (ไม่แนะนำถ้าใช้ Tiptap JSONB)
+                            editor.commands.setContent(data.content);
+                        } else {
+                            editor.commands.setContent('<p data-placeholder="พิมพ์ข้อความที่นี่..."></p>');
+                        }
+
+                        // ตั้งค่าพื้นหลัง Editor Wrapper ตามค่า background ใน Note
+                        if (data.background) {
+                            try {
+                                const backgroundData = data.background;
+                                if (backgroundData.type === "color" && backgroundData.value) {
+                                    editorWrapper.style.backgroundColor = backgroundData.value;
+                                    editorWrapper.style.backgroundImage = "none";
+                                } else if (backgroundData.type === "image" && backgroundData.value) {
+                                    editorWrapper.style.backgroundImage = `url('${backgroundData.value}')`;
+                                    editorWrapper.style.backgroundSize = "cover";
+                                    editorWrapper.style.backgroundPosition = "center";
+                                    editorWrapper.style.backgroundRepeat = "no-repeat";
+                                    editorWrapper.style.backgroundColor = "transparent";
+                                }
+                            } catch (e) {
+                                console.error("Failed to apply background from note:", e);
+                            }
+                        } else {
+                         //   editorWrapper.style.backgroundColor = "#f8f8f8"; // Default fallback
+                            editorWrapper.style.backgroundColor = "#ffffff"; // Default fallback
+                            
+                            //Default blackground.color
+                            
+                            editorWrapper.style.backgroundImage = "none";
+                        }
+                        navbarTitle.textContent = data.title || "Untitled Note"; // อัปเดตชื่อใน Navbar
+
+                        if (data.tcolor != null) {
+  noteTitleInput.style.color = data.tcolor;
+  navbarTitle.style.color = data.tcolor;
+}
+
+                       
+                    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+                        
+                        
+                        
+                        hasUnsavedChanges = false; // เมื่อโหลดเสร็จ ถือว่าไม่มีการเปลี่ยนแปลง
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                    } else {
+                        // ไม่พบโน้ต ให้ถือว่าเป็นการสร้างโน้ตใหม่
+                        console.log("Note not found, starting a new note.");
+                        await loadNote(null); // เรียกตัวเองให้เป็นโหมดสร้างใหม่
+                    }
+                }
+                // --- สิ้นสุดการเพิ่ม loadNote ---
+
+                // --- ส่วนนี้คือฟังก์ชัน saveNote() ที่ปรับปรุงแล้ว ---
+                async function saveNote() {
+                    if (isSaving) {
+                        console.log("Save in progress, skipping this call.");
+                        return; // ถ้ามีการบันทึกอยู่แล้ว ให้ข้ามการเรียกนี้ไป
+                    }
+
+                    isSaving = true; // ตั้งค่าสถานะว่ากำลังบันทึก
+
+                    try {
+                        console.log("Attempting to save note...");
+                        const title = noteTitleInput.value.trim();
+                        const content = editor.getJSON(); // หรือ editor.getHTML()
+                        const editorWrapperElement = document.getElementById("editor-wrapper");
+                        let backgroundData = null;
+                        
+                        
+
+                        // --- เพิ่ม console.log เหล่านี้เข้ามา ---
+                        console.log("DEBUG saveNote: editorWrapperElement.style.backgroundImage =", editorWrapperElement.style.backgroundImage);
+                        console.log("DEBUG saveNote: editorWrapperElement.style.backgroundColor =", editorWrapperElement.style.backgroundColor);
+                        // --- สิ้นสุดการเพิ่ม console.log ---
+
+                        // ตรวจสอบ Background Image ก่อน
+                        const backgroundImage = editorWrapperElement.style.backgroundImage;
+                        if (backgroundImage && backgroundImage !== "none") {
+                            const imageUrlMatch = backgroundImage.match(/url\(['"]?(.*?)['"]?\)/);
+                            if (imageUrlMatch && imageUrlMatch[1]) {
+                                backgroundData = { type: "image", value: imageUrlMatch[1] };
+                            }
+                        } else {
+                            // ถ้าไม่มี Background Image ให้ตรวจสอบ Background Color
+                            const backgroundColor = editorWrapperElement.style.backgroundColor;
+                            if (backgroundColor && backgroundColor !== "transparent" && backgroundColor !== "rgba(0, 0, 0, 0)") {
+                                backgroundData = { type: "color", value: backgroundColor };
+                            }
+                        }
+
+                        // --- เพิ่ม console.log นี้เข้ามา ---
+                        console.log("DEBUG saveNote: backgroundData to be saved =", backgroundData);
+                        // --- สิ้นสุดการเพิ่ม console.log ---
+
+                        const noteToSave = {
+                            title: title || "Untitled Note",
+                            content: content,
+                            updated_at: new Date().toISOString(),
+                            background: backgroundData,                                                                                    
+                            tcolor: window.getComputedStyle(noteTitleInput).getPropertyValue("color")
+                            
+                        };
+
+                        if (noteId) {
+                            // อัปเดตโน้ตที่มีอยู่
+                            const { data, error } = await supabase.from("NOTE").update(noteToSave).eq("id", noteId).select();
+
+                            if (error) {
+                                console.error("Error updating note:", error.message);
+                            } else {
+                                console.log("Note updated successfully:", data);
+                                currentNoteData = data[0];
+                                navbarTitle.textContent = title;
+                                hasUnsavedChanges = false;
+                            }
+                        } else {
+                            // สร้างโน้ตใหม่
+                            const { data, error } = await supabase.from("NOTE").insert([noteToSave]).select();
+
+                            if (error) {
+                                console.error("Error inserting new note:", error.message);
+                            } else {
+                                console.log("New note created successfully:", data);
+                                if (data && data.length > 0) {
+                                    currentNoteData = data[0];
+                                    noteId = data[0].id; // กำหนด noteId ใหม่ทันทีที่ได้รับจาก DB
+
+                                    // อัปเดต URL ใน Browser ให้มี noteId ใหม่
+                                    const newUrl = new URL(window.location.href);
+                                    newUrl.searchParams.set("noteId", noteId);
+                                    window.history.replaceState({}, "", newUrl);
+
+                                    navbarTitle.textContent = title;
+                                    hasUnsavedChanges = false;
+                                }
+                            }
+                        }
+                    } finally {
+                        isSaving = false; // <<< สำคัญมาก: รีเซ็ตสถานะว่าบันทึกเสร็จแล้ว (ไม่ว่าจะสำเร็จหรือล้มเหลว)
+                    }
+                }
+                // --- สิ้นสุดฟังก์ชัน saveNote() ---
+
+                document.getElementById("colorPicker").addEventListener("input", (event) => {
+                    const color = event.target.value;
+                    editor.chain().focus().setColor(color).run();
+                });
+
+                //editor.chain().focus().setColor("#FF0000").run();
+
+                document.getElementById("clearColorButton").addEventListener("click", () => {
+                    editor.chain().focus().unsetColor().run();
+                });
+
+                document.getElementById("toggleLargeParagraphButton").addEventListener("click", () => {
+                    editor.chain().focus().setLargeParagraph().run();
+                });
+                
+                const linkButton = document.getElementById("linkButton");
+
+linkButton.addEventListener("click", () => {
+  const title = prompt("ใส่ข้อความ (Title):");
+  if (!title) return;
+
+  const url = prompt("ใส่ URL:");
+  if (!url) return;
+
+  editor.chain().focus().insertContent(`<a href="${url}" target="_blank">${title}</a>`).run();
+});
+
+
+
+
+
+
+
+
+
+
+/*const toolbarMain = document.getElementById("toolbar-main");
+const toolbarHighlight = document.getElementById("toolbar-highlight");
+const highlightBtn = document.getElementById("highlightButton");
+const backToolbarBtn = document.getElementById("backToolbarBtn");
+*/
+// สลับ Toolbar หน้าแรก → หน้า highlight
+/*
+highlightBtn.addEventListener("click", () => {
+  toolbarMain.style.display = "none";
+  toolbarHighlight.style.display = "flex";
+});*/
+
+// ปุ่ม back ย้อนกลับไป Toolbar หน้าแรก
+/*backToolbarBtn.addEventListener("click", () => {
+  toolbarHighlight.style.display = "none";
+  toolbarMain.style.display = "flex";
+});*/
+
+// เลือกสี highlight
+/*document.querySelectorAll('#toolbar-highlight .highlight-option').forEach(btn => {
+  btn.addEventListener('click', () => {
+              
+           if (btn.dataset.clear) {
+      // ล้าง highlight + color
+      editor.chain().focus().unsetHighlight().unsetColor().run();
+      return;
+    }*/
+   
+              
+              
+    /*const color = btn.dataset.color;*/
+    
+ /*   const textColor = btn.dataset.text;
+    const bgColor = btn.dataset.bg;
+    */
+
+/*    if (color === "none") {
+      editor.chain().focus().unsetHighlight().run();  
+    } else {
+      editor.chain().focus().setHighlight({ color }).run(); 
+    }*/
+    
+    
+/*    editor.chain().focus()
+      .setColor(textColor)
+      .setHighlight({ color: bgColor })
+      .run();
+    
+    
+    
+  });
+});
+*/
+
+
+const underlineButton = document.getElementById("underlineButton");
+
+underlineButton.addEventListener("click", () => {
+  editor.chain().focus().toggleUnderline().run();
+});
+
+
+
+// เปิด Modal
+document.getElementById('tableEditBtn').addEventListener('click', () => {
+  document.getElementById('tableModal').classList.remove('hidden')
+})
+
+// ปิด Modal
+document.getElementById('closeModal').addEventListener('click', () => {
+  document.getElementById('tableModal').classList.add('hidden')
+})
+
+document.querySelector('[data-action="customResize"]').onclick = () => {
+  document.getElementById('tableModal').classList.add('hidden')
+  enableCustomResize()
+}
+
+// กด Action
+document.querySelectorAll('#tableModal [data-action]').forEach(btn => {
+  btn.addEventListener('click', e => {
+    const action = e.target.dataset.action
+    switch(action) {
+      case 'addColumn':
+        editor.chain().focus().addColumnAfter().run()
+        break
+      case 'deleteColumn':
+        editor.chain().focus().deleteColumn().run()
+        break
+      case 'addRow':
+        editor.chain().focus().addRowAfter().run()
+        break
+      case 'deleteRow':
+        editor.chain().focus().deleteRow().run()
+        break
+      case 'deleteTable':
+        editor.chain().focus().deleteTable().run()
+        break
+      case 'fixSize':
+      editor.chain().focus().setCellAttribute('background', 'lightblue').run();      
+        break
+    }
+  })
+})
+
+
+
+
+const dropdown = document.querySelector('.dropdown');
+const dropdownBtn = document.getElementById('headingDropdownBtn');
+const dropdownMenu = document.getElementById('headingDropdown');
+
+dropdownBtn.addEventListener('click', () => {
+  dropdown.classList.toggle('open');
+});
+
+// เลือก Heading level
+dropdownMenu.querySelectorAll('button').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const level = btn.dataset.level;
+    editor.chain().focus().toggleHeading({ level: parseInt(level) }).run();
+    dropdown.classList.remove('open'); // ปิดเมนูหลังเลือก
+  });
+});
+
+// ปิดเมื่อคลิกนอก
+document.addEventListener('click', (e) => {
+  if (!dropdown.contains(e.target)) {
+    dropdown.classList.remove('open');
+  }
+});
+
+
+
+const floattextalign = document.querySelector('.float-textalign');
+const floattextalignBtn = document.getElementById('headingfloattextalignBtn');
+const floattextalignMenu = document.getElementById('headingfloattextalign');
+
+floattextalignBtn.addEventListener('click', () => {
+  floattextalign.classList.toggle('open');
+});
+
+// เลือก Heading level
+floattextalignMenu.querySelectorAll('button').forEach(btn => {
+  btn.addEventListener('click', () => {
+              console.log("in 88");
+              
+              const align = btn.dataset.align;
+                        editor.chain().focus().setTextAlign(align).run();
+                        
+        floattextalign.classList.remove('open'); // ปิดเมนูหลังเลือก
+  });
+});
+
+// ปิดเมื่อคลิกนอก
+document.addEventListener('click', (e) => {
+  if (!floattextalign.contains(e.target)) {
+    floattextalign.classList.remove('open');
+  }
+});
+
+
+
+
+
+
+
+
+
+
+
+
+const fontButton = document.getElementById("fontButton");
+const fontBottomSheetOverlay = document.getElementById("fontBottomSheetOverlay");
+const closeFontBottomSheetBtn = document.getElementById("closeFontBottomSheetBtn");
+
+fontButton.addEventListener("click", () => {
+  fontBottomSheetOverlay.style.display = "flex";
+});
+
+closeFontBottomSheetBtn.addEventListener("click", () => {
+  fontBottomSheetOverlay.style.display = "none";
+});
+
+document.querySelectorAll(".font-option").forEach((btn) => {
+  btn.addEventListener("click", () => {
+    const font = btn.dataset.font;
+    editor.chain().focus().setFontFamily(font).run();
+    fontBottomSheetOverlay.style.display = "none";
+  });
+});
+
+
+
+const highlightButton = document.getElementById("highlightButton");
+const highlightSheetOverlay = document.getElementById("highlightSheetOverlay");
+const closeHighlightSheet = document.getElementById("closeHighlightSheet");
+
+highlightButton.addEventListener("click", () => {
+  highlightSheetOverlay.classList.add("show");
+  highlightSheetOverlay.style.display = "flex";
+});
+
+function closeHighlight() {
+  highlightSheetOverlay.classList.remove("show");
+  
+    highlightSheetOverlay.style.display = "none"; // รอ transition ลงล่าง
+}
+
+closeHighlightSheet.addEventListener("click", closeHighlight);
+highlightSheetOverlay.addEventListener("click", (e) => {
+  if (e.target === highlightSheetOverlay) closeHighlight();
+});
+
+
+
+
+
+
+highlightSheetOverlay.addEventListener("click", (e) => {
+  if (e.target === highlightSheetOverlay) {
+    highlightSheetOverlay.style.display = "none";
+  }
+});
+
+
+document.querySelectorAll(".highlight-color-btn").forEach(btn => {
+  btn.addEventListener("click", () => {
+    const kind = btn.dataset.type;
+
+    if (kind === "highlight") {
+      const pickedBg = btn.dataset.bgval;
+      const pickedFg = btn.dataset.fgval;
+
+      editor.chain().focus()
+        .setHighlight({ color: pickedBg })   // พื้นหลัง
+        .setColor(pickedFg)                 // สีตัวอักษร
+        .run();
+    } else if (kind === "text") {
+      const pickedVal = btn.dataset.value;
+      editor.chain().focus().setColor(pickedVal).run();
+    }
+
+    highlightSheetOverlay.style.display = "none";
+  });
+});
+
+
+
+
+function getColumnIndex($cellPos) {
+            let colIndex = 0;
+            const row = $cellPos.parent;
+            const cellStart = $cellPos.start();
+            
+            let currentPos = row.start + 1; // +1 เพื่อข้าม start token
+            
+            for (let i = 0; i < row.childCount; i++) {
+                if (currentPos >= cellStart) {
+                    colIndex = i;
+                    break;
+                }
+                currentPos += row.child(i).nodeSize;
+            }
+            
+            return colIndex;
+        }
+
+
+document.getElementById('indent-button').addEventListener('click', () => {
+      /*  editor.chain().focus().indent().run();*/
+
+
+
+
+            const width = 500;
+            const unit = 'px';
+            
+            if (!width) {
+                alert('กรุณาใส่ค่าความกว้าง')
+                return
+            }
+
+            if (unit === '%' && (width < 1 || width > 100)) {
+                alert('ค่าเปอร์เซ็นต์ต้องอยู่ระหว่าง 1-100')
+                return
+            }
+
+            if (unit === 'px' && (width < 50 || width > 1000)) {
+                alert('ค่า pixel ต้องอยู่ระหว่าง 50-1000')
+                return
+            }
+
+            // ใช้ selectedCellInfo หรือพยายามหาจาก selection ปัจจุบัน
+            let colIndex = -1;
+            
+            if (selectedCellInfo) {
+                colIndex = selectedCellInfo.colIndex;
+            } else {
+                // พยายามหาจาก selection ปัจจุบัน
+                const { state } = editor
+                const { selection } = state
+                
+                if (selection.$anchorCell) {
+                    colIndex = getColumnIndex(selection.$anchorCell);
+                } else {
+                    // หากไม่เจอ ให้ลองหาจาก cursor position
+                    const pos = selection.from;
+                    const resolvedPos = state.doc.resolve(pos);
+                    
+                    // ตรวจสอบว่า cursor อยู่ใน table cell หรือไม่
+                    for (let d = resolvedPos.depth; d > 0; d--) {
+                        const node = resolvedPos.node(d);
+                        if (node.type.name === 'tableCell' || node.type.name === 'tableHeader') {
+                            const cellPos = resolvedPos.start(d);
+                            const $cellPos = state.doc.resolve(cellPos);
+                            colIndex = getColumnIndex($cellPos);
+                            break;
+                        }
+                    }
+                }
+            }
+
+            if (colIndex >= 0) {
+                // ใช้ CSS เพื่อปรับขนาดคอลัมน์
+                const tableElement = document.querySelector('.ProseMirror table')
+                if (tableElement) {
+                    // สร้าง style rule สำหรับคอลัมน์
+                    const styleId = 'column-width-style'
+                    let styleElement = document.getElementById(styleId)
+                    
+                    if (!styleElement) {
+                        styleElement = document.createElement('style')
+                        styleElement.id = styleId
+                        document.head.appendChild(styleElement)
+                    }
+
+                    const colSelector = `.ProseMirror table td:nth-child(${colIndex + 1}), .ProseMirror table th:nth-child(${colIndex + 1})`
+                    
+                    // เพิ่ม CSS rule ใหม่
+                    const newRule = `${colSelector} { width: ${width}${unit} !important; min-width: ${width}${unit} !important; max-width: ${width}${unit} !important; }`
+                    
+                    // ลบ rule เก่าของคอลัมน์นี้ถ้ามี
+                    const existingRules = styleElement.textContent.split('\n');
+                    const filteredRules = existingRules.filter(rule => !rule.includes(colSelector));
+                    styleElement.textContent = filteredRules.join('\n') + '\n' + newRule;
+                    
+                    alert(`ปรับขนาดคอลัมน์ที่ ${colIndex + 1} เป็น ${width}${unit} แล้ว`)
+                }
+            } else {
+                alert('กรุณาคลิกใน cell ของตารางที่ต้องการปรับขนาด')
+            }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            
+    });
+    
+    
+    
+    
+    
+    
+    
+    
+    
+document.getElementById('outdent-button').addEventListener('click', () => {
+        editor.chain().focus().outdent().run();
+    });
+    
+
+
+
+
+// ฟังก์ชัน Fix Size (ทำให้ column มีขนาดเท่ากัน)
+function enableCustomResize() {
+  const table = document.querySelector('.ProseMirror table')
+  if (!table) return
+  const cols = table.querySelectorAll('col')
+  const width = 100 / cols.length
+  cols.forEach(col => col.style.width = `${width}%`)
+}
+
+
+
+let selectedCellInfo = null;
+
+
+
+        // ปิด table controls เมื่อคลิกนอกพื้นที่ (ปรับปรุงแล้ว)
+        document.addEventListener('click', (e) => {
+            // จัดการ cell selection ก่อน
+            const clickedCell = e.target.closest('td, th');
+            if (clickedCell && clickedCell.closest('.ProseMirror')) {
+                const table = clickedCell.closest('table');
+                const row = clickedCell.closest('tr');
+                const cells = Array.from(row.children);
+                const colIndex = cells.indexOf(clickedCell);
+                
+                selectedCellInfo = {
+                    element: clickedCell,
+                    colIndex: colIndex,
+                    table: table
+                };
+                
+                // เพิ่ม visual feedback
+                document.querySelectorAll('.selected-cell-highlight').forEach(el => {
+                    el.classList.remove('selected-cell-highlight');
+                });
+                clickedCell.classList.add('selected-cell-highlight');
+                
+                console.log('Selected cell column:', colIndex + 1);
+            }
+            
+            // จัดการ table controls
+            const controls = document.getElementById('tableControls')
+            const toggleBtn = e.target.closest('button[onclick="toggleTableControls()"]')
+            
+            if (!controls.contains(e.target) && !toggleBtn && !editor.isActive('table')) {
+                controls.classList.remove('show')
+            }
+        });
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                const buttons = {
+                    taskListButton: () => editor.chain().focus().toggleTaskList().run(),
+                    detailsButton: () => editor.chain().focus().insertDetails().run(),
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    hrButton: () => editor.chain().focus().setHorizontalRule().run(),
+                    imageButton: () => document.getElementById("imageUploader").click(),
+                    boldButton: () => editor.chain().focus().toggleBold().run(),
+                    italicButton: () => editor.chain().focus().toggleItalic().run(),
+                    strikeButton: () => editor.chain().focus().toggleStrike().run(),
+                    codeTextButton: () => editor.chain().focus().toggleCode().run(),
+                    paragraphButton: () => editor.chain().focus().setParagraph().run(),
+                    h1Button: () => editor.chain().focus().toggleHeading({ level: 1 }).run(),
+                    h2Button: () => editor.chain().focus().toggleHeading({ level: 2 }).run(),
+                    bulletListButton: () => editor.chain().focus().toggleBulletList().run(),
+                    orderedListButton: () => editor.chain().focus().toggleOrderedList().run(),
+                    codeBlockButton: () => editor.chain().focus().toggleCodeBlock().run(),
+                    blockquoteButton: () => editor.chain().focus().toggleBlockquote().run(),
+                    hrButton: () => editor.chain().focus().setHorizontalRule().run(),
+                    hardBreakButton: () => editor.chain().focus().setHardBreak().run(),
+                    
+                    insertTableButton: () => editor.chain().focus().insertTable({ rows: 3, cols: 3, withHeaderRow: true }).run(),
+                    
+                    
+                    
+                    undoButton: () => editor.chain().focus().undo().run(),
+                    redoButton: () => editor.chain().focus().redo().run(),
+                };
+                
+                
+                
+                    
+
+                Object.keys(buttons).forEach((id) => {
+                    const btn = document.getElementById(id);
+                    if (btn) btn.addEventListener("click", buttons[id]);
+                });
+
+                let cropper;
+                const imageUploader = document.getElementById("imageUploader");
+                const cropModal = document.getElementById("cropModal");
+                const cropperImage = document.getElementById("cropperImage");
+
+                imageUploader.addEventListener("change", (event) => {
+                    console.log("888");
+                    const file = event.target.files[0];
+                    if (!file) return;
+
+                    const reader = new FileReader();
+                    reader.onload = () => {
+                        cropperImage.src = reader.result;
+                        cropModal.style.display = "flex";
+
+                        // ป้องกัน cropper ซ้อน
+                        if (cropper) cropper.destroy();
+
+                        cropper = new Cropper(cropperImage, {
+                            aspectRatio: 4 / 3, // หรือใส่ 1, 16/9 ตามต้องการ
+                            viewMode: 1,
+                            autoCropArea: 1,
+                        });
+                    };
+                    reader.readAsDataURL(file);
+                });
+
+                // แทรกรูป
+                document.getElementById("cropInsertButton").addEventListener("click", () => {
+                    if (!cropper) return;
+                    const canvas = cropper.getCroppedCanvas();
+                    const base64 = canvas.toDataURL();
+
+                    editor.chain().focus().setImage({ src: base64 }).run();
+
+                    cropper.destroy();
+                    cropModal.style.display = "none";
+                });
+
+                document.getElementById("cropCancelButton").addEventListener("click", () => {
+                    if (cropper) cropper.destroy();
+                    cropModal.style.display = "none";
+                });
+
+                function updateToolbar(editor) {
+                    /*updateTextAlignOptions(editor);*/
+                    /*updateHighlightOptions(editor);*/
+                    const states = {
+                        taskListButton: editor.isActive("taskList"),
+                        boldButton: editor.isActive("bold"),
+                        italicButton: editor.isActive("italic"),
+                        strikeButton: editor.isActive("strike"),
+                        codeTextButton: editor.isActive("code"),
+                        paragraphButton: editor.isActive("paragraph"),
+                        h1Button: editor.isActive("heading", { level: 1 }),
+                        h2Button: editor.isActive("heading", { level: 2 }),
+                        bulletListButton: editor.isActive("bulletList"),
+                        orderedListButton: editor.isActive("orderedList"),
+                        codeBlockButton: editor.isActive("codeBlock"),
+                        blockquoteButton: editor.isActive("blockquote"),
+                        toggleLargeParagraphButton: editor.isActive("largeParagraph"),
+                    };
+                    for (const id in states) {
+                        const btn = document.getElementById(id);
+                        if (btn) btn.classList.toggle("is-active", states[id]);
+                    }
+                }
+
+                // ฟังก์ชันสำหรับอัปเดตสถานะ Active ของปุ่มใน Bottom Sheet
+                function updateHighlightOptions(editorInstance) {
+                    highlightColorOptions.forEach((btn) => {
+                        const color = btn.dataset.color;
+                        if (color === "unset") {
+                            if (editorInstance.isActive("highlight")) {
+                                btn.classList.remove("is-active"); // ถ้ามีไฮไลท์อยู่ ปุ่ม unset จะไม่ active
+                            } else {
+                                btn.classList.add("is-active"); // ถ้าไม่มีไฮไลท์ ปุ่ม unset จะ active
+                            }
+                        } else {
+                            if (editorInstance.isActive({ highlight: { color: color } })) {
+                                btn.classList.add("is-active");
+                            } else {
+                                btn.classList.remove("is-active");
+                            }
+                        }
+                    });
+                    // ตรวจสอบ Custom Color Input ด้วย
+                    const currentHighlightColor = editorInstance.getAttributes("highlight").color;
+                    if (currentHighlightColor) {
+                        customHighlightColorInput.value = currentHighlightColor;
+                    } else {
+                        // ตั้งค่าสีเริ่มต้นหากไม่มีไฮไลท์ หรือต้องการค่าที่ชัดเจน
+                        customHighlightColorInput.value = "#000000"; // หรือสีที่คุณต้องการ
+                    }
+                }
+
+                window.getNoteData = () => ({
+                    title: document.getElementById("note-title").value,
+                    content: editor.getHTML(),
+                });
+                window.editor = editor;
+            });
+        </script>
+    </body>
+</html>
